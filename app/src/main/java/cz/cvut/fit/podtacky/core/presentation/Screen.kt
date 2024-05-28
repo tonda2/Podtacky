@@ -11,4 +11,8 @@ sealed class Screen(val route: String) {
     data object DetailScreen : Screen("detail") {
         const val ID = "id"
     }
+
+    data object EditScreen : Screen("edit") {
+        const val ID = "id"
+    }
 }

@@ -7,8 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import cz.cvut.fit.podtacky.features.coaster.presentation.detail.DetailScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.add.AddScreen
+import cz.cvut.fit.podtacky.features.coaster.presentation.detail.DetailScreen
+import cz.cvut.fit.podtacky.features.coaster.presentation.edit.EditScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.list.ListScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.search.SearchScreen
 
@@ -41,6 +42,16 @@ fun Navigation(
             )
         ) {
             DetailScreen(navController = navController)
+        }
+        composable(
+            route = Screen.EditScreen.route + "/{id}",
+            arguments = listOf(
+                navArgument(name = "id") {
+                    type = NavType.LongType
+                }
+            )
+        ) {
+            EditScreen(navController = navController)
         }
     }
 }

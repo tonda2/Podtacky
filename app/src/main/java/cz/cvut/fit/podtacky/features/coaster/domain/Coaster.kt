@@ -1,7 +1,5 @@
 package cz.cvut.fit.podtacky.features.coaster.domain
 
-import java.util.Date
-
 data class Coaster(
     val coasterId: Long = 0L,
     val brewery: String,

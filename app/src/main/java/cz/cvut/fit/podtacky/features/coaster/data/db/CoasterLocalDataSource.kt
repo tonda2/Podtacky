@@ -36,6 +36,18 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
         coasterDao.insert(dbCoaster)
     }
 
+    suspend fun delete(coaster: Coaster) {
+        val dbCoaster = DbCoaster(
+            coasterId = coaster.coasterId,
+            brewery = coaster.brewery,
+            description = coaster.description,
+            dateAdded = coaster.dateAdded,
+            city = coaster.city,
+            count = coaster.count
+        )
+        coasterDao.delete(dbCoaster)
+    }
+
     private fun DbCoaster.toDomain(): Coaster {
         return Coaster(
             coasterId = coasterId,

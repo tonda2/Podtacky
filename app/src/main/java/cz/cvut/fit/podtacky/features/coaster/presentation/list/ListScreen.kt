@@ -2,6 +2,7 @@ package cz.cvut.fit.podtacky.features.coaster.presentation.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -49,7 +51,9 @@ fun ListScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(Screen.AddScreen.route) },
-                modifier = Modifier.padding(8.dp).size(64.dp, 64.dp),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(64.dp, 64.dp),
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
@@ -111,6 +115,13 @@ fun CoasterCard(
 @Composable
 private fun CoasterItem(coaster: Coaster, modifier: Modifier) {
     Row(modifier = modifier) {
+        Box(
+            modifier = Modifier.align(Alignment.CenterVertically).padding(start = 8.dp)
+        ) {
+            Text(
+                text = "${coaster.count}x"
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()

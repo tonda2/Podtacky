@@ -7,6 +7,7 @@ import cz.cvut.fit.podtacky.features.coaster.presentation.list.ListViewModel
 import cz.cvut.fit.podtacky.features.coaster.presentation.detail.DetailViewModel
 import cz.cvut.fit.podtacky.features.coaster.presentation.search.SearchViewModel
 import cz.cvut.fit.podtacky.features.coaster.presentation.add.AddViewModel
+import cz.cvut.fit.podtacky.features.coaster.presentation.edit.EditViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -21,4 +22,5 @@ val coasterModule = module {
     viewModelOf(::DetailViewModel)
     viewModelOf(::SearchViewModel)
     viewModelOf(::AddViewModel)
+    viewModelOf(::EditViewModel)
 }

@@ -4,10 +4,6 @@ import androidx.lifecycle.LiveData
 import cz.cvut.fit.podtacky.features.coaster.data.db.CoasterLocalDataSource
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import java.time.Instant
-import java.util.Date
-import java.util.Random
 
 class CoasterRepository(
     private val localDataSource: CoasterLocalDataSource
@@ -20,7 +16,7 @@ class CoasterRepository(
     suspend fun getCoasterById(id: String): Coaster {
         val coaster = localDataSource.getCoaster(id)
         if (coaster != null) return coaster
-        throw RuntimeException("Id doesn't exist!")
+        throw RuntimeException("Id $id doesn't exist!")
     }
 
     fun searchCoasterByBreweryName(name: String): Flow<List<Coaster>> {
@@ -28,6 +24,10 @@ class CoasterRepository(
     }
 
     suspend fun addCoaster(coaster: Coaster) {
-        return localDataSource.insert(coaster)
+        localDataSource.insert(coaster)
+    }
+
+    suspend fun deleteCoaster(coaster: Coaster) {
+        return localDataSource.delete(coaster)
     }
 }
