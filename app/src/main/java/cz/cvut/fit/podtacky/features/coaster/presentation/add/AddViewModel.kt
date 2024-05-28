@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.podtacky.features.coaster.data.CoasterRepository
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
+import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -88,11 +89,6 @@ data class AddScreenState(
     val count: String = "1",
     val state: ScreenState = ScreenState.Fill
 )
-
-enum class ScreenState {
-    Loading,
-    Fill
-}
 
 fun Date.toString(format: String): String {
     val formatter = SimpleDateFormat(format)

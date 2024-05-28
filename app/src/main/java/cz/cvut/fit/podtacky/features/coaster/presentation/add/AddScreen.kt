@@ -21,8 +21,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -44,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.podtacky.R
+import cz.cvut.fit.podtacky.features.coaster.presentation.LoadingScreen
+import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,7 +85,7 @@ fun AddScreen(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
-                Icon(Icons.Default.Add, "Add Coaster")
+                Icon(Icons.Default.Check, "Add Coaster")
             }
         },
     ) { paddingValues ->
@@ -175,22 +176,6 @@ fun EntryScreen(
             placeholder = "Počet",
             onQueryChange = viewModel::updateCount,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-    }
-}
-
-@Composable
-fun LoadingScreen(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator(modifier = Modifier.size(60.dp))
-        Text(
-            text = "Ukládám",
         )
     }
 }
