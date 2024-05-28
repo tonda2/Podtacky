@@ -9,7 +9,7 @@ data class DbCoaster(
     @PrimaryKey(autoGenerate = true) val coasterId: Long = 0,
     val brewery: String,
     val description: String,
-    val dateAdded: Date,
+    val dateAdded: String,
     val city: String,
     val count: Int
 )

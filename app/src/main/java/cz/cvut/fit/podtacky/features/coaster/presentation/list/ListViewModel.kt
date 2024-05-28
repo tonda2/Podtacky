@@ -1,26 +1,25 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.list
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.podtacky.features.coaster.data.CoasterRepository
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ListViewModel(
     private val coasterRepository: CoasterRepository
 ) : ViewModel() {
 
-    private val _screenStateStream = MutableStateFlow(ListScreenState())
-    val screenStateStream = _screenStateStream.asStateFlow()
+    private val _screenStateLiveData = MutableLiveData<ListScreenState>()
+    val screenStateLiveData: LiveData<ListScreenState> = _screenStateLiveData
 
     init {
         viewModelScope.launch {
-            // coasterRepository.addCoaster()
-            _screenStateStream.value = ListScreenState(
-                coasters = coasterRepository.getCoasters()
-            )
+            coasterRepository.getCoasters().observeForever { coasters ->
+                _screenStateLiveData.value = ListScreenState(coasters ?: emptyList())
+            }
         }
     }
 }
