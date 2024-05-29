@@ -33,7 +33,6 @@ import cz.cvut.fit.podtacky.features.coaster.presentation.list.CoasterCard
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     navController: NavController,
@@ -44,36 +43,16 @@ fun SearchScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "Back"
-                        )
+            SearchTopBar(
+                screenState = screenState,
+                onBackClick = { navController.navigateUp() },
+                onQueryChange = viewModel::updateQuery,
+                onClearClick = { viewModel.clear() },
+                onSearchClick = {
+                    coroutineScope.launch {
+                        viewModel.searchCoasters()
                     }
-                },
-                title = {
-                    SearchTopBar(
-                        query = screenState.query,
-                        onQueryChange = viewModel::updateQuery,
-                        onClearClick = viewModel::clear
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {
-                        coroutineScope.launch {
-                            viewModel.searchCoasters()
-                        }
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Hledat podtácky",
-                            tint = MaterialTheme.colorScheme.onSecondary,
-                        )
-                    }
-                }
-            )
+                })
         }
     ) { paddingValues ->
         LazyColumn(
@@ -94,46 +73,72 @@ fun SearchScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchTopBar(
-    query: String,
+    screenState: SearchScreenState,
+    onBackClick: () -> Unit,
     onQueryChange: (String) -> Unit,
-    onClearClick: () -> Unit
+    onClearClick: () -> Unit,
+    onSearchClick: () -> Unit
 ) {
-    TextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(2.dp),
-        value = query,
-        singleLine = true,
-        onValueChange = onQueryChange,
-        placeholder = {
-            Text(
-                text = "Vyhledat podtácek",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondary,
-            )
-        },
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-        ),
-        textStyle = MaterialTheme.typography.bodyMedium,
-        trailingIcon = {
-            if (query.isNotEmpty()) {
-                IconButton(onClick = {
-                    onClearClick()
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Smazat",
-                        tint = MaterialTheme.colorScheme.onSecondary,
-                    )
-                }
+    TopAppBar(
+        navigationIcon = {
+            IconButton(onClick = { onBackClick() }) {
+                Icon(
+                    Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = "Back"
+                )
             }
         },
+        title = {
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(2.dp),
+                value = screenState.query,
+                singleLine = true,
+                onValueChange = onQueryChange,
+                placeholder = {
+                    Text(
+                        text = "Vyhledat podtácek",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondary,
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+                textStyle = MaterialTheme.typography.bodyMedium,
+                trailingIcon = {
+                    if (screenState.query.isNotEmpty()) {
+                        IconButton(onClick = {
+                            onClearClick()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Smazat",
+                                tint = MaterialTheme.colorScheme.onSecondary,
+                            )
+                        }
+                    }
+                },
+            )
+        },
+        actions = {
+            IconButton(onClick = {
+                onSearchClick()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = "Hledat podtácky",
+                    tint = MaterialTheme.colorScheme.onSecondary,
+                )
+            }
+        }
     )
 }
