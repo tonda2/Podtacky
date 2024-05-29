@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -63,12 +64,12 @@ fun EditScreen(
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back_button)
                         )
                     }
                 },
                 title = {
-                    Text(text = "Upravit podtácek")
+                    Text(text = stringResource(R.string.edit_coaster_title))
                 }
             )
         },
@@ -87,7 +88,7 @@ fun EditScreen(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_save_24),
-                    "Save Changes"
+                    stringResource(R.string.save_changes_button)
                 )
             }
         },
@@ -134,7 +135,7 @@ fun EntryEditScreen(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_camera_alt_24),
-                    contentDescription = "Camera Icon",
+                    contentDescription = stringResource(R.string.camera_icon_button),
                     tint = Color.White
                 )
             }
@@ -146,14 +147,14 @@ fun EntryEditScreen(
             ) {
                 EntryField(
                     query = screenState.brewery,
-                    placeholder = "Pivovar",
+                    placeholder = stringResource(R.string.brewery),
                     onQueryChange = viewModel::updateBrewery,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 EntryField(
                     query = screenState.city,
-                    placeholder = "Původ podtácku",
+                    placeholder = stringResource(R.string.city),
                     onQueryChange = viewModel::updateCity,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
                 )
@@ -162,7 +163,7 @@ fun EntryEditScreen(
         Spacer(modifier = Modifier.height(16.dp))
         EntryField(
             query = screenState.description,
-            placeholder = "Popis",
+            placeholder = stringResource(R.string.description),
             onQueryChange = viewModel::updateDescription,
             singleline = false,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
@@ -170,13 +171,13 @@ fun EntryEditScreen(
         Spacer(modifier = Modifier.height(16.dp))
         EntryField(
             query = screenState.date,
-            placeholder = "Datum přidání",
+            placeholder = stringResource(R.string.added_date),
             onQueryChange = viewModel::updateDate
         )
         Spacer(modifier = Modifier.height(16.dp))
         EntryField(
             query = screenState.count,
-            placeholder = "Počet",
+            placeholder = stringResource(R.string.count),
             onQueryChange = viewModel::updateCount,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )

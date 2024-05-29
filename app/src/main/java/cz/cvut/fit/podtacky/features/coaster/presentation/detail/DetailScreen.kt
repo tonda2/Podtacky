@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -79,7 +80,7 @@ fun DetailScreen(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ) {
-                    Icon(Icons.Default.Edit, "Edit Coaster")
+                    Icon(Icons.Default.Edit, stringResource(R.string.edit_button))
                 }
             }
         ) { paddingValues ->
@@ -105,7 +106,7 @@ fun DetailTopBar(
             IconButton(onClick = { onBackClick() }) {
                 Icon(
                     Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = "Back"
+                    contentDescription = stringResource(R.string.back_button)
                 )
             }
         },
@@ -118,7 +119,7 @@ fun DetailTopBar(
             }) {
                 Icon(
                     Icons.Default.Delete,
-                    contentDescription = "Delete"
+                    contentDescription = stringResource(R.string.delete_button)
                 )
             }
         }
@@ -169,7 +170,7 @@ fun DetailTopPart(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_camera_alt_24),
-                contentDescription = "Camera Icon",
+                contentDescription = stringResource(R.string.camera_icon_button),
                 tint = Color.White
             )
         }
@@ -179,7 +180,7 @@ fun DetailTopPart(
                 .padding(horizontal = 16.dp),
         ) {
             Text(
-                text = "Pivovar",
+                text = stringResource(R.string.brewery),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSecondary
             )
@@ -191,7 +192,7 @@ fun DetailTopPart(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Původ",
+                text = stringResource(R.string.city),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSecondary
             )
@@ -215,9 +216,9 @@ fun DetailLowerPart(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Field(title = "Popis", value = coaster.description)
-        Field(title = "Počet", value = coaster.count.toString())
-        Field(title = "Přidáno", value = coaster.dateAdded)
+        Field(title = stringResource(R.string.description), value = coaster.description)
+        Field(title = stringResource(R.string.count), value = coaster.count.toString())
+        Field(title = stringResource(R.string.added_date), value = coaster.dateAdded)
     }
 }
 

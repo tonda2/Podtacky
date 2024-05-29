@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Podtacky</string>
+    <string name="back_button">Back</string>
+    <string name="add_coaster">Přidat podtácek</string>
+    <string name="add_coaster_button">Add Coaster</string>
+    <string name="camera_icon_button">Camera Icon</string>
+    <string name="brewery">Pivovar</string>
+    <string name="city">Původ podtácku</string>
+    <string name="description">Popis</string>
+    <string name="added_date">Datum přidání</string>
+    <string name="count">Počet</string>
+    <string name="edit_button">Edit Coaster</string>
+    <string name="delete_button">Delete</string>
+    <string name="edit_coaster_title">Upravit podtácek</string>
+    <string name="save_changes_button">Save Changes</string>
+    <string name="list_title">Podtácky</string>
+    <string name="search_button">Search</string>
+    <string name="search_placeholder">Vyhledat podtácek</string>
+    <string name="clear_button">Smazat</string>
 </resources>

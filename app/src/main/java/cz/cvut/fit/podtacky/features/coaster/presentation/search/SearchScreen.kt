@@ -25,9 +25,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import cz.cvut.fit.podtacky.R
 import cz.cvut.fit.podtacky.core.presentation.Screen
 import cz.cvut.fit.podtacky.features.coaster.presentation.list.CoasterCard
 import kotlinx.coroutines.launch
@@ -87,7 +89,7 @@ private fun SearchTopBar(
             IconButton(onClick = { onBackClick() }) {
                 Icon(
                     Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = "Back"
+                    contentDescription = stringResource(R.string.back_button)
                 )
             }
         },
@@ -101,7 +103,7 @@ private fun SearchTopBar(
                 onValueChange = onQueryChange,
                 placeholder = {
                     Text(
-                        text = "Vyhledat podtácek",
+                        text = stringResource(R.string.search_placeholder),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSecondary,
                     )
@@ -121,7 +123,7 @@ private fun SearchTopBar(
                         }) {
                             Icon(
                                 imageVector = Icons.Filled.Close,
-                                contentDescription = "Smazat",
+                                contentDescription = stringResource(R.string.clear_button),
                                 tint = MaterialTheme.colorScheme.onSecondary,
                             )
                         }
@@ -135,7 +137,7 @@ private fun SearchTopBar(
             }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
-                    contentDescription = "Hledat podtácky",
+                    contentDescription = stringResource(R.string.search_button),
                     tint = MaterialTheme.colorScheme.onSecondary,
                 )
             }

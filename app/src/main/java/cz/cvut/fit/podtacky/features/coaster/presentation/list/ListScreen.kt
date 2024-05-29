@@ -32,9 +32,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import cz.cvut.fit.podtacky.R
 import cz.cvut.fit.podtacky.core.presentation.Screen
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
 import org.koin.androidx.compose.koinViewModel
@@ -58,19 +60,19 @@ fun ListScreen(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
-                Icon(Icons.Filled.Add, "Add Coaster")
+                Icon(Icons.Filled.Add, stringResource(R.string.add_coaster_button))
             }
         },
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Podtácky")
+                    Text(text = stringResource(R.string.list_title))
                 },
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.SearchScreen.route) }) {
                         Icon(
                             Icons.Default.Search,
-                            contentDescription = "Search"
+                            contentDescription = stringResource(R.string.search_button)
                         )
                     }
                 }
@@ -116,7 +118,9 @@ fun CoasterCard(
 private fun CoasterItem(coaster: Coaster, modifier: Modifier) {
     Row(modifier = modifier) {
         Box(
-            modifier = Modifier.align(Alignment.CenterVertically).padding(start = 8.dp)
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(start = 8.dp)
         ) {
             Text(
                 text = "${coaster.count}x"
