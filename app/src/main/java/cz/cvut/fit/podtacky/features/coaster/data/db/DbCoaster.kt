@@ -11,6 +11,8 @@ data class DbCoaster(
     val description: String,
     val dateAdded: String,
     val city: String,
-    val count: Int
+    val count: Int,
+    val frontUri: String,
+    val backUri: String
 )
 

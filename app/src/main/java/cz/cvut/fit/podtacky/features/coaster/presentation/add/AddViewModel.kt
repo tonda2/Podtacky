@@ -1,5 +1,6 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.add
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.podtacky.features.coaster.data.CoasterRepository
@@ -34,6 +35,8 @@ class AddViewModel(
                     dateAdded = _screenStateStream.value.date,
                     city = _screenStateStream.value.city,
                     count = _screenStateStream.value.count.toInt(),
+                    frontUri = _screenStateStream.value.frontUri.toString(),
+                    backUri = _screenStateStream.value.backUri.toString()
                 )
             )
             _screenStateStream.update {
@@ -79,6 +82,22 @@ class AddViewModel(
             )
         }
     }
+
+    fun updateFrontUri(uri: Uri) {
+        _screenStateStream.update {
+            it.copy(
+                frontUri = uri
+            )
+        }
+    }
+
+    fun updateBackUri(uri: Uri) {
+        _screenStateStream.update {
+            it.copy(
+                backUri = uri
+            )
+        }
+    }
 }
 
 data class AddScreenState(
@@ -87,6 +106,8 @@ data class AddScreenState(
     val date: String = Calendar.getInstance().time.toString("dd.MM.yyy"),
     val city: String = "",
     val count: String = "1",
+    val frontUri: Uri = Uri.EMPTY,
+    val backUri: Uri = Uri.EMPTY,
     val state: ScreenState = ScreenState.Fill
 )
 

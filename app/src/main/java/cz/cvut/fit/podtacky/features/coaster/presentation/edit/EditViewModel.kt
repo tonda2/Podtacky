@@ -1,5 +1,6 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.edit
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -67,6 +68,8 @@ class EditViewModel(
                     dateAdded = _screenStateStream.value.date,
                     city = _screenStateStream.value.city,
                     count = _screenStateStream.value.count.toInt(),
+                    frontUri = _screenStateStream.value.frontUri.toString(),
+                    backUri = _screenStateStream.value.backUri.toString()
                 )
             )
         }
@@ -121,5 +124,7 @@ data class EditScreenState(
     val date: String = Calendar.getInstance().time.toString("dd.MM.yyy"),
     val city: String = "",
     val count: String = "1",
+    val frontUri: Uri = Uri.EMPTY,
+    val backUri: Uri = Uri.EMPTY,
     val state: ScreenState = ScreenState.Fill
 )

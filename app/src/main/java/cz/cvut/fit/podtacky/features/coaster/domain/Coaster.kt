@@ -7,5 +7,7 @@ data class Coaster(
     val dateAdded: String,
     val city: String,
     val count: Int,
+    val frontUri: String,
+    val backUri: String
 //    val labels: List<Label>
 )

@@ -31,7 +31,9 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
             description = coaster.description,
             dateAdded = coaster.dateAdded,
             city = coaster.city,
-            count = coaster.count
+            count = coaster.count,
+            frontUri = coaster.frontUri,
+            backUri = coaster.backUri
         )
         coasterDao.insert(dbCoaster)
     }
@@ -43,7 +45,9 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
             description = coaster.description,
             dateAdded = coaster.dateAdded,
             city = coaster.city,
-            count = coaster.count
+            count = coaster.count,
+            frontUri = coaster.frontUri,
+            backUri = coaster.backUri
         )
         coasterDao.delete(dbCoaster)
     }
@@ -55,14 +59,9 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
             description = description,
             dateAdded = dateAdded,
             city = city,
-            count = count
-        )
-    }
-
-    private fun DbLabel.toDomain(): Label {
-        return Label(
-            labelId = labelId,
-            title = title
+            count = count,
+            frontUri = frontUri,
+            backUri = backUri
         )
     }
 }

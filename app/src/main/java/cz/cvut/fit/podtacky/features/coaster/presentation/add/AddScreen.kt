@@ -1,5 +1,14 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.add
 
+import android.Manifest.permission
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +24,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,20 +44,30 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import cz.cvut.fit.podtacky.R
+import cz.cvut.fit.podtacky.core.presentation.Screen
 import cz.cvut.fit.podtacky.features.coaster.presentation.LoadingScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
 import org.koin.androidx.compose.koinViewModel
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,21 +142,7 @@ fun EntryScreen(
                 .fillMaxWidth()
                 .height(164.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(164.dp)
-                    .background(Color.Gray)
-                    .clickable {
-                        // TODO vyfotit podtacek
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_camera_alt_24),
-                    contentDescription = stringResource(R.string.camera_icon_button),
-                    tint = Color.White
-                )
-            }
+            PhotoSlider(listOf(screenState.frontUri, screenState.backUri), viewModel)
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -181,6 +188,92 @@ fun EntryScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PhotoSlider(
+    photos: List<Uri>,
+    viewModel: AddViewModel
+) {
+    Box(
+        modifier = Modifier
+            .size(164.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        HorizontalPager(
+            state = rememberPagerState(
+                pageCount = { photos.size }
+            )
+        ) { page ->
+            PictureBox(photos[page], page, viewModel)
+        }
+    }
+}
+
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun PictureBox(
+    uri: Uri,
+    page: Int,
+    viewModel: AddViewModel
+) {
+    val context = LocalContext.current
+    var photoUri by remember { mutableStateOf<Uri?>(null) }
+    val permission = permission.CAMERA
+    val permissionState = rememberMultiplePermissionsState(listOf(permission))
+
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            when(page) {
+                0 -> viewModel.updateFrontUri(photoUri ?: Uri.EMPTY)
+                1 -> viewModel.updateBackUri(photoUri ?: Uri.EMPTY)
+            }
+        }
+    }
+
+    if (uri != Uri.EMPTY) {
+        Box(
+            modifier = Modifier
+                .size(164.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                modifier = Modifier.size(size = 164.dp),
+                model = uri,
+                contentDescription = null
+            )
+        }
+    }
+    else {
+        Box(
+            modifier = Modifier
+                .size(164.dp)
+                .background(Color.Gray)
+                .clickable {
+                    if (permissionState.allPermissionsGranted) {
+                        photoUri = createImageFile(context)
+                        takePictureLauncher.launch(photoUri)
+                    } else {
+                        context.startActivity(
+                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", context.packageName, null)
+                            }
+                        )
+                    }
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_camera_alt_24),
+                contentDescription = stringResource(R.string.camera_icon_button),
+                tint = Color.White
+            )
+        }
+    }
+}
+
 @Composable
 fun EntryField(
     query: String,
@@ -205,4 +298,19 @@ fun EntryField(
         },
         keyboardOptions = keyboardOptions
     )
+}
+
+fun createImageFile(context: Context): Uri? {
+    val storageDir: File? = context.getExternalFilesDir(null)
+    File.createTempFile(
+        "JPEG_${System.currentTimeMillis()}_",
+        ".jpg",
+        storageDir
+    ).apply {
+        return FileProvider.getUriForFile(
+            context,
+            "cz.cvut.fit.podtacky.provider",
+            this
+        )
+    }
 }
