@@ -1,5 +1,6 @@
 package cz.cvut.fit.podtacky.features.coaster.data.db
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
@@ -32,8 +33,8 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
             dateAdded = coaster.dateAdded,
             city = coaster.city,
             count = coaster.count,
-            frontUri = coaster.frontUri,
-            backUri = coaster.backUri
+            frontUri = coaster.frontUri.toString(),
+            backUri = coaster.backUri.toString()
         )
         coasterDao.insert(dbCoaster)
     }
@@ -46,8 +47,8 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
             dateAdded = coaster.dateAdded,
             city = coaster.city,
             count = coaster.count,
-            frontUri = coaster.frontUri,
-            backUri = coaster.backUri
+            frontUri = coaster.frontUri.toString(),
+            backUri = coaster.backUri.toString()
         )
         coasterDao.delete(dbCoaster)
     }
@@ -60,8 +61,8 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
             dateAdded = dateAdded,
             city = city,
             count = count,
-            frontUri = frontUri,
-            backUri = backUri
+            frontUri = Uri.parse(frontUri) ?: Uri.EMPTY,
+            backUri = Uri.parse(backUri) ?: Uri.EMPTY
         )
     }
 }

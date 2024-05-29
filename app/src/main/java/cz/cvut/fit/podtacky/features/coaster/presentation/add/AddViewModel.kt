@@ -35,8 +35,8 @@ class AddViewModel(
                     dateAdded = _screenStateStream.value.date,
                     city = _screenStateStream.value.city,
                     count = _screenStateStream.value.count.toInt(),
-                    frontUri = _screenStateStream.value.frontUri.toString(),
-                    backUri = _screenStateStream.value.backUri.toString()
+                    frontUri = _screenStateStream.value.frontUri,
+                    backUri = _screenStateStream.value.backUri
                 )
             )
             _screenStateStream.update {

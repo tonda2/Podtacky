@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import cz.cvut.fit.podtacky.R
 import cz.cvut.fit.podtacky.core.presentation.Screen
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
@@ -122,14 +123,16 @@ private fun CoasterItem(coaster: Coaster, modifier: Modifier) {
                 .align(Alignment.CenterVertically)
                 .padding(start = 8.dp)
         ) {
-            Text(
-                text = "${coaster.count}x"
+            AsyncImage(
+                modifier = Modifier.size(size = 60.dp),
+                model = coaster.frontUri,
+                contentDescription = null
             )
         }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 2.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(

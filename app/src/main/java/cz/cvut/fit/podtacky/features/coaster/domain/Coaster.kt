@@ -1,5 +1,7 @@
 package cz.cvut.fit.podtacky.features.coaster.domain
 
+import android.net.Uri
+
 data class Coaster(
     val coasterId: Long = 0L,
     val brewery: String,
@@ -7,7 +9,7 @@ data class Coaster(
     val dateAdded: String,
     val city: String,
     val count: Int,
-    val frontUri: String,
-    val backUri: String
+    val frontUri: Uri,
+    val backUri: Uri
 //    val labels: List<Label>
 )

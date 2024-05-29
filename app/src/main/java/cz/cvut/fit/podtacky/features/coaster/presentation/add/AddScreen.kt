@@ -142,7 +142,11 @@ fun EntryScreen(
                 .fillMaxWidth()
                 .height(164.dp)
         ) {
-            PhotoSlider(listOf(screenState.frontUri, screenState.backUri), viewModel)
+            PhotoSlider(
+                photos = listOf(screenState.frontUri, screenState.backUri),
+                viewModel = viewModel,
+                modifier = Modifier.size(164.dp)
+            )
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -192,11 +196,11 @@ fun EntryScreen(
 @Composable
 fun PhotoSlider(
     photos: List<Uri>,
-    viewModel: AddViewModel
+    viewModel: AddViewModel,
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
-            .size(164.dp),
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         HorizontalPager(
@@ -235,8 +239,7 @@ fun PictureBox(
 
     if (uri != Uri.EMPTY) {
         Box(
-            modifier = Modifier
-                .size(164.dp),
+            modifier = Modifier.size(164.dp),
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(

@@ -1,6 +1,9 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.detail
 
+import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,11 +45,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import cz.cvut.fit.podtacky.R
 import cz.cvut.fit.podtacky.core.presentation.Screen
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
 import cz.cvut.fit.podtacky.features.coaster.presentation.LoadingScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
+import cz.cvut.fit.podtacky.features.coaster.presentation.add.PhotoSlider
+import cz.cvut.fit.podtacky.features.coaster.presentation.add.PictureBox
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -157,22 +165,32 @@ fun CoasterDetail(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetailTopPart(
     coaster: Coaster
 ) {
     Row(modifier = Modifier.padding(all = 16.dp)) {
         Box(
-            modifier = Modifier
-                .size(164.dp)
-                .background(Color.Gray),
+            modifier = Modifier.size(164.dp),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_camera_alt_24),
-                contentDescription = stringResource(R.string.camera_icon_button),
-                tint = Color.White
-            )
+            HorizontalPager(
+                state = rememberPagerState(
+                    pageCount = { 2 }
+                )
+            ) { page ->
+                val uri = when (page) {
+                    0 -> coaster.frontUri
+                    1 -> coaster.backUri
+                    else -> Uri.EMPTY
+                }
+                AsyncImage(
+                    modifier = Modifier.size(size = 164.dp),
+                    model = uri,
+                    contentDescription = null
+                )
+            }
         }
         Column(
             modifier = Modifier
