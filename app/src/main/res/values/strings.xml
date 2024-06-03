@@ -17,4 +17,8 @@
     <string name="search_button">Search</string>
     <string name="search_placeholder">Vyhledat podtácek</string>
     <string name="clear_button">Smazat</string>
+    <string name="fakta">Fakta</string>
+    <string name="vygenerovat_fakt">Vygenerovat fakt</string>
+    <string name="yummy">yummy</string>
+    <string name="podt_cky">Podtácky</string>
 </resources>
