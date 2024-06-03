@@ -1,6 +1,7 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.detail
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -46,10 +47,10 @@ class DetailViewModel(
 
             try {
                 var delCount = 0
-                if (frontUri != null) {
+                if (frontUri != null && frontUri.toString().isNotEmpty()) {
                     delCount += contentResolver.delete(frontUri, null, null)
                 }
-                if (backUri != null) {
+                if (backUri != null && backUri.toString().isNotEmpty()) {
                     delCount += contentResolver.delete(backUri, null, null)
                 }
                 Log.d("Deleting", "Deleted $delCount images")

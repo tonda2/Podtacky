@@ -1,6 +1,8 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.add
 
+import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.podtacky.features.coaster.data.CoasterRepository
@@ -43,6 +45,25 @@ class AddViewModel(
                 it.copy(
                     state = ScreenState.Fill
                 )
+            }
+        }
+    }
+
+    fun deletePictures(context: Context) {
+        viewModelScope.launch {
+            val contentResolver = context.contentResolver
+
+            try {
+                var delCount = 0
+                if (screenStateStream.value.frontUri != Uri.EMPTY) {
+                    delCount += contentResolver.delete(screenStateStream.value.frontUri, null, null)
+                }
+                if (screenStateStream.value.backUri != Uri.EMPTY) {
+                    delCount += contentResolver.delete(screenStateStream.value.backUri, null, null)
+                }
+                Log.d("Deleting", "Deleted $delCount images")
+            } catch (e: Exception) {
+                Log.e("Deleting", e.toString())
             }
         }
     }
