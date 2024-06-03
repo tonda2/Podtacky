@@ -2,8 +2,6 @@ package cz.cvut.fit.podtacky.features.coaster.presentation.detail
 
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,8 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,8 +48,6 @@ import cz.cvut.fit.podtacky.core.presentation.Screen
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
 import cz.cvut.fit.podtacky.features.coaster.presentation.LoadingScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
-import cz.cvut.fit.podtacky.features.coaster.presentation.add.PhotoSlider
-import cz.cvut.fit.podtacky.features.coaster.presentation.add.PictureBox
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -61,6 +56,7 @@ fun DetailScreen(
     viewModel: DetailViewModel = koinViewModel()
 ) {
     val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     screenState.coaster?.let { coaster ->
         Scaffold(
@@ -69,7 +65,7 @@ fun DetailScreen(
                     coaster = coaster,
                     onBackClick = { navController.navigateUp() },
                     onDeleteClick = {
-                        viewModel.delete()
+                        viewModel.delete(context)
                         navController.navigateUp()
                     }
                 )
