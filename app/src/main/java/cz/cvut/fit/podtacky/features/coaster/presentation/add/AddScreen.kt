@@ -3,6 +3,10 @@ package cz.cvut.fit.podtacky.features.coaster.presentation.add
 import android.Manifest.permission
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -224,7 +228,7 @@ fun PictureBox(
     viewModel: AddViewModel
 ) {
     val context = LocalContext.current
-    var photoUri by remember { mutableStateOf<Uri?>(null) }
+    var photoUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
     val permission = permission.CAMERA
     val permissionState = rememberMultiplePermissionsState(listOf(permission))
 
@@ -232,9 +236,10 @@ fun PictureBox(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
+            photoUri = compressImage(context, photoUri, compressRate = 0.25)
             when(page) {
-                0 -> viewModel.updateFrontUri(photoUri ?: Uri.EMPTY)
-                1 -> viewModel.updateBackUri(photoUri ?: Uri.EMPTY)
+                0 -> viewModel.updateFrontUri(photoUri)
+                1 -> viewModel.updateBackUri(photoUri)
             }
         }
     }
@@ -305,7 +310,7 @@ fun EntryField(
     )
 }
 
-fun createImageFile(context: Context): Uri? {
+private fun createImageFile(context: Context): Uri {
     val storageDir: File? = context.getExternalFilesDir(null)
     File.createTempFile(
         "JPEG_${System.currentTimeMillis()}_",
@@ -318,4 +323,50 @@ fun createImageFile(context: Context): Uri? {
             this
         )
     }
+}
+
+private fun compressImage(context: Context, originalIimageUri: Uri, compressRate: Double = 0.5): Uri {
+    val compressedImageUri = createImageFile(context)
+
+    val inputStream = context.contentResolver.openInputStream(originalIimageUri)
+    val originalBitmap = BitmapFactory.decodeStream(inputStream)
+    inputStream?.close()
+
+    val rotatedBitmap = fixBitmapRotation(context, originalIimageUri, originalBitmap)
+    val newW = rotatedBitmap.width * compressRate
+    val newH = rotatedBitmap.height * compressRate
+    val resizedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, newW.toInt(), newH.toInt(), true)
+
+    val outputStream = context.contentResolver.openOutputStream(compressedImageUri)!!
+    outputStream.use {
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+    }
+    resizedBitmap.recycle()
+    originalBitmap.recycle()
+    rotatedBitmap.recycle()
+
+    context.contentResolver.delete(originalIimageUri, null, null)
+
+    return compressedImageUri
+}
+
+private fun fixBitmapRotation(context: Context, originalIimageUri: Uri, originalBitmap: Bitmap): Bitmap {
+    val exifInputStream = context.contentResolver.openInputStream(originalIimageUri)
+    val exif = ExifInterface(exifInputStream!!)
+    val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+    exifInputStream.close()
+
+   return when (orientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(originalBitmap, 90f)
+        ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(originalBitmap, 180f)
+        ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(originalBitmap, 270f)
+        else -> originalBitmap
+    }
+}
+
+private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
+    val matrix = Matrix().apply {
+        postRotate(degrees)
+    }
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
