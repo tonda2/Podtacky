@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import cz.cvut.fit.podtacky.features.coaster.presentation.add.AddScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.detail.DetailScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.edit.EditScreen
+import cz.cvut.fit.podtacky.features.coaster.presentation.large_photo.LargePhotoScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.list.ListScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.search.SearchScreen
 import cz.cvut.fit.podtacky.features.fact.presentation.FactScreen
@@ -56,6 +57,16 @@ fun Navigation(
         }
         composable(route = Screen.FactScreen.route) {
             FactScreen(navController = navController)
+        }
+        composable(
+            route = Screen.LargePhotoScreen.route + "/{id}",
+            arguments = listOf(
+                navArgument(name = "id") {
+                    type = NavType.LongType
+                }
+            )
+        ) {
+            LargePhotoScreen(navController = navController)
         }
     }
 }

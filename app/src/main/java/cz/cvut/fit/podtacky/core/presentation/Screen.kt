@@ -17,4 +17,8 @@ sealed class Screen(val route: String) {
     }
 
     data object FactScreen : Screen("fact")
+
+    data object LargePhotoScreen : Screen("photo") {
+        const val ID = "id"
+    }
 }

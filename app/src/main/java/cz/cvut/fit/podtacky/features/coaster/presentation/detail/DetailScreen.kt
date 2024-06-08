@@ -2,6 +2,7 @@ package cz.cvut.fit.podtacky.features.coaster.presentation.detail
 
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -90,7 +91,7 @@ fun DetailScreen(
         ) { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues)) {
                 when (screenState.state) {
-                    ScreenState.Fill -> CoasterDetail(coaster)
+                    ScreenState.Fill -> CoasterDetail(coaster) { navController.navigate(Screen.LargePhotoScreen.route + "/${coaster.coasterId}") }
                     ScreenState.Loading -> LoadingScreen(modifier = Modifier.padding(paddingValues))
                 }
             }
@@ -132,7 +133,8 @@ fun DetailTopBar(
 
 @Composable
 fun CoasterDetail(
-    coaster: Coaster
+    coaster: Coaster,
+    onPhotoClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -147,7 +149,7 @@ fun CoasterDetail(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
         ) {
-            DetailTopPart(coaster = coaster)
+            DetailTopPart(coaster = coaster, onPhotoClick = onPhotoClick)
             Spacer(modifier = Modifier.height(14.dp))
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant,
@@ -164,7 +166,8 @@ fun CoasterDetail(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetailTopPart(
-    coaster: Coaster
+    coaster: Coaster,
+    onPhotoClick: () -> Unit
 ) {
     Row(modifier = Modifier.padding(all = 16.dp)) {
         Box(
@@ -182,7 +185,9 @@ fun DetailTopPart(
                     else -> Uri.EMPTY
                 }
                 AsyncImage(
-                    modifier = Modifier.size(size = 164.dp),
+                    modifier = Modifier
+                        .size(size = 164.dp)
+                        .clickable { onPhotoClick() },
                     model = uri,
                     contentDescription = null
                 )
