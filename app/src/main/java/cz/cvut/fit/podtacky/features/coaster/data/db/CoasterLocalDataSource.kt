@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
-import cz.cvut.fit.podtacky.features.coaster.domain.Label
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -20,7 +19,7 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
 
     suspend fun getCoaster(id: String): Coaster? = coasterDao.getCoasterById(id)?.toDomain()
 
-    fun searchByBrewery(name: String): Flow<List<Coaster>> = coasterDao.searchByBreweryName(name).map { dbCoasters ->
+    fun seachCoasters(query: String): Flow<List<Coaster>> = coasterDao.searchCoasters(query).map { dbCoasters ->
         dbCoasters.map { dbCoaster ->
             dbCoaster.toDomain()
         }

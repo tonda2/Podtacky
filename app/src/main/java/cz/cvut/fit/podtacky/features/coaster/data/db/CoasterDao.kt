@@ -18,8 +18,12 @@ interface CoasterDao {
     @Query("SELECT * FROM coasters WHERE coasterId = :id")
     suspend fun getCoasterById(id: String): DbCoaster?
 
-    @Query("SELECT * FROM coasters WHERE LOWER(brewery) like '%' || LOWER(:name) || '%'")
-    fun searchByBreweryName(name: String): Flow<List<DbCoaster>>
+    @Query(
+        "SELECT * FROM coasters " +
+                "WHERE LOWER(brewery) like '%' || LOWER(:query) || '%' OR " +
+                "LOWER(description) like '%' || LOWER(:query) || '%'" +
+                "ORDER BY dateAdded DESC")
+    fun searchCoasters(query: String): Flow<List<DbCoaster>>
 
     @Insert
     suspend fun insert(coaster: DbCoaster)

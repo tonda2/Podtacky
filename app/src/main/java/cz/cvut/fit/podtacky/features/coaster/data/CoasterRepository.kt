@@ -19,8 +19,8 @@ class CoasterRepository(
         throw RuntimeException("Id $id doesn't exist!")
     }
 
-    fun searchCoasterByBreweryName(name: String): Flow<List<Coaster>> {
-        return localDataSource.searchByBrewery(name)
+    fun searchCoasters(query: String): Flow<List<Coaster>> {
+        return localDataSource.seachCoasters(query)
     }
 
     suspend fun addCoaster(coaster: Coaster) {

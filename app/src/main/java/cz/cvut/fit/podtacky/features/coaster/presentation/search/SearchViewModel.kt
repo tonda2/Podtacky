@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.podtacky.features.coaster.data.CoasterRepository
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
-import cz.cvut.fit.podtacky.features.coaster.presentation.list.ListScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -34,7 +33,7 @@ class SearchViewModel(
         _screenStateStream.update {
             it.copy(
                 query = _screenStateStream.value.query,
-                result = coasterRepository.searchCoasterByBreweryName(_screenStateStream.value.query).first()
+                result = coasterRepository.searchCoasters(_screenStateStream.value.query).first()
             )
         }
     }

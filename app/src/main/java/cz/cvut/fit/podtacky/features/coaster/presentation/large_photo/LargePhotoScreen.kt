@@ -28,45 +28,46 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LargePhotoScreen (
+fun LargePhotoScreen(
     navController: NavController,
     viewModel: LargePhotoViewModel = koinViewModel()
 ) {
     val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
 
     screenState.coaster?.let { coaster ->
-        HorizontalPager(
-            state = rememberPagerState(
-                pageCount = { 2 }
-            )
-        ) { page ->
-            val uri = when (page) {
-                0 -> coaster.frontUri
-                1 -> coaster.backUri
-                else -> Uri.EMPTY
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-            ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            HorizontalPager(
+                state = rememberPagerState(
+                    pageCount = { 2 }
+                )
+            ) { page ->
+                val uri = when (page) {
+                    0 -> coaster.frontUri
+                    1 -> coaster.backUri
+                    else -> Uri.EMPTY
+                }
+
                 AsyncImage(
                     model = uri,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize()
                 )
-
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(R.string.close),
-                    modifier = Modifier
-                        .size(64.dp)
-                        .padding(16.dp)
-                        .align(Alignment.TopEnd)
-                        .clickable { navController.navigateUp() },
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
             }
+
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = stringResource(R.string.close),
+                modifier = Modifier
+                    .size(64.dp)
+                    .padding(16.dp)
+                    .align(Alignment.TopEnd)
+                    .clickable { navController.navigateUp() },
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }

@@ -64,7 +64,7 @@ fun SearchScreen(
             contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(screenState.result, key = { it.dateAdded }) { coaster ->
+            items(screenState.result) { coaster ->
                 CoasterCard(
                     coaster = coaster
                 ) {
