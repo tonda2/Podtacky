@@ -9,7 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import cz.cvut.fit.podtacky.R
 
 enum class ScreenState {
     Loading,
@@ -27,7 +29,7 @@ fun LoadingScreen(
     ) {
         CircularProgressIndicator(modifier = Modifier.size(60.dp))
         Text(
-            text = "Ukládám",
+            text = stringResource(R.string.ukladam),
         )
     }
 }

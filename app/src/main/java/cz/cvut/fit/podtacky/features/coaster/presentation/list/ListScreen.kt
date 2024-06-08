@@ -1,5 +1,6 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.list
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -133,7 +134,7 @@ private fun CoasterItem(coaster: Coaster, modifier: Modifier) {
         ) {
             AsyncImage(
                 modifier = Modifier.size(size = 60.dp),
-                model = coaster.frontUri,
+                model = if (coaster.frontUri != Uri.EMPTY) coaster.frontUri else coaster.backUri,
                 contentDescription = null
             )
         }

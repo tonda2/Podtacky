@@ -256,7 +256,7 @@ fun PictureBox(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
-            photoUri = compressImage(context, photoUri, compressRate = 0.25)
+            photoUri = compressImage(context, photoUri)
             when (page) {
                 0 -> onFrontUpdate(photoUri)
                 1 -> onBackUpdate(photoUri)
@@ -348,16 +348,16 @@ private fun createImageFile(context: Context): Uri {
 
 private fun compressImage(
     context: Context,
-    originalIimageUri: Uri,
-    compressRate: Double = 0.5
+    originalImageUri: Uri,
+    compressRate: Double = 0.25
 ): Uri {
     val compressedImageUri = createImageFile(context)
 
-    val inputStream = context.contentResolver.openInputStream(originalIimageUri)
+    val inputStream = context.contentResolver.openInputStream(originalImageUri)
     val originalBitmap = BitmapFactory.decodeStream(inputStream)
     inputStream?.close()
 
-    val rotatedBitmap = fixBitmapRotation(context, originalIimageUri, originalBitmap)
+    val rotatedBitmap = fixBitmapRotation(context, originalImageUri, originalBitmap)
     val newW = rotatedBitmap.width * compressRate
     val newH = rotatedBitmap.height * compressRate
     val resizedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, newW.toInt(), newH.toInt(), true)
@@ -370,17 +370,17 @@ private fun compressImage(
     originalBitmap.recycle()
     rotatedBitmap.recycle()
 
-    context.contentResolver.delete(originalIimageUri, null, null)
+    context.contentResolver.delete(originalImageUri, null, null)
 
     return compressedImageUri
 }
 
 private fun fixBitmapRotation(
     context: Context,
-    originalIimageUri: Uri,
+    originalImageUri: Uri,
     originalBitmap: Bitmap
 ): Bitmap {
-    val exifInputStream = context.contentResolver.openInputStream(originalIimageUri)
+    val exifInputStream = context.contentResolver.openInputStream(originalImageUri)
     val exif = ExifInterface(exifInputStream!!)
     val orientation =
         exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
