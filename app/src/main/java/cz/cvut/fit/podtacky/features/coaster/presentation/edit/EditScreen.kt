@@ -1,10 +1,7 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.edit
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,9 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -46,6 +42,7 @@ import cz.cvut.fit.podtacky.core.presentation.Screen
 import cz.cvut.fit.podtacky.features.coaster.presentation.LoadingScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
 import cz.cvut.fit.podtacky.features.coaster.presentation.add.EntryField
+import cz.cvut.fit.podtacky.features.coaster.presentation.add.PhotoSlider
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -113,6 +110,8 @@ fun EntryEditScreen(
     screenState: EditScreenState,
     viewModel: EditViewModel
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -124,21 +123,13 @@ fun EntryEditScreen(
                 .fillMaxWidth()
                 .height(164.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(164.dp)
-                    .background(Color.Gray)
-                    .clickable {
-                        // TODO vyfotit podtacek
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_camera_alt_24),
-                    contentDescription = stringResource(R.string.camera_icon_button),
-                    tint = Color.White
-                )
-            }
+            PhotoSlider(
+                photos = listOf(screenState.frontUri, screenState.backUri),
+                modifier = Modifier.size(164.dp),
+                onFrontUpdate = { uri -> viewModel.updateFrontUri(uri) },
+                onBackUpdate = { uri -> viewModel.updateBackUri(uri) },
+                onPhotoClick = { uri -> viewModel.deletePicture(uri, context) }
+            )
             Column(
                 modifier = Modifier
                     .fillMaxHeight()

@@ -49,6 +49,23 @@ class AddViewModel(
         }
     }
 
+    fun deletePicture(uri: Uri, context: Context) {
+        if (uri != Uri.EMPTY) {
+            if (screenStateStream.value.frontUri == uri) {
+                updateFrontUri(Uri.EMPTY)
+            } else {
+                updateBackUri(Uri.EMPTY)
+            }
+
+            try {
+                context.contentResolver.delete(uri, null, null)
+                Log.d("Deleting", "Deleted $uri")
+            } catch (e: Exception) {
+                Log.e("Deleting", "Error deleting $uri")
+            }
+        }
+    }
+
     fun deletePictures(context: Context) {
         viewModelScope.launch {
             val contentResolver = context.contentResolver
@@ -75,6 +92,7 @@ class AddViewModel(
             )
         }
     }
+
     fun updateDescription(description: String) {
         _screenStateStream.update {
             it.copy(
@@ -82,6 +100,7 @@ class AddViewModel(
             )
         }
     }
+
     fun updateDate(date: String) {
         _screenStateStream.update {
             it.copy(
@@ -89,6 +108,7 @@ class AddViewModel(
             )
         }
     }
+
     fun updateCity(city: String) {
         _screenStateStream.update {
             it.copy(
@@ -96,6 +116,7 @@ class AddViewModel(
             )
         }
     }
+
     fun updateCount(count: String) {
         _screenStateStream.update {
             it.copy(

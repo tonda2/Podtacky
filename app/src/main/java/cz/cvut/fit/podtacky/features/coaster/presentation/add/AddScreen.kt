@@ -122,7 +122,14 @@ fun AddScreen(
                 paddingValues = paddingValues,
                 scrollState = scrollState,
                 screenState = screenState,
-                viewModel = viewModel
+                { uri -> viewModel.updateFrontUri(uri) },
+                { uri -> viewModel.updateBackUri(uri) },
+                { brewery -> viewModel.updateBrewery(brewery) },
+                { city -> viewModel.updateCity(city) },
+                { description -> viewModel.updateDescription(description) },
+                { date -> viewModel.updateDate(date) },
+                { count -> viewModel.updateCount(count) },
+                { uri -> viewModel.deletePicture(uri, context) }
             )
 
             ScreenState.Loading -> LoadingScreen(modifier = Modifier.padding(paddingValues))
@@ -135,7 +142,14 @@ fun EntryScreen(
     paddingValues: PaddingValues,
     scrollState: ScrollState,
     screenState: AddScreenState,
-    viewModel: AddViewModel
+    onFrontUpdate: (Uri) -> Unit,
+    onBackUpdate: (Uri) -> Unit,
+    onBreweryUpdate: (String) -> Unit,
+    onCityUpdate: (String) -> Unit,
+    onDescriptionUpdate: (String) -> Unit,
+    onDateUpdate: (String) -> Unit,
+    onCountUpdate: (String) -> Unit,
+    onPhotoClick: (Uri) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -150,8 +164,10 @@ fun EntryScreen(
         ) {
             PhotoSlider(
                 photos = listOf(screenState.frontUri, screenState.backUri),
-                viewModel = viewModel,
-                modifier = Modifier.size(164.dp)
+                modifier = Modifier.size(164.dp),
+                onFrontUpdate,
+                onBackUpdate,
+                onPhotoClick
             )
             Column(
                 modifier = Modifier
@@ -162,14 +178,14 @@ fun EntryScreen(
                 EntryField(
                     query = screenState.brewery,
                     placeholder = stringResource(R.string.brewery),
-                    onQueryChange = viewModel::updateBrewery,
+                    onQueryChange = onBreweryUpdate,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 EntryField(
                     query = screenState.city,
                     placeholder = stringResource(R.string.city),
-                    onQueryChange = viewModel::updateCity,
+                    onQueryChange = onCityUpdate,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
                 )
             }
@@ -178,7 +194,7 @@ fun EntryScreen(
         EntryField(
             query = screenState.description,
             placeholder = stringResource(R.string.description),
-            onQueryChange = viewModel::updateDescription,
+            onQueryChange = onDescriptionUpdate,
             singleline = false,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
@@ -186,13 +202,13 @@ fun EntryScreen(
         EntryField(
             query = screenState.date,
             placeholder = stringResource(R.string.added_date),
-            onQueryChange = viewModel::updateDate
+            onQueryChange = onDateUpdate
         )
         Spacer(modifier = Modifier.height(16.dp))
         EntryField(
             query = screenState.count,
             placeholder = stringResource(R.string.count),
-            onQueryChange = viewModel::updateCount,
+            onQueryChange = onCountUpdate,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
     }
@@ -202,8 +218,10 @@ fun EntryScreen(
 @Composable
 fun PhotoSlider(
     photos: List<Uri>,
-    viewModel: AddViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onFrontUpdate: (Uri) -> Unit,
+    onBackUpdate: (Uri) -> Unit,
+    onPhotoClick: (Uri) -> Unit
 ) {
     Box(
         modifier = modifier,
@@ -214,7 +232,7 @@ fun PhotoSlider(
                 pageCount = { photos.size }
             )
         ) { page ->
-            PictureBox(photos[page], page, viewModel)
+            PictureBox(photos[page], page, onFrontUpdate, onBackUpdate, onPhotoClick)
         }
     }
 }
@@ -225,7 +243,9 @@ fun PhotoSlider(
 fun PictureBox(
     uri: Uri,
     page: Int,
-    viewModel: AddViewModel
+    onFrontUpdate: (Uri) -> Unit,
+    onBackUpdate: (Uri) -> Unit,
+    onPhotoClick: (Uri) -> Unit
 ) {
     val context = LocalContext.current
     var photoUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
@@ -237,9 +257,9 @@ fun PictureBox(
     ) { success ->
         if (success) {
             photoUri = compressImage(context, photoUri, compressRate = 0.25)
-            when(page) {
-                0 -> viewModel.updateFrontUri(photoUri)
-                1 -> viewModel.updateBackUri(photoUri)
+            when (page) {
+                0 -> onFrontUpdate(photoUri)
+                1 -> onBackUpdate(photoUri)
             }
         }
     }
@@ -250,13 +270,14 @@ fun PictureBox(
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
-                modifier = Modifier.size(size = 164.dp),
+                modifier = Modifier
+                    .size(size = 164.dp)
+                    .clickable { onPhotoClick(uri) },
                 model = uri,
                 contentDescription = null
             )
         }
-    }
-    else {
+    } else {
         Box(
             modifier = Modifier
                 .size(164.dp)
@@ -325,7 +346,11 @@ private fun createImageFile(context: Context): Uri {
     }
 }
 
-private fun compressImage(context: Context, originalIimageUri: Uri, compressRate: Double = 0.5): Uri {
+private fun compressImage(
+    context: Context,
+    originalIimageUri: Uri,
+    compressRate: Double = 0.5
+): Uri {
     val compressedImageUri = createImageFile(context)
 
     val inputStream = context.contentResolver.openInputStream(originalIimageUri)
@@ -350,13 +375,18 @@ private fun compressImage(context: Context, originalIimageUri: Uri, compressRate
     return compressedImageUri
 }
 
-private fun fixBitmapRotation(context: Context, originalIimageUri: Uri, originalBitmap: Bitmap): Bitmap {
+private fun fixBitmapRotation(
+    context: Context,
+    originalIimageUri: Uri,
+    originalBitmap: Bitmap
+): Bitmap {
     val exifInputStream = context.contentResolver.openInputStream(originalIimageUri)
     val exif = ExifInterface(exifInputStream!!)
-    val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+    val orientation =
+        exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
     exifInputStream.close()
 
-   return when (orientation) {
+    return when (orientation) {
         ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(originalBitmap, 90f)
         ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(originalBitmap, 180f)
         ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(originalBitmap, 270f)

@@ -1,6 +1,8 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.edit
 
+import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,6 +39,8 @@ class EditViewModel(
                     date = coaster.dateAdded,
                     city = coaster.city,
                     count = coaster.count.toString(),
+                    frontUri = coaster.frontUri,
+                    backUri = coaster.backUri
                 )
             }
         }
@@ -49,7 +53,9 @@ class EditViewModel(
             old.description == _screenStateStream.value.description &&
             old.dateAdded == _screenStateStream.value.date &&
             old.city == _screenStateStream.value.city &&
-            old.count.toString() == _screenStateStream.value.count
+            old.count.toString() == _screenStateStream.value.count &&
+            old.frontUri == _screenStateStream.value.frontUri &&
+            old.backUri == _screenStateStream.value.backUri
         ) return
 
         _screenStateStream.update {
@@ -77,6 +83,23 @@ class EditViewModel(
             it.copy(
                 state = ScreenState.Fill
             )
+        }
+    }
+
+    fun deletePicture(uri: Uri, context: Context) {
+        if (uri != Uri.EMPTY) {
+            if (screenStateStream.value.frontUri == uri) {
+                updateFrontUri(Uri.EMPTY)
+            } else {
+                updateBackUri(Uri.EMPTY)
+            }
+
+            try {
+                context.contentResolver.delete(uri, null, null)
+                Log.d("Deleting", "Deleted $uri")
+            } catch (e: Exception) {
+                Log.e("Deleting", "Error deleting $uri")
+            }
         }
     }
 
@@ -112,6 +135,22 @@ class EditViewModel(
         _screenStateStream.update {
             it.copy(
                 count = count
+            )
+        }
+    }
+
+    fun updateFrontUri(uri: Uri) {
+        _screenStateStream.update {
+            it.copy(
+                frontUri = uri
+            )
+        }
+    }
+
+    fun updateBackUri(uri: Uri) {
+        _screenStateStream.update {
+            it.copy(
+                backUri = uri
             )
         }
     }
