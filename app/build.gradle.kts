@@ -1,3 +1,10 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val keystorePropertiesFile = rootProject.file("local.properties")
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -30,9 +37,25 @@ android {
         }
     }
 
+    signingConfigs {
+        getByName("debug") {
+            keyAlias = keystoreProperties["DEBUG_KEY_ALIAS"].toString()
+            keyPassword = keystoreProperties["DEBUG_KEY_PASSWORD"].toString()
+            storeFile = file(keystoreProperties["DEBUG_STORE_FILE"].toString())
+            storePassword = keystoreProperties["DEBUG_STORE_PASSWORD"].toString()
+        }
+        create("release") {
+            keyAlias = keystoreProperties["RELEASE_KEY_ALIAS"].toString()
+            keyPassword = keystoreProperties["RELEASE_KEY_PASSWORD"].toString()
+            storeFile = file(keystoreProperties["RELEASE_STORE_FILE"].toString())
+            storePassword = keystoreProperties["RELEASE_STORE_PASSWORD"].toString()
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
