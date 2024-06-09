@@ -46,6 +46,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,7 +72,7 @@ import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddScreen(
     navController: NavController,
@@ -80,6 +81,9 @@ fun AddScreen(
     val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+
+    val permission = permission.CAMERA
+    val permissionState = rememberMultiplePermissionsState(listOf(permission))
 
     Scaffold(
         topBar = {
@@ -117,22 +121,29 @@ fun AddScreen(
             }
         },
     ) { paddingValues ->
-        when (screenState.state) {
-            ScreenState.Fill -> EntryScreen(
-                paddingValues = paddingValues,
-                scrollState = scrollState,
-                screenState = screenState,
-                { uri -> viewModel.updateFrontUri(uri) },
-                { uri -> viewModel.updateBackUri(uri) },
-                { brewery -> viewModel.updateBrewery(brewery) },
-                { city -> viewModel.updateCity(city) },
-                { description -> viewModel.updateDescription(description) },
-                { date -> viewModel.updateDate(date) },
-                { count -> viewModel.updateCount(count) },
-                { uri -> viewModel.deletePicture(uri, context) }
-            )
+        if (permissionState.allPermissionsGranted) {
+            when (screenState.state) {
+                ScreenState.Fill -> EntryScreen(
+                    paddingValues = paddingValues,
+                    scrollState = scrollState,
+                    screenState = screenState,
+                    { uri -> viewModel.updateFrontUri(uri) },
+                    { uri -> viewModel.updateBackUri(uri) },
+                    { brewery -> viewModel.updateBrewery(brewery) },
+                    { city -> viewModel.updateCity(city) },
+                    { description -> viewModel.updateDescription(description) },
+                    { date -> viewModel.updateDate(date) },
+                    { count -> viewModel.updateCount(count) },
+                    { uri -> viewModel.deletePicture(uri, context) }
+                )
 
-            ScreenState.Loading -> LoadingScreen(modifier = Modifier.padding(paddingValues))
+                ScreenState.Loading -> LoadingScreen(modifier = Modifier.padding(paddingValues))
+            }
+        }
+        else {
+            LaunchedEffect(Unit) {
+                permissionState.launchMultiplePermissionRequest()
+            }
         }
     }
 }
