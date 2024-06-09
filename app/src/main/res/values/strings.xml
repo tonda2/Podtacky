@@ -23,4 +23,8 @@
     <string name="podt_cky">Podtácky</string>
     <string name="close">Close</string>
     <string name="ukladam">Ukládám</string>
+    <string name="smazat">Smazat</string>
+    <string name="zru_it">Zrušit</string>
+    <string name="potvrzeni">Opravdu chcete podtácek smazat?</string>
+    <string name="potvrdte_title">Potvrďte smazání</string>
 </resources>
