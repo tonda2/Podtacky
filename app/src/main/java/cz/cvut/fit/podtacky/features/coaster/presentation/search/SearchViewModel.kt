@@ -32,8 +32,8 @@ class SearchViewModel(
     suspend fun searchCoasters() {
         _screenStateStream.update {
             it.copy(
-                query = _screenStateStream.value.query,
-                result = coasterRepository.searchCoasters(_screenStateStream.value.query).first()
+                query = _screenStateStream.value.query.trim(),
+                result = coasterRepository.searchCoasters(_screenStateStream.value.query.trim()).first()
             )
         }
     }
