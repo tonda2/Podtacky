@@ -127,14 +127,14 @@ fun AddScreen(
                     paddingValues = paddingValues,
                     scrollState = scrollState,
                     screenState = screenState,
-                    { uri -> viewModel.updateFrontUri(uri) },
-                    { uri -> viewModel.updateBackUri(uri) },
-                    { brewery -> viewModel.updateBrewery(brewery) },
-                    { city -> viewModel.updateCity(city) },
-                    { description -> viewModel.updateDescription(description) },
-                    { date -> viewModel.updateDate(date) },
-                    { count -> viewModel.updateCount(count) },
-                    { uri -> viewModel.deletePicture(uri, context) }
+                    onFrontUpdate = { uri -> viewModel.updateFrontUri(uri) },
+                    onBackUpdate = { uri -> viewModel.updateBackUri(uri) },
+                    onBreweryUpdate = { brewery -> viewModel.updateBrewery(brewery) },
+                    onCityUpdate = { city -> viewModel.updateCity(city) },
+                    onDescriptionUpdate = { description -> viewModel.updateDescription(description) },
+                    onDateUpdate = { date -> viewModel.updateDate(date) },
+                    onCountUpdate = { count -> viewModel.updateCount(count) },
+                    onPhotoClick = { uri -> viewModel.deletePicture(uri, context) }
                 )
 
                 ScreenState.Loading -> LoadingScreen(modifier = Modifier.padding(paddingValues))

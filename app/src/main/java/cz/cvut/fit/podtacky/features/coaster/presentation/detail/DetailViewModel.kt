@@ -1,7 +1,6 @@
 package cz.cvut.fit.podtacky.features.coaster.presentation.detail
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

@@ -11,5 +11,4 @@ data class Coaster(
     val count: Int,
     val frontUri: Uri,
     val backUri: Uri
-//    val labels: List<Label>
 )
