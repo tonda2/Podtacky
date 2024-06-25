@@ -10,12 +10,13 @@ import cz.cvut.fit.podtacky.core.presentation.Screen
 import cz.cvut.fit.podtacky.features.coaster.data.CoasterRepository
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
 import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
-import cz.cvut.fit.podtacky.features.coaster.presentation.add.toString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 
 class EditViewModel(
     private val savedStateHandle: SavedStateHandle,
@@ -23,25 +24,27 @@ class EditViewModel(
 ) : ViewModel() {
 
     private val id: Long
-        get() = savedStateHandle[Screen.EditScreen.ID] ?: 1L
+        get() = savedStateHandle[Screen.EditScreen.ID] ?: -1L
 
     private val _screenStateStream = MutableStateFlow(EditScreenState())
     val screenStateStream = _screenStateStream.asStateFlow()
 
     init {
         viewModelScope.launch {
-            val coaster = coasterRepository.getCoasterById(id.toString())
-            _screenStateStream.update {
-                it.copy(
-                    oldCoaster = coaster,
-                    brewery = coaster.brewery,
-                    description = coaster.description,
-                    date = coaster.dateAdded,
-                    city = coaster.city,
-                    count = coaster.count.toString(),
-                    frontUri = coaster.frontUri,
-                    backUri = coaster.backUri
-                )
+            if (id != -1L) {
+                val coaster = coasterRepository.getCoasterById(id.toString())
+                _screenStateStream.update {
+                    it.copy(
+                        oldCoaster = coaster,
+                        brewery = coaster.brewery,
+                        description = coaster.description,
+                        date = coaster.dateAdded,
+                        city = coaster.city,
+                        count = coaster.count.toString(),
+                        frontUri = coaster.frontUri,
+                        backUri = coaster.backUri
+                    )
+                }
             }
         }
     }
@@ -64,9 +67,11 @@ class EditViewModel(
             )
         }
         viewModelScope.launch {
-            coasterRepository.deleteCoaster(
-                old!!
-            )
+            if (old != null) {
+                coasterRepository.deleteCoaster(
+                    old
+                )
+            }
             coasterRepository.addCoaster(
                 Coaster(
                     brewery = _screenStateStream.value.brewery,
@@ -167,3 +172,8 @@ data class EditScreenState(
     val backUri: Uri = Uri.EMPTY,
     val state: ScreenState = ScreenState.Fill
 )
+
+fun Date.toString(format: String): String {
+    val formatter = SimpleDateFormat(format)
+    return formatter.format(this)
+}

@@ -10,7 +10,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import cz.cvut.fit.podtacky.features.coaster.presentation.add.AddScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.detail.DetailScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.edit.EditScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.large_photo.LargePhotoScreen
@@ -33,9 +32,6 @@ fun Navigation(
         ) {
             composable(route = Screen.ListScreen.route) {
                 ListScreen(navController = navController)
-            }
-            composable(route = Screen.AddScreen.route) {
-                AddScreen(navController = navController)
             }
             composable(route = Screen.SearchScreen.route) {
                 SearchScreen(navController = navController)

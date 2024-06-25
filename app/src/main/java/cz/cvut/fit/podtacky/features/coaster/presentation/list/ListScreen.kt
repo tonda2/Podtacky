@@ -43,7 +43,9 @@ fun ListScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(Screen.AddScreen.route) },
+                onClick = {
+                    navController.navigate(Screen.EditScreen.route + "/-1")
+                },
                 modifier = Modifier
                     .padding(8.dp)
                     .size(64.dp, 64.dp),
