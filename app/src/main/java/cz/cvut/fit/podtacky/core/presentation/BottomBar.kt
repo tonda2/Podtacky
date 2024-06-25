@@ -30,16 +30,13 @@ fun BottomBar(
             }
         )
 
-//        NavigationBarItem(
-//            painter = painterResource(id = R.drawable.baseline_psychology_24),
-//            name = stringResource(R.string.fakta),
-//            selected = !isList,
-//            onClick = {
-//                if (isList) {
-//                    navController.navigate(Screen.FactScreen.route)
-//                }
-//            }
-//        )
+        NavigationBarItem(
+            painter = painterResource(id = R.drawable.baseline_psychology_24),
+            name = stringResource(R.string.fakta),
+            selected = !isList,
+            onClick = {
+            }
+        )
     }
 }
 
@@ -51,7 +48,7 @@ private fun RowScope.NavigationBarItem(
     onClick: () -> Unit
 ) {
     val contentColor = if (selected) {
-        MaterialTheme.colorScheme.primary
+        MaterialTheme.colorScheme.onPrimary
     } else {
         MaterialTheme.colorScheme.onTertiary
     }
