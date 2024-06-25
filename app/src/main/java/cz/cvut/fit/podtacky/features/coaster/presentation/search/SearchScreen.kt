@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.podtacky.R
+import cz.cvut.fit.podtacky.core.presentation.CoasterCard
 import cz.cvut.fit.podtacky.core.presentation.Screen
-import cz.cvut.fit.podtacky.features.coaster.presentation.list.CoasterCard
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
