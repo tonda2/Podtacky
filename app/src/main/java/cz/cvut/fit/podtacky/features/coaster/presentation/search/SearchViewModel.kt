@@ -18,13 +18,11 @@ class SearchViewModel(
     val screenStateStream = _screenStateStream.asStateFlow()
 
     fun updateQuery(query: String) {
-        if (query.isNotBlank()) {
-            viewModelScope.launch {
-                _screenStateStream.update {
-                    it.copy(
-                        query = query
-                    )
-                }
+        viewModelScope.launch {
+            _screenStateStream.update {
+                it.copy(
+                    query = query
+                )
             }
         }
     }
