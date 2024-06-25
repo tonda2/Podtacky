@@ -43,8 +43,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -216,28 +218,22 @@ fun DetailTopPart(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
         ) {
-            Text(
-                text = stringResource(R.string.brewery),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondary
+            Field(
+                title = stringResource(R.string.brewery),
+                value = coaster.brewery,
+                styleTitle = MaterialTheme.typography.bodyMedium,
+                colorTitle = MaterialTheme.colorScheme.onSecondary,
+                styleValue = MaterialTheme.typography.headlineMedium,
+                colorValue = MaterialTheme.colorScheme.onPrimary
             )
             Spacer(modifier = Modifier.height(14.dp))
-            Text(
-                text = coaster.brewery,
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = stringResource(R.string.city),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSecondary
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-            Text(
-                text = coaster.city,
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onPrimary,
+            Field(
+                title = stringResource(R.string.city),
+                value = coaster.city,
+                styleTitle = MaterialTheme.typography.bodyMedium,
+                colorTitle = MaterialTheme.colorScheme.onSecondary,
+                styleValue = MaterialTheme.typography.headlineMedium,
+                colorValue = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
@@ -262,18 +258,22 @@ fun DetailLowerPart(
 @Composable
 fun Field(
     title: String,
-    value: String
-) {
+    value: String,
+    styleTitle: TextStyle = MaterialTheme.typography.bodySmall,
+    colorTitle: Color = MaterialTheme.colorScheme.onSecondary,
+    styleValue: TextStyle = MaterialTheme.typography.headlineSmall,
+    colorValue: Color = MaterialTheme.colorScheme.onPrimary,
+    ) {
     Column {
         Text(
             text = title,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSecondary,
+            style = styleTitle,
+            color = colorTitle,
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onPrimary,
+            style = styleValue,
+            color = colorValue,
         )
     }
 }
