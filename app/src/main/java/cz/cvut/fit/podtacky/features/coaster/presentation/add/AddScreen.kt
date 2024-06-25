@@ -9,6 +9,7 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -66,11 +67,15 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import cz.cvut.fit.podtacky.R
 import cz.cvut.fit.podtacky.features.coaster.presentation.LoadingScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
+import java.io.FileInputStream
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -84,6 +89,8 @@ fun AddScreen(
 
     val permission = permission.CAMERA
     val permissionState = rememberMultiplePermissionsState(listOf(permission))
+
+    val storageRef = FirebaseStorage.getInstance().reference
 
     Scaffold(
         topBar = {
@@ -134,7 +141,8 @@ fun AddScreen(
                     onDescriptionUpdate = { description -> viewModel.updateDescription(description) },
                     onDateUpdate = { date -> viewModel.updateDate(date) },
                     onCountUpdate = { count -> viewModel.updateCount(count) },
-                    onPhotoClick = { uri -> viewModel.deletePicture(uri, context) }
+                    onPhotoClick = { uri -> viewModel.deletePicture(uri, context) },
+                    storageRef
                 )
 
                 ScreenState.Loading -> LoadingScreen(modifier = Modifier.padding(paddingValues))
@@ -160,7 +168,8 @@ fun EntryScreen(
     onDescriptionUpdate: (String) -> Unit,
     onDateUpdate: (String) -> Unit,
     onCountUpdate: (String) -> Unit,
-    onPhotoClick: (Uri) -> Unit
+    onPhotoClick: (Uri) -> Unit,
+    storage: StorageReference
 ) {
     Column(
         modifier = Modifier
@@ -178,7 +187,8 @@ fun EntryScreen(
                 modifier = Modifier.size(164.dp),
                 onFrontUpdate,
                 onBackUpdate,
-                onPhotoClick
+                onPhotoClick,
+                storage
             )
             Column(
                 modifier = Modifier
@@ -232,7 +242,8 @@ fun PhotoSlider(
     modifier: Modifier = Modifier,
     onFrontUpdate: (Uri) -> Unit,
     onBackUpdate: (Uri) -> Unit,
-    onPhotoClick: (Uri) -> Unit
+    onPhotoClick: (Uri) -> Unit,
+    storage: StorageReference?
 ) {
     Box(
         modifier = modifier,
@@ -243,7 +254,7 @@ fun PhotoSlider(
                 pageCount = { photos.size }
             )
         ) { page ->
-            PictureBox(photos[page], page, onFrontUpdate, onBackUpdate, onPhotoClick)
+            PictureBox(photos[page], page, onFrontUpdate, onBackUpdate, onPhotoClick, storage!!)
         }
     }
 }
@@ -256,7 +267,8 @@ fun PictureBox(
     page: Int,
     onFrontUpdate: (Uri) -> Unit,
     onBackUpdate: (Uri) -> Unit,
-    onPhotoClick: (Uri) -> Unit
+    onPhotoClick: (Uri) -> Unit,
+    storage: StorageReference
 ) {
     val context = LocalContext.current
     var photoUri by remember { mutableStateOf<Uri>(Uri.EMPTY) }
@@ -267,7 +279,20 @@ fun PictureBox(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
-            photoUri = compressImage(context, photoUri)
+            photoUri = compressImage(context, photoUri, compressRate = 0.2)
+
+            val imgRef = storage.child("images/" + UUID.randomUUID().toString() + ".jpg")
+
+            imgRef.putFile(photoUri)
+                .addOnSuccessListener {
+                    imgRef.getDownloadUrl().addOnSuccessListener { uri ->
+                        Log.d("FIREBASE", uri.toString())
+                    }
+                }
+                .addOnFailureListener {
+                    print(it.message)
+                }
+
             when (page) {
                 0 -> onFrontUpdate(photoUri)
                 1 -> onBackUpdate(photoUri)

@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.storage.FirebaseStorage
 import cz.cvut.fit.podtacky.features.coaster.data.CoasterRepository
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
 import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
@@ -17,11 +18,14 @@ import java.util.Calendar
 import java.util.Date
 
 class AddViewModel(
-    private val coasterRepository: CoasterRepository
+    private val coasterRepository: CoasterRepository,
+    private val firebaseStorage: FirebaseStorage
 ) : ViewModel() {
 
     private val _screenStateStream = MutableStateFlow(AddScreenState())
     val screenStateStream = _screenStateStream.asStateFlow()
+
+    private val storageRef = firebaseStorage.reference
 
     fun save() {
         _screenStateStream.update {

@@ -175,16 +175,16 @@ fun BottomBar(
             }
         )
 
-        NavigationBarItem(
-            painter = painterResource(id = R.drawable.baseline_psychology_24),
-            name = stringResource(R.string.fakta),
-            selected = !isList,
-            onClick = {
-                if (isList) {
-                    navController.navigate(Screen.FactScreen.route)
-                }
-            }
-        )
+//        NavigationBarItem(
+//            painter = painterResource(id = R.drawable.baseline_psychology_24),
+//            name = stringResource(R.string.fakta),
+//            selected = !isList,
+//            onClick = {
+//                if (isList) {
+//                    navController.navigate(Screen.FactScreen.route)
+//                }
+//            }
+//        )
     }
 }
 
