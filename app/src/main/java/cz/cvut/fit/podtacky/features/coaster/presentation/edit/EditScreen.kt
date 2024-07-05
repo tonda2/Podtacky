@@ -80,12 +80,17 @@ fun EditScreen(
 ) {
     val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
+                    IconButton(onClick = {
+                        viewModel.deletePicture(screenState.frontUri, context)
+                        viewModel.deletePicture(screenState.backUri, context)
+                        navController.navigateUp()
+                    }) {
                         Icon(
                             Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = stringResource(R.string.back_button)
