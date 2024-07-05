@@ -27,4 +27,9 @@
     <string name="zru_it">Zrušit</string>
     <string name="potvrzeni">Opravdu chcete podtácek smazat?</string>
     <string name="potvrdte_title">Potvrďte smazání</string>
+    <string name="profil">Profil</string>
+    <string name="prihlasit_se">Přihlásit se</string>
+    <string name="ucet">Účet</string>
+    <string name="jste_prihlaseni_jako">"Jste přihlášeni jako: "</string>
+    <string name="odhlasit_se">Odhlásit se</string>
 </resources>

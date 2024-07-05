@@ -15,6 +15,7 @@ import cz.cvut.fit.podtacky.features.coaster.presentation.edit.EditScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.large_photo.LargePhotoScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.list.ListScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.search.SearchScreen
+import cz.cvut.fit.podtacky.features.profile.presentation.ProfileScreen
 
 @Composable
 fun Navigation(
@@ -65,6 +66,9 @@ fun Navigation(
                 )
             ) {
                 LargePhotoScreen(navController = navController)
+            }
+            composable(route = Screen.ProfileScreen.route) {
+                ProfileScreen(navController = navController)
             }
         }
     }

@@ -3,6 +3,7 @@ package cz.cvut.fit.podtacky
 import android.app.Application
 import cz.cvut.fit.podtacky.core.di.coreModule
 import cz.cvut.fit.podtacky.features.coaster.di.coasterModule
+import cz.cvut.fit.podtacky.features.profile.di.profileModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -12,7 +13,7 @@ class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(coreModule, coasterModule)
+            modules(coreModule, coasterModule, profileModule)
         }
     }
 }

@@ -31,10 +31,13 @@ fun BottomBar(
         )
 
         NavigationBarItem(
-            painter = painterResource(id = R.drawable.baseline_psychology_24),
-            name = stringResource(R.string.fakta),
+            painter = painterResource(id = R.drawable.baseline_manage_accounts_24),
+            name = stringResource(R.string.ucet),
             selected = !isList,
             onClick = {
+                if (isList) {
+                    navController.navigate(Screen.ProfileScreen.route)
+                }
             }
         )
     }
