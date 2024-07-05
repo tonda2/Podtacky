@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import cz.cvut.fit.podtacky.R
+import cz.cvut.fit.podtacky.core.presentation.PageIndicator
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -40,10 +41,10 @@ fun LargePhotoScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
+            val pagerState = rememberPagerState(pageCount = { 2 })
+
             HorizontalPager(
-                state = rememberPagerState(
-                    pageCount = { 2 }
-                )
+                state = pagerState
             ) { page ->
                 val uri = when (page) {
                     0 -> coaster.frontUri
@@ -57,6 +58,8 @@ fun LargePhotoScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             }
+
+            PageIndicator(count = pagerState.pageCount, current = pagerState.currentPage)
 
             Icon(
                 imageVector = Icons.Default.Close,

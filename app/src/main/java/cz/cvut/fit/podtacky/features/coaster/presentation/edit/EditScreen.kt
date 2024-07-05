@@ -65,6 +65,7 @@ import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import cz.cvut.fit.podtacky.R
+import cz.cvut.fit.podtacky.core.presentation.PageIndicator
 import cz.cvut.fit.podtacky.core.presentation.Screen
 import cz.cvut.fit.podtacky.features.coaster.presentation.LoadingScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
@@ -214,16 +215,17 @@ fun PhotoSlider(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
+        val pagerState = rememberPagerState(pageCount = { photos.size })
+
         HorizontalPager(
-            state = rememberPagerState(
-                pageCount = { photos.size }
-            )
+            state = pagerState
         ) { page ->
             PictureBox(photos[page], page, onFrontUpdate, onBackUpdate, onPhotoClick)
         }
+
+        PageIndicator(count = pagerState.pageCount, current = pagerState.currentPage)
     }
 }
-
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

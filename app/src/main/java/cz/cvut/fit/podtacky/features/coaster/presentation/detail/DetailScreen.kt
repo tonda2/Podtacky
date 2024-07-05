@@ -52,6 +52,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import cz.cvut.fit.podtacky.R
+import cz.cvut.fit.podtacky.core.presentation.PageIndicator
 import cz.cvut.fit.podtacky.core.presentation.Screen
 import cz.cvut.fit.podtacky.features.coaster.domain.Coaster
 import cz.cvut.fit.podtacky.features.coaster.presentation.LoadingScreen
@@ -194,10 +195,10 @@ fun DetailTopPart(
             modifier = Modifier.size(164.dp),
             contentAlignment = Alignment.Center
         ) {
+            val pagerState = rememberPagerState(pageCount = { 2 })
+
             HorizontalPager(
-                state = rememberPagerState(
-                    pageCount = { 2 }
-                )
+                state = pagerState
             ) { page ->
                 val uri = when (page) {
                     0 -> coaster.frontUri
@@ -212,6 +213,8 @@ fun DetailTopPart(
                     contentDescription = null
                 )
             }
+            Spacer(modifier = Modifier.height(14.dp))
+            PageIndicator(count = pagerState.pageCount, current = pagerState.currentPage)
         }
         Column(
             modifier = Modifier
