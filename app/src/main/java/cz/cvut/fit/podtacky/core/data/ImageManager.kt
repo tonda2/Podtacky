@@ -18,7 +18,7 @@ fun createImageFile(context: Context): Uri {
     ).apply {
         return FileProvider.getUriForFile(
             context,
-            "cz.cvut.cz.tonda2.podtacky.provider",
+            "cz.cvut.fit.podtacky.provider",
             this
         )
     }
