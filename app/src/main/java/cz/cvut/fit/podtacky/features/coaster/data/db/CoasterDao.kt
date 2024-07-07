@@ -15,6 +15,9 @@ interface CoasterDao {
     @Query("SELECT * FROM coasters ORDER BY dateAdded DESC")
     fun getCoasters(): LiveData<List<DbCoaster>>
 
+    @Query("SELECT * FROM coasters ORDER BY dateAdded DESC")
+    fun getCoastersFlow(): Flow<List<DbCoaster>>
+
     @Query("SELECT * FROM coasters WHERE coasterId = :id")
     suspend fun getCoasterById(id: String): DbCoaster?
 
@@ -24,6 +27,12 @@ interface CoasterDao {
                 "LOWER(description) like '%' || LOWER(:query) || '%'" +
                 "ORDER BY dateAdded DESC")
     fun searchCoasters(query: String): Flow<List<DbCoaster>>
+
+    @Query("UPDATE coasters SET uploaded = 1 WHERE coasterId = :id")
+    suspend fun markUploaded(id: String)
+
+    @Query("UPDATE coasters SET deleted = 1 WHERE coasterId = :id")
+    suspend fun markDeleted(id: String)
 
     @Insert
     suspend fun insert(coaster: DbCoaster)

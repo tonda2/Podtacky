@@ -67,11 +67,6 @@ class EditViewModel(
             )
         }
         viewModelScope.launch {
-            if (old != null) {
-                coasterRepository.deleteCoaster(
-                    old
-                )
-            }
             coasterRepository.addCoaster(
                 Coaster(
                     brewery = _screenStateStream.value.brewery,
@@ -80,9 +75,15 @@ class EditViewModel(
                     city = _screenStateStream.value.city,
                     count = _screenStateStream.value.count.toInt(),
                     frontUri = _screenStateStream.value.frontUri,
-                    backUri = _screenStateStream.value.backUri
+                    backUri = _screenStateStream.value.backUri,
+                    uploaded = false,
+                    deleted = false
                 )
             )
+
+            if (old != null) {
+                coasterRepository.markDeleted(old.coasterId.toString())
+            }
         }
         _screenStateStream.update {
             it.copy(

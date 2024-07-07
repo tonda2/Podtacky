@@ -17,6 +17,14 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
         }
     }
 
+    fun getCoastersFlow(): Flow<List<Coaster>> {
+        return coasterDao.getCoastersFlow().map { dbCoasters ->
+            dbCoasters.map { dbCoaster ->
+                dbCoaster.toDomain()
+            }
+        }
+    }
+
     suspend fun getCoaster(id: String): Coaster? = coasterDao.getCoasterById(id)?.toDomain()
 
     fun seachCoasters(query: String): Flow<List<Coaster>> = coasterDao.searchCoasters(query).map { dbCoasters ->
@@ -24,6 +32,10 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
             dbCoaster.toDomain()
         }
     }
+
+    suspend fun markUploaded(id: String) = coasterDao.markUploaded(id)
+
+    suspend fun markDeleted(id: String) = coasterDao.markDeleted(id)
 
     suspend fun insert(coaster: Coaster) {
         val dbCoaster = DbCoaster(
@@ -33,7 +45,9 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
             city = coaster.city,
             count = coaster.count,
             frontUri = coaster.frontUri.toString(),
-            backUri = coaster.backUri.toString()
+            backUri = coaster.backUri.toString(),
+            uploaded = coaster.uploaded,
+            deleted = coaster.deleted
         )
         coasterDao.insert(dbCoaster)
     }
@@ -47,7 +61,9 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
             city = coaster.city,
             count = coaster.count,
             frontUri = coaster.frontUri.toString(),
-            backUri = coaster.backUri.toString()
+            backUri = coaster.backUri.toString(),
+            uploaded = coaster.uploaded,
+            deleted = coaster.deleted
         )
         coasterDao.delete(dbCoaster)
     }
@@ -61,7 +77,9 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
             city = city,
             count = count,
             frontUri = Uri.parse(frontUri) ?: Uri.EMPTY,
-            backUri = Uri.parse(backUri) ?: Uri.EMPTY
+            backUri = Uri.parse(backUri) ?: Uri.EMPTY,
+            uploaded = uploaded,
+            deleted = deleted
         )
     }
 }

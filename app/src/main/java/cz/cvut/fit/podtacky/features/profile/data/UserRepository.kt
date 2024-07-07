@@ -1,5 +1,7 @@
 package cz.cvut.fit.podtacky.features.profile.data
 
+import android.content.Context
+import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import cz.cvut.fit.podtacky.features.profile.domain.User
@@ -28,7 +30,8 @@ class UserRepository(
         }
     }
 
-    fun logOut() {
+    fun logOut(context: Context) {
         firebaseAuth.signOut()
+        AuthUI.getInstance().signOut(context)
     }
 }

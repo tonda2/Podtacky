@@ -10,5 +10,7 @@ data class Coaster(
     val city: String,
     val count: Int,
     val frontUri: Uri,
-    val backUri: Uri
+    val backUri: Uri,
+    val uploaded: Boolean,
+    val deleted: Boolean
 )

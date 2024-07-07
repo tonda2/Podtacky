@@ -32,4 +32,8 @@
     <string name="ucet">Účet</string>
     <string name="jste_prihlaseni_jako">"Jste přihlášeni jako: "</string>
     <string name="odhlasit_se">Odhlásit se</string>
+    <string name="zalohovat">Zálohovat</string>
+    <string name="zaloha_spustena">Záloha databáze byla spuštěna na pozadí</string>
+    <string name="please_login">Pro automatické online zálohování vaší databáze se prosím přihlašte. Získáte tím možnost jednoduše přenést celou sbírku do jiného zařízení v případě ztráty nebo koupě nového telefonu.</string>
+    <string name="backed_up">Backed up to cloud</string>
 </resources>

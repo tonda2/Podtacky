@@ -9,8 +9,12 @@ class CoasterRepository(
     private val localDataSource: CoasterLocalDataSource
 ) {
 
-    fun getCoasters(): LiveData<List<Coaster>> {
+    fun getCoastersLive(): LiveData<List<Coaster>> {
         return localDataSource.getCoastersStream()
+    }
+
+    fun getCoastersFlow(): Flow<List<Coaster>> {
+        return localDataSource.getCoastersFlow()
     }
 
     suspend fun getCoasterById(id: String): Coaster {
@@ -21,6 +25,14 @@ class CoasterRepository(
 
     fun searchCoasters(query: String): Flow<List<Coaster>> {
         return localDataSource.seachCoasters(query)
+    }
+
+    suspend fun markUploaded(id: String) {
+        localDataSource.markUploaded(id)
+    }
+
+    suspend fun markDeleted(id: String) {
+        localDataSource.markDeleted(id)
     }
 
     suspend fun addCoaster(coaster: Coaster) {

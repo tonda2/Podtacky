@@ -1,7 +1,9 @@
 package cz.cvut.fit.podtacky.features.profile.presentation
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.cvut.fit.podtacky.core.data.BackupManager
 import cz.cvut.fit.podtacky.features.profile.data.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,6 +12,7 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     private val userRepository: UserRepository,
+    private val backupManager: BackupManager
 ) : ViewModel() {
 
     private val _screenStateStream = MutableStateFlow(ProfileScreenState())
@@ -25,12 +28,18 @@ class ProfileViewModel(
         }
     }
 
-    fun logOut() {
-        userRepository.logOut()
+    fun logOut(context: Context) {
+        userRepository.logOut(context)
+    }
+
+    fun backup() {
+        viewModelScope.launch {
+            backupManager.createBackup()
+        }
     }
 }
 
 data class ProfileScreenState(
     val id: String? = null,
-    val name: String? = null,
+    val name: String? = null
 )

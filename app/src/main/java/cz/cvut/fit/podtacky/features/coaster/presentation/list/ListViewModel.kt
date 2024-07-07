@@ -17,8 +17,8 @@ class ListViewModel(
 
     init {
         viewModelScope.launch {
-            coasterRepository.getCoasters().observeForever { coasters ->
-                _screenStateLiveData.value = ListScreenState(coasters ?: emptyList())
+            coasterRepository.getCoastersLive().observeForever { coasters ->
+                _screenStateLiveData.value = ListScreenState(coasters?.filter { !it.deleted } ?: emptyList())
             }
         }
     }

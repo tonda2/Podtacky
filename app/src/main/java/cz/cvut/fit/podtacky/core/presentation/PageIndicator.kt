@@ -36,7 +36,7 @@ fun PageIndicator(
         ) {
             repeat(count) { iteration ->
                 val color =
-                    if (current == iteration) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onTertiary
+                    if (current == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary
                 Box(
                     modifier = Modifier
                         .padding(6.dp)
