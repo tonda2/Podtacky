@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -104,8 +105,7 @@ fun ProfileScreenContent(
         modifier = modifier
     ) {
         if (state.name == null) {
-            Text(text = stringResource(R.string.please_login))
-
+            Text(text = stringResource(R.string.please_login), fontWeight = FontWeight.Light)
             Spacer(Modifier.weight(1f))
 
             Button(

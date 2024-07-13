@@ -34,7 +34,8 @@
     <string name="odhlasit_se">Odhlásit se</string>
     <string name="zalohovat">Zálohovat</string>
     <string name="zaloha_spustena">Záloha databáze byla spuštěna na pozadí</string>
-    <string name="please_login">Pro automatické online zálohování vaší databáze se prosím přihlašte. Získáte tím možnost jednoduše přenést celou sbírku do jiného zařízení v případě ztráty nebo koupě nového telefonu.</string>
+    <string name="please_login">Pro automatické online zálohování vaší sbírky se prosím přihlašte svým Google účtem.
+        Získáte tím možnost jednoduše přenést celou databázi do jiného zařízení.</string>
     <string name="backed_up">Backed up to cloud</string>
     <string name="sta_eno_z_podt_ck">Staženo %1$s podtácků</string>
     <string name="prob_h_stahov_n">Probíhá stahování</string>
