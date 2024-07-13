@@ -35,6 +35,7 @@ class EditViewModel(
                 val coaster = coasterRepository.getCoasterById(id.toString())
                 _screenStateStream.update {
                     it.copy(
+                        title = "Upravit podtácek",
                         oldCoaster = coaster,
                         brewery = coaster.brewery,
                         description = coaster.description,
@@ -163,6 +164,7 @@ class EditViewModel(
 }
 
 data class EditScreenState(
+    val title: String = "Přidat podtácek",
     val oldCoaster: Coaster? = null,
     val brewery: String = "",
     val description: String = "",

@@ -97,7 +97,7 @@ fun EditScreen(
                     }
                 },
                 title = {
-                    Text(text = stringResource(R.string.edit_coaster_title))
+                    Text(text = screenState.title)
                 }
             )
         },
