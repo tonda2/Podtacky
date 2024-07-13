@@ -58,7 +58,14 @@ class DetailViewModel(
             }
 
             val coaster = _screenStateStream.value.coaster
-            if (coaster != null) coasterRepository.markDeleted(coaster.coasterId.toString())
+            if (coaster != null) {
+                if (coaster.uploaded) {
+                    coasterRepository.markDeleted(coaster.coasterId.toString())
+                }
+                else {
+                    coasterRepository.deleteCoaster(coaster)
+                }
+            }
         }
         _screenStateStream.update {
             it.copy(
