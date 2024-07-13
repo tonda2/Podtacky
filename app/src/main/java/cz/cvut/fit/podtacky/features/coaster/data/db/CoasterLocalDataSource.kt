@@ -33,6 +33,16 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
         }
     }
 
+    fun isCoasterDuplicate(coaster: Coaster): Boolean {
+        return coasterDao.countSameCoasters(
+            coaster.brewery,
+            coaster.description,
+            coaster.dateAdded,
+            coaster.city,
+            coaster.count
+        ) > 0
+    }
+
     suspend fun markUploaded(id: String) = coasterDao.markUploaded(id)
 
     suspend fun markDeleted(id: String) = coasterDao.markDeleted(id)
@@ -67,19 +77,19 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
         )
         coasterDao.delete(dbCoaster)
     }
+}
 
-    private fun DbCoaster.toDomain(): Coaster {
-        return Coaster(
-            coasterId = coasterId,
-            brewery = brewery,
-            description = description,
-            dateAdded = dateAdded,
-            city = city,
-            count = count,
-            frontUri = Uri.parse(frontUri) ?: Uri.EMPTY,
-            backUri = Uri.parse(backUri) ?: Uri.EMPTY,
-            uploaded = uploaded,
-            deleted = deleted
-        )
-    }
+fun DbCoaster.toDomain(): Coaster {
+    return Coaster(
+        coasterId = coasterId,
+        brewery = brewery,
+        description = description,
+        dateAdded = dateAdded,
+        city = city,
+        count = count,
+        frontUri = Uri.parse(frontUri) ?: Uri.EMPTY,
+        backUri = Uri.parse(backUri) ?: Uri.EMPTY,
+        uploaded = uploaded,
+        deleted = deleted
+    )
 }

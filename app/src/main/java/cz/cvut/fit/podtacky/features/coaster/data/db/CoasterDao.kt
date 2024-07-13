@@ -28,6 +28,18 @@ interface CoasterDao {
                 "ORDER BY dateAdded DESC")
     fun searchCoasters(query: String): Flow<List<DbCoaster>>
 
+    @Query(
+        "SELECT COUNT(*) FROM coasters " +
+                "WHERE brewery = :brewery AND description = :description AND dateAdded = :dateAdded " +
+                "AND city = :city AND count = :count")
+    fun countSameCoasters(
+        brewery: String,
+        description: String,
+        dateAdded: String,
+        city: String,
+        count: Int
+    ): Int
+
     @Query("UPDATE coasters SET uploaded = 1 WHERE coasterId = :id")
     suspend fun markUploaded(id: String)
 

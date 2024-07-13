@@ -27,6 +27,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import cz.cvut.fit.podtacky.R
 import cz.cvut.fit.podtacky.core.presentation.BottomBar
+import cz.cvut.fit.podtacky.features.coaster.presentation.DownloadingScreen
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,42 +43,50 @@ fun ProfileScreen(
         onResult = {}
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = stringResource(R.string.profil))
-                }
-            )
-        },
-        bottomBar = {
-            BottomBar(navController = navController, isList = false)
-        }
-    ) { paddingValues ->
-        ProfileScreenContent(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(12.dp)
-                .fillMaxSize(),
-            LocalContext.current,
-            state = screenState,
-            onLoginClick = {
-                val providers = arrayListOf(
-                    AuthUI.IdpConfig.GoogleBuilder().build()
+    if (screenState.downloading) {
+        DownloadingScreen(done = screenState.downloadCount)
+    }
+    else {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = stringResource(R.string.profil))
+                    }
                 )
-
-                val signInIntent = AuthUI.getInstance()
-                    .createSignInIntentBuilder()
-                    .setAvailableProviders(providers)
-                    .build()
-
-                launcher.launch(signInIntent)
             },
-            onBackupClick = {
-                viewModel.backup()
-            },
-            onLogoutClick = { viewModel.logOut(context) }
-        )
+            bottomBar = {
+                BottomBar(navController = navController, isList = false)
+            }
+        ) { paddingValues ->
+            ProfileScreenContent(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .padding(12.dp)
+                    .fillMaxSize(),
+                LocalContext.current,
+                state = screenState,
+                onLoginClick = {
+                    val providers = arrayListOf(
+                        AuthUI.IdpConfig.GoogleBuilder().build()
+                    )
+
+                    val signInIntent = AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build()
+
+                    launcher.launch(signInIntent)
+                },
+                onBackupClick = {
+                    viewModel.backup()
+                },
+                onImportClick = {
+                    viewModel.import(context)
+                },
+                onLogoutClick = { viewModel.logOut(context) }
+            )
+        }
     }
 }
 
@@ -88,6 +97,7 @@ fun ProfileScreenContent(
     state: ProfileScreenState,
     onLoginClick: () -> Unit,
     onBackupClick: () -> Unit,
+    onImportClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
     Column(
@@ -125,6 +135,15 @@ fun ProfileScreenContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = stringResource(R.string.zalohovat))
+            }
+
+            Button(
+                onClick = {
+                    onImportClick()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = stringResource(R.string.importovat_z_lohu))
             }
 
             Spacer(modifier = Modifier.height(8.dp))

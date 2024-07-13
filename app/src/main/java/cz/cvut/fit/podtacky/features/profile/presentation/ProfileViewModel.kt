@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.podtacky.core.data.BackupManager
+import cz.cvut.fit.podtacky.core.data.ImportManager
 import cz.cvut.fit.podtacky.features.profile.data.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +13,8 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     private val userRepository: UserRepository,
-    private val backupManager: BackupManager
+    private val backupManager: BackupManager,
+    private val importManager: ImportManager
 ) : ViewModel() {
 
     private val _screenStateStream = MutableStateFlow(ProfileScreenState())
@@ -37,9 +39,29 @@ class ProfileViewModel(
             backupManager.createBackup()
         }
     }
+
+    fun import(context: Context) {
+        viewModelScope.launch {
+            _screenStateStream.update {
+                it.copy(downloading = true, downloadCount = 0)
+            }
+
+            importManager.importBackup(context) {
+                _screenStateStream.update {
+                    it.copy(downloadCount = _screenStateStream.value.downloadCount + 1)
+                }
+            }
+
+            _screenStateStream.update {
+                it.copy(downloading = false, downloadCount = 0)
+            }
+        }
+    }
 }
 
 data class ProfileScreenState(
     val id: String? = null,
-    val name: String? = null
+    val name: String? = null,
+    val downloading: Boolean = false,
+    val downloadCount: Int = 0
 )

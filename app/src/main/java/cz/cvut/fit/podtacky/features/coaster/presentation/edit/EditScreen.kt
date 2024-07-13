@@ -40,6 +40,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,7 +68,7 @@ import cz.cvut.fit.podtacky.features.coaster.presentation.LoadingScreen
 import cz.cvut.fit.podtacky.features.coaster.presentation.ScreenState
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun EditScreen(
     navController: NavController,
@@ -76,6 +77,9 @@ fun EditScreen(
     val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+
+    val permission = Manifest.permission.CAMERA
+    val permissionState = rememberMultiplePermissionsState(listOf(permission))
 
     Scaffold(
         topBar = {
@@ -117,15 +121,22 @@ fun EditScreen(
             }
         },
     ) { paddingValues ->
-        when (screenState.state) {
-            ScreenState.Fill -> EntryEditScreen(
-                paddingValues = paddingValues,
-                scrollState = scrollState,
-                screenState = screenState,
-                viewModel = viewModel
-            )
+        if (permissionState.allPermissionsGranted) {
+            when (screenState.state) {
+                ScreenState.Fill -> EntryEditScreen(
+                    paddingValues = paddingValues,
+                    scrollState = scrollState,
+                    screenState = screenState,
+                    viewModel = viewModel
+                )
 
-            ScreenState.Loading -> LoadingScreen(modifier = Modifier.padding(paddingValues))
+                ScreenState.Loading -> LoadingScreen(modifier = Modifier.padding(paddingValues))
+            }
+        }
+        else {
+            LaunchedEffect(Unit) {
+                permissionState.launchMultiplePermissionRequest()
+            }
         }
     }
 }
