@@ -72,10 +72,10 @@ class EditViewModel(
             coasterRepository.addCoaster(
                 Coaster(
                     uid = UUID.randomUUID().toString(),
-                    brewery = _screenStateStream.value.brewery,
-                    description = _screenStateStream.value.description,
+                    brewery = _screenStateStream.value.brewery.trim(),
+                    description = _screenStateStream.value.description.trim(),
                     dateAdded = _screenStateStream.value.date,
-                    city = _screenStateStream.value.city,
+                    city = _screenStateStream.value.city.trim(),
                     count = _screenStateStream.value.count.toInt(),
                     frontUri = _screenStateStream.value.frontUri,
                     backUri = _screenStateStream.value.backUri,
