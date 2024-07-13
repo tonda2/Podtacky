@@ -27,7 +27,7 @@ class CoasterRepository(
         return localDataSource.seachCoasters(query)
     }
 
-    fun isCoasterDuplicate(coaster: Coaster): Boolean {
+    suspend fun isCoasterDuplicate(coaster: Coaster): Boolean {
         return localDataSource.isCoasterDuplicate(coaster)
     }
 

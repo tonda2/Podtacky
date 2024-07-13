@@ -27,20 +27,16 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
 
     suspend fun getCoaster(id: String): Coaster? = coasterDao.getCoasterById(id)?.toDomain()
 
+    suspend fun getCoasterByUid(uid: String): Coaster? = coasterDao.getCoasterByUid(uid)?.toDomain()
+
     fun seachCoasters(query: String): Flow<List<Coaster>> = coasterDao.searchCoasters(query).map { dbCoasters ->
         dbCoasters.map { dbCoaster ->
             dbCoaster.toDomain()
         }
     }
 
-    fun isCoasterDuplicate(coaster: Coaster): Boolean {
-        return coasterDao.countSameCoasters(
-            coaster.brewery,
-            coaster.description,
-            coaster.dateAdded,
-            coaster.city,
-            coaster.count
-        ) > 0
+    suspend fun isCoasterDuplicate(coaster: Coaster): Boolean {
+        return coasterDao.getCoasterByUid(coaster.uid) != null
     }
 
     suspend fun markUploaded(id: String) = coasterDao.markUploaded(id)
@@ -49,6 +45,7 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
 
     suspend fun insert(coaster: Coaster) {
         val dbCoaster = DbCoaster(
+            uid = coaster.uid,
             brewery = coaster.brewery,
             description = coaster.description,
             dateAdded = coaster.dateAdded,
@@ -65,6 +62,7 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
     suspend fun delete(coaster: Coaster) {
         val dbCoaster = DbCoaster(
             coasterId = coaster.coasterId,
+            uid = coaster.uid,
             brewery = coaster.brewery,
             description = coaster.description,
             dateAdded = coaster.dateAdded,
@@ -81,6 +79,7 @@ class CoasterLocalDataSource(private val coasterDao: CoasterDao) {
 
 fun DbCoaster.toDomain(): Coaster {
     return Coaster(
+        uid = uid,
         coasterId = coasterId,
         brewery = brewery,
         description = description,

@@ -21,24 +21,15 @@ interface CoasterDao {
     @Query("SELECT * FROM coasters WHERE coasterId = :id")
     suspend fun getCoasterById(id: String): DbCoaster?
 
+    @Query("SELECT * FROM coasters WHERE uid = :uid")
+    suspend fun getCoasterByUid(uid: String): DbCoaster?
+
     @Query(
         "SELECT * FROM coasters " +
                 "WHERE LOWER(brewery) like '%' || LOWER(:query) || '%' OR " +
                 "LOWER(description) like '%' || LOWER(:query) || '%'" +
                 "ORDER BY dateAdded DESC")
     fun searchCoasters(query: String): Flow<List<DbCoaster>>
-
-    @Query(
-        "SELECT COUNT(*) FROM coasters " +
-                "WHERE brewery = :brewery AND description = :description AND dateAdded = :dateAdded " +
-                "AND city = :city AND count = :count")
-    fun countSameCoasters(
-        brewery: String,
-        description: String,
-        dateAdded: String,
-        city: String,
-        count: Int
-    ): Int
 
     @Query("UPDATE coasters SET uploaded = 1 WHERE coasterId = :id")
     suspend fun markUploaded(id: String)

@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import java.util.UUID
 
 class EditViewModel(
     private val savedStateHandle: SavedStateHandle,
@@ -70,6 +71,7 @@ class EditViewModel(
         viewModelScope.launch {
             coasterRepository.addCoaster(
                 Coaster(
+                    uid = UUID.randomUUID().toString(),
                     brewery = _screenStateStream.value.brewery,
                     description = _screenStateStream.value.description,
                     dateAdded = _screenStateStream.value.date,
@@ -83,7 +85,12 @@ class EditViewModel(
             )
 
             if (old != null) {
-                coasterRepository.markDeleted(old.coasterId.toString())
+                if (old.uploaded) {
+                    coasterRepository.markDeleted(old.coasterId.toString())
+                }
+                else {
+                    coasterRepository.deleteCoaster(old)
+                }
             }
         }
         _screenStateStream.update {

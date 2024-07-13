@@ -29,28 +29,30 @@ class FirestoreRepository(
         firestore.collection("users")
             .document(userId)
             .collection("coasters")
-            .add(coaster)
+            .document(coaster.uid)
+            .set(coaster)
     }
 
-    fun deleteCoaster(userId: String, coasterId: String) {
-        val collection = firestore.collection("users")
+    fun deleteCoaster(userId: String, uid: String) {
+        firestore.collection("users")
             .document(userId)
             .collection("coasters")
-        val query = collection.whereEqualTo("coasterId", coasterId.toInt())
+            .document(uid)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val doc = task.result
 
-        query.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                for (doc in task.result!!) {
                     firebaseStorageRepository.deletePicture(doc.get("frontUri").toString())
                     firebaseStorageRepository.deletePicture(doc.get("backUri").toString())
 
-                    collection.document(doc.id).delete()
-                    Log.d("FS DELETE", "Deleted ${doc.id}")
+                    doc.reference.delete().addOnSuccessListener {
+                        Log.d("FS DELETE", "Deleted ${doc.id}")
+                    }
+                }
+                else {
+                    Log.d("FS DELETE", "Error deleting: ", task.exception)
                 }
             }
-            else {
-                Log.d("FS DELETE", "Error deleting: ", task.exception)
-            }
-        }
     }
 }

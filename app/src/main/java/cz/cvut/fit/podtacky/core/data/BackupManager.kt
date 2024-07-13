@@ -45,6 +45,7 @@ class BackupManager(
         val backPath = firebaseStorageRepository.uploadPicture(userId, coaster.backUri)
 
         firestoreRepository.addCoaster(userId, Coaster(
+            uid = coaster.uid,
             coasterId = coaster.coasterId,
             brewery = coaster.brewery,
             description = coaster.description,
@@ -61,7 +62,7 @@ class BackupManager(
     }
 
     private suspend fun deleteCoaster(userId: String, coaster: Coaster): Boolean{
-        firestoreRepository.deleteCoaster(userId, coaster.coasterId.toString())
+        firestoreRepository.deleteCoaster(userId, coaster.uid)
         coasterRepository.deleteCoaster(coaster)
         return true
     }
