@@ -15,11 +15,11 @@ plugins {
 }
 
 android {
-    namespace = "cz.cvut.fit.podtacky"
+    namespace = "cz.tonda2.podtacky"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "cz.cvut.fit.podtacky"
+        applicationId = "cz.tonda2.podtacky"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
