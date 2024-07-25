@@ -146,6 +146,8 @@ class EditViewModel(
         }
     }
     fun updateCount(count: String) {
+        if (count.isNotEmpty() && count.toIntOrNull() == null) return
+
         _screenStateStream.update {
             it.copy(
                 count = count
