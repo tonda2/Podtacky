@@ -31,7 +31,7 @@ class SearchViewModel(
         _screenStateStream.update {
             it.copy(
                 query = _screenStateStream.value.query.trim(),
-                result = coasterRepository.searchCoasters(_screenStateStream.value.query.trim()).first()
+                result = coasterRepository.searchCoasters(_screenStateStream.value.query.trim()).first().filter { coaster -> !coaster.deleted }
             )
         }
     }
