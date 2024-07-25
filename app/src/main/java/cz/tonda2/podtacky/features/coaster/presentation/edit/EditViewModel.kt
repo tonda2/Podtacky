@@ -76,7 +76,7 @@ class EditViewModel(
                     description = _screenStateStream.value.description.trim(),
                     dateAdded = _screenStateStream.value.date,
                     city = _screenStateStream.value.city.trim(),
-                    count = _screenStateStream.value.count.toInt(),
+                    count = _screenStateStream.value.count.toIntOrNull() ?: 1,
                     frontUri = _screenStateStream.value.frontUri,
                     backUri = _screenStateStream.value.backUri,
                     uploaded = false,
