@@ -211,7 +211,7 @@ fun DetailTopPart(
                         .size(size = 164.dp)
                         .clickable { onPhotoClick() },
                     model = uri,
-                    contentDescription = null
+                    contentDescription = stringResource(R.string.coaster_image_cd, page)
                 )
             }
             Spacer(modifier = Modifier.height(14.dp))

@@ -275,7 +275,7 @@ fun PictureBox(
                     .size(size = 164.dp)
                     .clickable { onPhotoClick(uri) },
                 model = uri,
-                contentDescription = null
+                contentDescription = stringResource(R.string.coaster_image_edit_screen)
             )
         }
     } else {

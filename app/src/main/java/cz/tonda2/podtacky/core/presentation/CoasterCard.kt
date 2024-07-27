@@ -17,9 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 
 @Composable
@@ -27,6 +32,8 @@ fun CoasterCard(
     coaster: Coaster,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier.clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(2.dp),
@@ -35,7 +42,14 @@ fun CoasterCard(
         CoasterItem(coaster,
             Modifier
                 .fillMaxWidth()
-                .padding(8.dp))
+                .padding(8.dp)
+                .semantics {
+                    contentDescription = context.getString(
+                        R.string.a_single_coaster_description,
+                        coaster.description
+                    )
+                }
+        )
     }
 }
 
@@ -50,7 +64,7 @@ private fun CoasterItem(coaster: Coaster, modifier: Modifier) {
             AsyncImage(
                 modifier = Modifier.size(size = 60.dp),
                 model = if (coaster.frontUri != Uri.EMPTY) coaster.frontUri else coaster.backUri,
-                contentDescription = null
+                contentDescription = stringResource(R.string.coaster_item_image)
             )
         }
         Column(

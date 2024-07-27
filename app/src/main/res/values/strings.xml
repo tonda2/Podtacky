@@ -21,6 +21,7 @@
     <string name="vygenerovat_fakt">Vygenerovat fakt</string>
     <string name="yummy">yummy</string>
     <string name="podt_cky">Podtácky</string>
+    <string name="sbirka">Sbírka</string>
     <string name="close">Close</string>
     <string name="ukladam">Ukládám</string>
     <string name="smazat">Smazat</string>
@@ -45,4 +46,8 @@
     <string name="nothing_found">Nebyly nalezeny žádné podtácky</string>
     <string name="coaster_image_cd">Coaster Image %1$s</string>
     <string name="large_coaster_image">Large coaster image %1$s</string>
+    <string name="coaster_item_image">Coaster item image</string>
+    <string name="bottom_bar_icon">Bottom bar icon %1$s</string>
+    <string name="coaster_image_edit_screen">Coaster image edit screen</string>
+    <string name="a_single_coaster_description">A single coaster, description %1$s</string>
 </resources>

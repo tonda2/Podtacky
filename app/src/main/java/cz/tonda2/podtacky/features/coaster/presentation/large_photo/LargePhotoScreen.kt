@@ -54,7 +54,7 @@ fun LargePhotoScreen(
 
                 AsyncImage(
                     model = uri,
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.large_coaster_image, page),
                     modifier = Modifier.fillMaxSize()
                 )
             }

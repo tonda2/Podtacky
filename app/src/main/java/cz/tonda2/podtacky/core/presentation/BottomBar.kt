@@ -21,7 +21,7 @@ fun BottomBar(
     BottomAppBar(containerColor = MaterialTheme.colorScheme.secondaryContainer) {
         NavigationBarItem(
             painter = painterResource(id = R.drawable.baseline_list_24),
-            name = stringResource(R.string.podt_cky),
+            name = stringResource(R.string.sbirka),
             selected = isList,
             onClick = {
                 if (!isList) {
@@ -60,7 +60,10 @@ private fun RowScope.NavigationBarItem(
         selected = selected,
         onClick = onClick,
         icon = {
-            Icon(painter = painter, contentDescription = null, tint = contentColor)
+            Icon(painter = painter, contentDescription = stringResource(
+                R.string.bottom_bar_icon,
+                name
+            ), tint = contentColor)
         },
         label = {
             Text(text = name, style = MaterialTheme.typography.labelMedium, color = contentColor)
