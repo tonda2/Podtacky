@@ -82,7 +82,7 @@ fun ListScreen(
             NoResults(
                 text = stringResource(R.string.no_coasters),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.secondary
             )
         }
         else {

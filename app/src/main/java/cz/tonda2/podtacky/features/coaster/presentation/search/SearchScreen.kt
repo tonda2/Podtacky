@@ -67,7 +67,7 @@ fun SearchScreen(
             NoResults(
                 text = stringResource(R.string.nothing_found),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.secondary
             )
         }
         else {
@@ -128,7 +128,7 @@ private fun SearchTopBar(
                     unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 ),
                 textStyle = MaterialTheme.typography.bodyMedium,
                 trailingIcon = {

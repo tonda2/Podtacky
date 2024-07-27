@@ -51,9 +51,9 @@ private fun RowScope.NavigationBarItem(
     onClick: () -> Unit
 ) {
     val contentColor = if (selected) {
-        MaterialTheme.colorScheme.onPrimary
+        MaterialTheme.colorScheme.onPrimaryContainer
     } else {
-        MaterialTheme.colorScheme.onTertiary
+        MaterialTheme.colorScheme.onSecondary
     }
 
     NavigationBarItem(

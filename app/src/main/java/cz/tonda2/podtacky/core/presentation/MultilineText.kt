@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun MultiLineText(
@@ -13,7 +14,8 @@ fun MultiLineText(
     style: TextStyle,
     color: Color,
     modifier: Modifier = Modifier,
-    maxLength: Int = 30
+    maxLength: Int = 30,
+    fontWeight: FontWeight = FontWeight.Normal
 ) {
     val words = text.split(' ')
     var line = ""
@@ -27,7 +29,8 @@ fun MultiLineText(
                     modifier = modifier,
                     text = line,
                     style = style,
-                    color = color
+                    color = color,
+                    fontWeight = fontWeight
                 )
                 word.plus(' ')
             }
@@ -37,7 +40,8 @@ fun MultiLineText(
                 modifier = modifier,
                 text = line,
                 style = style,
-                color = color
+                color = color,
+                fontWeight = fontWeight
             )
         }
     }
