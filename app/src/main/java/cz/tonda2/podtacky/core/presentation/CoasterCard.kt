@@ -46,7 +46,7 @@ fun CoasterCard(
                 .semantics {
                     contentDescription = context.getString(
                         R.string.a_single_coaster_description,
-                        coaster.description
+                        coaster.coasterId.toString()
                     )
                 }
         )

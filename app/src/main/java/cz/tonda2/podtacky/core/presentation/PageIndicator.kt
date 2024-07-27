@@ -15,7 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import cz.tonda2.podtacky.R
 
 @Composable
 fun PageIndicator(
@@ -34,6 +38,7 @@ fun PageIndicator(
                 .padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.Center
         ) {
+            val context = LocalContext.current
             repeat(count) { iteration ->
                 val color =
                     if (current == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary
@@ -43,6 +48,10 @@ fun PageIndicator(
                         .clip(CircleShape)
                         .background(color)
                         .size(8.dp)
+                        .semantics {
+                            contentDescription =
+                                context.getString(R.string.page_indicator_current_page, iteration.toString())
+                        }
                 )
             }
         }

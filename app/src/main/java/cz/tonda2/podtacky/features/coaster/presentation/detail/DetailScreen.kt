@@ -47,6 +47,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -276,7 +278,12 @@ fun Field(
     styleValue: TextStyle = MaterialTheme.typography.headlineSmall,
     colorValue: Color = MaterialTheme.colorScheme.onPrimary,
     ) {
-    Column {
+    Column(
+        modifier = Modifier
+            .semantics {
+                contentDescription = "$title is $value"
+            }
+    ) {
         Text(
             text = title,
             style = styleTitle,
