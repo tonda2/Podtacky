@@ -105,7 +105,10 @@ fun ProfileScreenContent(
         modifier = modifier
     ) {
         if (state.name == null) {
-            Text(text = stringResource(R.string.please_login), fontWeight = FontWeight.Light)
+            Text(
+                text = stringResource(R.string.please_login),
+                fontWeight = FontWeight.Light
+            )
             Spacer(Modifier.weight(1f))
 
             Button(

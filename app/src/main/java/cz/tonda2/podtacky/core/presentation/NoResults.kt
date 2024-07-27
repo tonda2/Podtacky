@@ -24,12 +24,6 @@ fun NoResults(
         contentAlignment = Alignment.Center
     ) {
         Column {
-//            Text(
-//                modifier = Modifier.align(Alignment.CenterHorizontally),
-//                text = "\uD83D\uDE1E",
-//                fontSize = 32.sp
-//            )
-//            Spacer(modifier = Modifier.height(8.dp))
             MultiLineText(
                 text = text,
                 style = style,
