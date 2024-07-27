@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.presentation.BottomBar
 import cz.tonda2.podtacky.core.presentation.CoasterCard
+import cz.tonda2.podtacky.core.presentation.NoResults
 import cz.tonda2.podtacky.core.presentation.Screen
 import org.koin.androidx.compose.koinViewModel
 
@@ -75,18 +76,29 @@ fun ListScreen(
             BottomBar(navController = navController, isList = true)
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(screenState?.coasters ?: emptyList()) { coaster ->
-                CoasterCard(
-                    coaster = coaster
-                ) {
-                    navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")
+        val coasters = screenState?.coasters ?: emptyList()
+
+        if (coasters.isEmpty()) {
+            NoResults(
+                text = stringResource(R.string.no_coasters),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+        else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(coasters) { coaster ->
+                    CoasterCard(
+                        coaster = coaster
+                    ) {
+                        navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")
+                    }
                 }
             }
         }

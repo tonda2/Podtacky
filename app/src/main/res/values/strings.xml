@@ -40,4 +40,9 @@
     <string name="sta_eno_z_podt_ck">Staženo %1$s podtácků</string>
     <string name="prob_h_stahov_n">Probíhá stahování</string>
     <string name="importovat_z_lohu">Importovat zálohu</string>
+    <string name="beer_glass_emoji">🍺</string>
+    <string name="no_coasters">Zatím nemáte žádné podtácky, přidejte si je tlačítkem +</string>
+    <string name="nothing_found">Nebyly nalezeny žádné podtácky</string>
+    <string name="coaster_image_cd">Coaster Image %1$s</string>
+    <string name="large_coaster_image">Large coaster image %1$s</string>
 </resources>
