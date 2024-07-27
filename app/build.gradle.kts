@@ -22,8 +22,8 @@ android {
         applicationId = "cz.tonda2.podtacky"
         minSdk = 24
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 4
+        versionName = "1.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -125,5 +125,5 @@ dependencies {
     implementation("com.firebaseui:firebase-ui-auth:8.0.2")
     implementation("com.google.firebase:firebase-firestore")
 
-
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 }
