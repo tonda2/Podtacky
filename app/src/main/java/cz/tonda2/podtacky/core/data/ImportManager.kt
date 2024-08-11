@@ -4,7 +4,10 @@ package cz.tonda2.podtacky.core.data
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.crashlytics.crashlytics
+import com.google.firebase.storage.StorageException
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
 import cz.tonda2.podtacky.features.coaster.data.db.toDomain
@@ -12,6 +15,7 @@ import cz.tonda2.podtacky.features.coaster.data.firebase.firestore.FirestoreRepo
 import cz.tonda2.podtacky.features.coaster.data.firebase.storage.FirebaseStorageRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
@@ -24,18 +28,27 @@ class ImportManager(
     suspend fun importBackup(context: Context, onFileDownload: () -> Unit) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        val backedData: Flow<List<DbCoaster>>
         try {
-            val backupedData = firestoreRepository.getCoasters(userId)
-            withContext(Dispatchers.IO) {
-                backupedData.first().forEach { dbCoaster ->
+            backedData = firestoreRepository.getCoasters(userId)
+        }
+        catch (e: Exception) {
+            Log.e("IMPORT", "Couldn't get coasters from firestore for user id: $userId!", e)
+            Firebase.crashlytics.recordException(e)
+            return
+        }
+
+        withContext(Dispatchers.IO) {
+            backedData.first().forEach { dbCoaster ->
+                try {
                     importCoaster(dbCoaster, context)
                     onFileDownload()
                 }
+                catch (e: StorageException) {
+                    Log.e("IMPORT", "Failed to import coaster uid: ${dbCoaster.uid} for user id: $userId", e)
+                    Firebase.crashlytics.recordException(e)
+                }
             }
-        }
-        catch (e: Exception) {
-            Log.e("IMPORT", "Exception thrown when importing!", e)
-            return
         }
     }
 

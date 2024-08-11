@@ -2,7 +2,9 @@ package cz.tonda2.podtacky.core.data
 
 import android.net.Uri
 import android.util.Log
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.crashlytics.crashlytics
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.data.firebase.firestore.FirestoreRepository
 import cz.tonda2.podtacky.features.coaster.data.firebase.storage.FirebaseStorageRepository
@@ -29,6 +31,9 @@ class BackupManager(
                 coasterRepository.markUploaded(coaster.coasterId.toString())
                 count += 1
             }
+            else {
+                Firebase.crashlytics.recordException(RuntimeException("Failed to upload pictures for coaster ${coaster.coasterId}"))
+            }
         }
 
         toDelete.forEach { coaster ->
@@ -40,9 +45,15 @@ class BackupManager(
         Log.d("BACKUP", "$count/${toDelete.size + toUpload.size} coasters backed up!")
     }
 
-    private fun uploadCoaster(userId: String, coaster: Coaster): Boolean {
+    private suspend fun uploadCoaster(userId: String, coaster: Coaster): Boolean {
         val frontPath = firebaseStorageRepository.uploadPicture(userId, coaster.frontUri)
+        if (frontPath.isEmpty()) return false
+
         val backPath = firebaseStorageRepository.uploadPicture(userId, coaster.backUri)
+        if (backPath.isEmpty()) {
+            firebaseStorageRepository.deletePicture(frontPath)
+            return false
+        }
 
         firestoreRepository.addCoaster(userId, Coaster(
             uid = coaster.uid,

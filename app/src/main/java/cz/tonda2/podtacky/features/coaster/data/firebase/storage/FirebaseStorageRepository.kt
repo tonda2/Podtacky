@@ -15,14 +15,20 @@ class FirebaseStorageRepository(
 ) {
     private val storageRef = firebaseStorage.reference
 
-    fun uploadPicture(userId: String, uri: Uri): String {
+    /**
+     * Uploads image at provided uri to Firebase Storage.
+     * Returns path to firebase storage or empty string if upload failed.
+     */
+    suspend fun uploadPicture(userId: String, uri: Uri): String {
         if (uri == Uri.EMPTY) return ""
 
         val path = getPath(userId)
 
         val imgRefFront = storageRef.child(path)
-        imgRefFront.putFile(uri)
-        return path
+        var result = ""
+        imgRefFront.putFile(uri).addOnSuccessListener { result = path }.await()
+
+        return result
     }
 
     fun deletePicture(path: String) {
