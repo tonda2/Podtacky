@@ -87,8 +87,11 @@ fun EditScreen(
             TopAppBar(
                 navigationIcon = {
                     IconButton(onClick = {
-                        viewModel.deletePicture(screenState.frontUri, context)
-                        viewModel.deletePicture(screenState.backUri, context)
+                        // if we're adding a coaster and leave, delete taken pictures
+                        if (screenState.oldCoaster == null) {
+                            viewModel.deletePicture(screenState.frontUri, context)
+                            viewModel.deletePicture(screenState.backUri, context)
+                        }
                         navController.navigateUp()
                     }) {
                         Icon(
