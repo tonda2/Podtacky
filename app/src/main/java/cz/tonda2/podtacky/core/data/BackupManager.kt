@@ -47,11 +47,11 @@ class BackupManager(
 
     private suspend fun uploadCoaster(userId: String, coaster: Coaster): Boolean {
         val frontPath = firebaseStorageRepository.uploadPicture(userId, coaster.frontUri)
-        if (frontPath.isEmpty()) return false
+        if (coaster.frontUri != Uri.EMPTY && frontPath.isEmpty()) return false
 
         val backPath = firebaseStorageRepository.uploadPicture(userId, coaster.backUri)
-        if (backPath.isEmpty()) {
-            firebaseStorageRepository.deletePicture(frontPath)
+        if (coaster.backUri != Uri.EMPTY && backPath.isEmpty()) {
+            if (coaster.frontUri != Uri.EMPTY) firebaseStorageRepository.deletePicture(frontPath)
             return false
         }
 

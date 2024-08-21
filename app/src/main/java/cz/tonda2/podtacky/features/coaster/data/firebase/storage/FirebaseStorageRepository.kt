@@ -25,10 +25,9 @@ class FirebaseStorageRepository(
         val path = getPath(userId)
 
         val imgRefFront = storageRef.child(path)
-        var result = ""
-        imgRefFront.putFile(uri).addOnSuccessListener { result = path }.await()
+        val uploadTask = imgRefFront.putFile(uri).await()
 
-        return result
+        return if (uploadTask.task.isSuccessful) path else ""
     }
 
     fun deletePicture(path: String) {
@@ -41,19 +40,24 @@ class FirebaseStorageRepository(
         }
     }
 
-    suspend fun downloadPicture(context: Context, path: String, uri: Uri) {
-        if (path.isEmpty()) return
+    suspend fun downloadPicture(context: Context, path: String, uri: Uri): Boolean {
+        if (path.isEmpty()) return false
 
         val imgRef = storageRef.child(path)
-        imgRef.getBytes(Long.MAX_VALUE).addOnSuccessListener { bytes ->
-            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-            try {
-                saveImageToUri(context, bitmap, uri)
-            }
-            catch (e: IOException) {
-                Log.e("STORAGE", "Failed to download $path", e)
-            }
-        }.await()
+
+        val downloadedBytes = imgRef.getBytes(Long.MAX_VALUE).await()
+        if (downloadedBytes.isEmpty()) {
+            return false
+        }
+
+        val bitmap = BitmapFactory.decodeByteArray(downloadedBytes, 0, downloadedBytes.size)
+        return try {
+            saveImageToUri(context, bitmap, uri)
+            true
+        } catch (e: IOException) {
+            Log.e("STORAGE", "Failed to download $path", e)
+            false
+        }
     }
 
     private fun saveImageToUri(context: Context, bitmap: Bitmap, uri: Uri) {

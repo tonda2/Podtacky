@@ -62,11 +62,13 @@ class ImportManager(
 
         if (coaster.frontUri.isNotEmpty()) {
             frontUri = createImageFile(context)
-            firebaseStorageRepository.downloadPicture(context, coaster.frontUri, frontUri)
+            val downloaded = firebaseStorageRepository.downloadPicture(context, coaster.frontUri, frontUri)
+            if (!downloaded) return
         }
         if (coaster.backUri.isNotEmpty()) {
             backUri = createImageFile(context)
-            firebaseStorageRepository.downloadPicture(context, coaster.backUri, backUri)
+            val downloaded = firebaseStorageRepository.downloadPicture(context, coaster.backUri, backUri)
+            if (!downloaded) return
         }
 
         val newCoaster = Coaster(

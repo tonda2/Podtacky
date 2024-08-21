@@ -2,6 +2,7 @@ package cz.tonda2.podtacky
 
 import android.app.Application
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -27,14 +28,16 @@ class App : Application() {
     private fun setupBackupWorker() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
-            .setRequiresDeviceIdle(true)
+            // .setRequiresDeviceIdle(true)
             .build()
 
         val periodicWorkRequest = PeriodicWorkRequestBuilder<BackupWorker>(1, TimeUnit.DAYS)
             .setConstraints(constraints)
             .build()
 
-        WorkManager.getInstance(this).enqueue(
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "backup_worker",
+            ExistingPeriodicWorkPolicy.KEEP,
             periodicWorkRequest
         )
     }
