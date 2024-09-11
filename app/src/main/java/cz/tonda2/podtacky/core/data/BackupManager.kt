@@ -55,7 +55,7 @@ class BackupManager(
             return false
         }
 
-        firestoreRepository.addCoaster(userId, Coaster(
+        return firestoreRepository.addCoaster(userId, Coaster(
             uid = coaster.uid,
             coasterId = coaster.coasterId,
             brewery = coaster.brewery,
@@ -68,8 +68,6 @@ class BackupManager(
             uploaded = true,
             deleted = coaster.deleted
         ))
-
-        return true
     }
 
     private suspend fun deleteCoaster(userId: String, coaster: Coaster): Boolean{

@@ -1,6 +1,8 @@
 package cz.tonda2.podtacky.features.coaster.data.firebase.firestore
 
 import android.util.Log
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
@@ -25,12 +27,20 @@ class FirestoreRepository(
         emit(query.toObjects(DbCoaster::class.java))
     }
 
-    fun addCoaster(userId: String, coaster: Coaster) {
-        firestore.collection("users")
-            .document(userId)
-            .collection("coasters")
-            .document(coaster.uid)
-            .set(coaster)
+    suspend fun addCoaster(userId: String, coaster: Coaster): Boolean {
+        try {
+            firestore.collection("users")
+                .document(userId)
+                .collection("coasters")
+                .document(coaster.uid)
+                .set(coaster)
+                .await()
+            return true
+        }
+        catch (e: Exception) {
+            Firebase.crashlytics.recordException(RuntimeException("Couldn't upload coaster to Firestore!"))
+            return false
+        }
     }
 
     fun deleteCoaster(userId: String, uid: String) {
