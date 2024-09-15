@@ -51,4 +51,7 @@
     <string name="coaster_image_edit_screen">Coaster image edit screen</string>
     <string name="a_single_coaster_description">A single coaster, id %1$s</string>
     <string name="page_indicator_current_page">Page indicator, current page %1$s</string>
+    <string name="_1_podtacek">1 podtácek</string>
+    <string name="_2_4_podtacky">%1$s podtácky</string>
+    <string name="_5_podtacku">%1$s podtácků</string>
 </resources>

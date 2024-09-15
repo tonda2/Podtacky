@@ -1,6 +1,7 @@
 package cz.tonda2.podtacky.features.coaster.presentation.list
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -60,7 +62,31 @@ fun ListScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = stringResource(R.string.list_title))
+                    Column {
+                        Text(text = stringResource(R.string.list_title))
+                        Text(
+                            text =
+                            when (screenState?.coasters?.size ?: 0) {
+                                1 -> {
+                                    stringResource(R.string._1_podtacek)
+                                }
+
+                                in 1..4 -> {
+                                    stringResource(
+                                        R.string._2_4_podtacky,
+                                        screenState?.coasters?.size ?: 0
+                                    )
+                                }
+
+                                else -> stringResource(
+                                    R.string._5_podtacku,
+                                    screenState?.coasters?.size ?: 0
+                                )
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.LightGray
+                        )
+                    }
                 },
                 actions = {
                     IconButton(onClick = { navController.navigate(Screen.SearchScreen.route) }) {
