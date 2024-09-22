@@ -37,13 +37,16 @@ class ListViewModel(
         }
     }
 
-    fun updateSortOrder(newOrder: CoasterSortType) {
-        val currentState = _screenStateLiveData.value ?: return
+    fun updateSortOrder(newOrder: CoasterSortType): Boolean {
+        val currentState = _screenStateLiveData.value ?: return false
+        if (currentState.order == newOrder) return false
 
         _screenStateLiveData.value = currentState.copy(
             coasters = sortCoastersByType(currentState.coasters, newOrder),
             order = newOrder
         )
+
+        return true
     }
 
     fun getSelectedIndex(): Int {

@@ -135,7 +135,9 @@ fun ListScreen(
                     showSortBottomSheet = false
                 },
                 onOptionClick = { order ->
-                    viewModel.updateSortOrder(order)
+                    if (viewModel.updateSortOrder(order)) {
+                        showSortBottomSheet = false
+                    }
                 }
             )
         }
@@ -172,7 +174,6 @@ fun ListSortBottomSheet(
             selected,
             onOptionClick = { order ->
                 onOptionClick(order)
-                onDismissRequest()
             }
         )
     }
