@@ -54,4 +54,6 @@
     <string name="_1_podtacek">1 podtácek</string>
     <string name="_2_4_podtacky">%1$s podtácky</string>
     <string name="_5_podtacku">%1$s podtácků</string>
+    <string name="sort">Seřadit podtácky</string>
+    <string name="selected">Selected</string>
 </resources>
