@@ -41,7 +41,7 @@ fun LargePhotoScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            val pagerState = rememberPagerState(pageCount = { 2 })
+            val pagerState = rememberPagerState(pageCount = { 2 }, initialPage = screenState.startIndex)
 
             HorizontalPager(
                 state = pagerState
