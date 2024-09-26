@@ -126,4 +126,5 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
+    implementation(libs.zoomable)
 }

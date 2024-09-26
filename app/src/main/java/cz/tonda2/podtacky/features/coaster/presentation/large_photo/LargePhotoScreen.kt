@@ -25,6 +25,9 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.presentation.PageIndicator
+import net.engawapg.lib.zoomable.ScrollGesturePropagation
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.zoomable
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -42,6 +45,7 @@ fun LargePhotoScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             val pagerState = rememberPagerState(pageCount = { 2 }, initialPage = screenState.startIndex)
+            val zoomState = rememberZoomState(maxScale = 3f)
 
             HorizontalPager(
                 state = pagerState
@@ -55,7 +59,12 @@ fun LargePhotoScreen(
                 AsyncImage(
                     model = uri,
                     contentDescription = stringResource(R.string.large_coaster_image, page),
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .zoomable(
+                            zoomState = zoomState,
+                            scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
+                        )
                 )
             }
 
