@@ -315,7 +315,7 @@ fun DeleteConfirmation(
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text(stringResource(R.string.zru_it))
+                Text(stringResource(R.string.zrusit))
             }
         },
         title = { Text(text = stringResource(R.string.potvrdte_title)) },
