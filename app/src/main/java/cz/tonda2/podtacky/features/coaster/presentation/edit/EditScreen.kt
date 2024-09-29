@@ -30,6 +30,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -39,7 +42,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,6 +73,9 @@ import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.presentation.LoadingScreen
 import cz.tonda2.podtacky.features.coaster.presentation.ScreenState
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -136,8 +144,7 @@ fun EditScreen(
 
                 ScreenState.Loading -> LoadingScreen(modifier = Modifier.padding(paddingValues))
             }
-        }
-        else {
+        } else {
             LaunchedEffect(Unit) {
                 permissionState.launchMultiplePermissionRequest()
             }
@@ -145,6 +152,7 @@ fun EditScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EntryEditScreen(
     paddingValues: PaddingValues,
@@ -153,6 +161,11 @@ fun EntryEditScreen(
     viewModel: EditViewModel
 ) {
     val context = LocalContext.current
+    var showDatePicker by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
+    var selectedDate by remember {
+        mutableStateOf("")
+    }
 
     Column(
         modifier = Modifier
@@ -205,7 +218,16 @@ fun EntryEditScreen(
         EntryField(
             query = screenState.date,
             placeholder = stringResource(R.string.added_date),
-            onQueryChange = viewModel::updateDate
+            readOnly = true,
+            trailingIcon = {
+                IconButton(onClick = { showDatePicker = !showDatePicker }) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = stringResource(R.string.select_date)
+                    )
+                }
+            },
+            onQueryChange = {}
         )
         Spacer(modifier = Modifier.height(16.dp))
         EntryField(
@@ -214,6 +236,38 @@ fun EntryEditScreen(
             onQueryChange = viewModel::updateCount,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
+
+        if (showDatePicker) {
+             DatePickerDialog(
+                onDismissRequest = {
+                    selectedDate = screenState.date
+                    showDatePicker = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.updateDate(selectedDate)
+                            showDatePicker = false
+                        },
+                        enabled = datePickerState.selectedDateMillis != null
+                    ) {
+                        Text(text = stringResource(R.string.ulozit))
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            selectedDate = screenState.date
+                            showDatePicker = false
+                        }
+                    ) {
+                        Text(text = stringResource(R.string.zrusit))
+                    }
+                }) {
+                selectedDate = datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: screenState.date
+                DatePicker(state = datePickerState)
+            }
+        }
     }
 }
 
@@ -314,8 +368,10 @@ fun PictureBox(
 fun EntryField(
     query: String,
     placeholder: String,
+    readOnly: Boolean = false,
     singleline: Boolean = true,
     onQueryChange: (String) -> Unit,
+    trailingIcon: (@Composable () -> Unit) = {},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     OutlinedTextField(
@@ -324,7 +380,9 @@ fun EntryField(
             .padding(2.dp),
         value = query,
         singleLine = singleline,
+        readOnly = readOnly,
         onValueChange = onQueryChange,
+        trailingIcon = trailingIcon,
         placeholder = {
             Text(
                 text = placeholder,
@@ -337,4 +395,9 @@ fun EntryField(
             focusedBorderColor = MaterialTheme.colorScheme.secondary
         ),
     )
+}
+
+fun convertMillisToDate(millis: Long): String {
+    val formatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+    return formatter.format(Date(millis))
 }

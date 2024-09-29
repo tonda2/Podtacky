@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface CoasterDao {
 
     @Transaction
-    @Query("SELECT * FROM coasters ORDER BY DATE(SUBSTR(dateAdded, 7, 4) || '-' || SUBSTR(dateAdded, 4, 2) || '-' || SUBSTR(dateAdded, 1, 2)) DESC")
+    @Query("SELECT * FROM coasters")
     fun getCoasters(): LiveData<List<DbCoaster>>
 
     @Query("SELECT * FROM coasters ORDER BY dateAdded DESC")

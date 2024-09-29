@@ -1,12 +1,8 @@
 package cz.tonda2.podtacky.features.coaster.presentation.search
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -33,8 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.tonda2.podtacky.R
-import cz.tonda2.podtacky.core.presentation.CoasterCard
-import cz.tonda2.podtacky.core.presentation.NoResults
+import cz.tonda2.podtacky.core.presentation.CoasterList
 import cz.tonda2.podtacky.core.presentation.Screen
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -63,30 +58,16 @@ fun SearchScreen(
     ) { paddingValues ->
         val coasters = screenState.result
 
-        if (coasters.isEmpty()) {
-            NoResults(
-                text = stringResource(R.string.nothing_found),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary
-            )
-        }
-        else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentPadding = PaddingValues(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(coasters) { coaster ->
-                    CoasterCard(
-                        coaster = coaster
-                    ) {
-                        navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")
-                    }
-                }
+        CoasterList(
+            coasters = coasters,
+            emptyText = stringResource(R.string.nothing_found),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            onItemClick = { coaster ->
+                navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")
             }
-        }
+        )
     }
 }
 
