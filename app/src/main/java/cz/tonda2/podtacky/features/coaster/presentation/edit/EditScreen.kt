@@ -249,9 +249,9 @@ fun EntryEditScreen(
                             viewModel.updateDate(selectedDate)
                             showDatePicker = false
                         },
-                        enabled = datePickerState.selectedDateMillis != null
+                        enabled = datePickerState.selectedDateMillis != null,
                     ) {
-                        Text(text = stringResource(R.string.ulozit))
+                        Text(text = stringResource(R.string.ulozit), color = MaterialTheme.colorScheme.secondary)
                     }
                 },
                 dismissButton = {
@@ -261,7 +261,7 @@ fun EntryEditScreen(
                             showDatePicker = false
                         }
                     ) {
-                        Text(text = stringResource(R.string.zrusit))
+                        Text(text = stringResource(R.string.zrusit), color = MaterialTheme.colorScheme.secondary)
                     }
                 }) {
                 selectedDate = datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: screenState.date
