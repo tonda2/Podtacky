@@ -122,8 +122,18 @@ fun ProfileScreenContent(
                 text = stringResource(R.string.jste_prihlaseni_jako),
                 style = MaterialTheme.typography.titleMedium
             )
-
             Text(state.name)
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.number_of_backedup),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(text = stringResource(
+                R.string.out_of,
+                state.coasters.filter { it.uploaded }.size,
+                state.coasters.size
+            ))
 
             Spacer(Modifier.weight(1f))
 

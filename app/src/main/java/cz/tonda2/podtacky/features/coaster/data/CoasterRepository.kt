@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import cz.tonda2.podtacky.features.coaster.data.db.CoasterLocalDataSource
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 class CoasterRepository(
     private val localDataSource: CoasterLocalDataSource
@@ -15,6 +16,10 @@ class CoasterRepository(
 
     fun getCoastersFlow(): Flow<List<Coaster>> {
         return localDataSource.getCoastersFlow()
+    }
+
+    suspend fun getUndeletedCoastersList(): List<Coaster> {
+        return localDataSource.getCoastersFlow().first().filter { !it.deleted }
     }
 
     suspend fun getCoasterById(id: String): Coaster {

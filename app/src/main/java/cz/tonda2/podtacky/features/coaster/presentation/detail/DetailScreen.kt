@@ -110,7 +110,11 @@ fun DetailScreen(
             } else {
                 Box(modifier = Modifier.padding(paddingValues)) {
                     when (screenState.state) {
-                        ScreenState.Fill -> CoasterDetail(coaster) { navController.navigate(Screen.LargePhotoScreen.route + "/${coaster.coasterId}") }
+                        ScreenState.Fill -> CoasterDetail(coaster) { index ->
+                            navController.navigate(
+                                Screen.LargePhotoScreen.route + "/${coaster.coasterId}?${Screen.LargePhotoScreen.START_INDEX}=${index}"
+                            )
+                        }
                         ScreenState.Loading -> LoadingScreen(
                             modifier = Modifier.padding(
                                 paddingValues
@@ -158,7 +162,7 @@ fun DetailTopBar(
 @Composable
 fun CoasterDetail(
     coaster: Coaster,
-    onPhotoClick: () -> Unit
+    onPhotoClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -191,7 +195,7 @@ fun CoasterDetail(
 @Composable
 fun DetailTopPart(
     coaster: Coaster,
-    onPhotoClick: () -> Unit
+    onPhotoClick: (Int) -> Unit
 ) {
     Row(modifier = Modifier.padding(all = 16.dp)) {
         Box(
@@ -211,7 +215,7 @@ fun DetailTopPart(
                 AsyncImage(
                     modifier = Modifier
                         .size(size = 164.dp)
-                        .clickable { onPhotoClick() },
+                        .clickable { onPhotoClick(page) },
                     model = uri,
                     contentDescription = stringResource(R.string.coaster_image_cd, page)
                 )
@@ -311,7 +315,7 @@ fun DeleteConfirmation(
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text(stringResource(R.string.zru_it))
+                Text(stringResource(R.string.zrusit))
             }
         },
         title = { Text(text = stringResource(R.string.potvrdte_title)) },

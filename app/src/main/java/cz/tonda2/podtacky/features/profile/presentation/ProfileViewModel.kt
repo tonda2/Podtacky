@@ -3,7 +3,10 @@ package cz.tonda2.podtacky.features.profile.presentation
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.tonda2.podtacky.core.data.BackupManager
 import cz.tonda2.podtacky.core.data.ImportManager
+import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
+import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.profile.data.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,8 +15,9 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(
     private val userRepository: UserRepository,
-    private val backupManager: cz.tonda2.podtacky.core.data.BackupManager,
-    private val importManager: ImportManager
+    private val backupManager: BackupManager,
+    private val importManager: ImportManager,
+    private val coasterRepository: CoasterRepository
 ) : ViewModel() {
 
     private val _screenStateStream = MutableStateFlow(ProfileScreenState())
@@ -23,7 +27,11 @@ class ProfileViewModel(
         viewModelScope.launch {
             userRepository.userStream.collect { user ->
                 _screenStateStream.update {
-                    it.copy(id = user?.id, name = user?.name)
+                    it.copy(
+                        id = user?.id,
+                        name = user?.name,
+                        coasters = coasterRepository.getUndeletedCoastersList()
+                    )
                 }
             }
         }
@@ -62,5 +70,6 @@ data class ProfileScreenState(
     val id: String? = null,
     val name: String? = null,
     val downloading: Boolean = false,
-    val downloadCount: Int = 0
+    val downloadCount: Int = 0,
+    val coasters: List<Coaster> = emptyList()
 )
