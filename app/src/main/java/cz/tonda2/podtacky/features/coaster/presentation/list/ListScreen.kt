@@ -148,6 +148,7 @@ fun ListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
+            scrollModifier = Modifier.padding(paddingValues),
             onItemClick = { coaster ->
                 navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")
             }
