@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
+import cz.tonda2.podtacky.features.coaster.domain.CoasterSortType
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 
 class ListViewModel(
     private val coasterRepository: CoasterRepository
@@ -18,12 +20,41 @@ class ListViewModel(
     init {
         viewModelScope.launch {
             coasterRepository.getCoastersLive().observeForever { coasters ->
-                _screenStateLiveData.value = ListScreenState(coasters?.filter { !it.deleted } ?: emptyList())
+                _screenStateLiveData.value = ListScreenState(
+                    coasters = sortCoastersByType(coasters?.filter { !it.deleted } ?: emptyList(), CoasterSortType.DATE)
+                )
             }
         }
+    }
+
+    private fun sortCoastersByType(coasters: List<Coaster>, order: CoasterSortType): List<Coaster> {
+        val formatter = SimpleDateFormat("dd.MM.yyy")
+
+        return when (order) {
+            CoasterSortType.DATE -> coasters.sortedByDescending { formatter.parse(it.dateAdded) }
+            CoasterSortType.BREWERY -> coasters.sortedBy { it.brewery.lowercase() }
+            CoasterSortType.COUNT -> coasters.sortedByDescending { it.count }
+        }
+    }
+
+    fun updateSortOrder(newOrder: CoasterSortType): Boolean {
+        val currentState = _screenStateLiveData.value ?: return false
+        if (currentState.order == newOrder) return false
+
+        _screenStateLiveData.value = currentState.copy(
+            coasters = sortCoastersByType(currentState.coasters, newOrder),
+            order = newOrder
+        )
+
+        return true
+    }
+
+    fun getSelectedIndex(): Int {
+        return CoasterSortType.entries.indexOf(_screenStateLiveData.value?.order)
     }
 }
 
 data class ListScreenState(
-    val coasters: List<Coaster> = emptyList()
+    val coasters: List<Coaster> = emptyList(),
+    val order: CoasterSortType = CoasterSortType.DATE
 )

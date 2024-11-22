@@ -19,13 +19,19 @@ class LargePhotoViewModel(
     private val id: Long
         get() = savedStateHandle[Screen.LargePhotoScreen.ID] ?: 1L
 
+    private val startIndex: Int
+        get() = savedStateHandle[Screen.LargePhotoScreen.START_INDEX] ?: 0
+
     private val _screenStateStream = MutableStateFlow(PhotoScreenState())
     val screenStateStream = _screenStateStream.asStateFlow()
 
     init {
         viewModelScope.launch {
             _screenStateStream.update {
-                it.copy(coaster = coasterRepository.getCoasterById(id.toString()))
+                it.copy(
+                    coaster = coasterRepository.getCoasterById(id.toString()),
+                    startIndex = startIndex
+                )
             }
         }
     }
@@ -33,4 +39,5 @@ class LargePhotoViewModel(
 
 data class PhotoScreenState (
     val coaster: Coaster? = null,
+    val startIndex: Int = 0
 )
