@@ -30,3 +30,7 @@ The app can be downloaded from Google play
 - Add new coasters, their information and photos
 - Edit coasters
 - Automatic backup of data to Firebase storage (all data is kept locally as well)
+
+### Screenshots
+
+<img src="screenshots/sc1.jpg" alt="Main list screen" style="width:20%;"/>  <img src="screenshots/sc2.jpg" alt="Search screen" style="width:20%;"/>  <img src="screenshots/sc3.jpg" alt="Coaster detail screen" style="width:20%;"/>  <img src="screenshots/sc4.jpg" alt="Coaster edit screen" style="width:20%;"/>
