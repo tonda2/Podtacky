@@ -58,7 +58,7 @@ fun ExpandableFAB(
                         containerColor = containerColor,
                         buttonShape = shape
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
@@ -90,7 +90,7 @@ fun FABListItem(item: FABItem, containerColor: Color, buttonShape: Shape) {
         Spacer(modifier = Modifier.width(10.dp))
         FloatingActionButton(
             onClick = { item.onClick() },
-            modifier = Modifier.size(45.dp),
+            modifier = Modifier.size(40.dp),
             containerColor = containerColor,
             shape = buttonShape
         ) {
