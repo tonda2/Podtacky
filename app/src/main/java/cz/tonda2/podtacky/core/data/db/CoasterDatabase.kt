@@ -8,7 +8,8 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import cz.tonda2.podtacky.features.coaster.data.db.CoasterDao
 import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
-import cz.tonda2.podtacky.features.coaster.data.db.DbFolder
+import cz.tonda2.podtacky.features.folder.data.db.DbFolder
+import cz.tonda2.podtacky.features.folder.data.db.FolderDao
 
 @Database(
     version = 2,
@@ -17,6 +18,8 @@ import cz.tonda2.podtacky.features.coaster.data.db.DbFolder
 abstract class CoasterDatabase : RoomDatabase() {
 
     abstract fun coasterDao(): CoasterDao
+
+    abstract fun folderDao(): FolderDao
 
     companion object {
         fun newInstance(context: Context): CoasterDatabase {

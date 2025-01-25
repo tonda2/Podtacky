@@ -28,6 +28,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.presentation.BottomBar
+import cz.tonda2.podtacky.core.presentation.BottomBarScreenIndex
 import cz.tonda2.podtacky.features.coaster.presentation.DownloadingScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -57,7 +58,7 @@ fun ProfileScreen(
                 )
             },
             bottomBar = {
-                BottomBar(navController = navController, isList = false)
+                BottomBar(navController = navController, selectedInd = BottomBarScreenIndex.PROFILE.index)
             }
         ) { paddingValues ->
             ProfileScreenContent(

@@ -20,4 +20,6 @@ sealed class Screen(val route: String) {
     }
 
     data object ProfileScreen : Screen("profile")
+
+    data object FolderScreen : Screen("folder")
 }

@@ -15,6 +15,7 @@ import cz.tonda2.podtacky.features.coaster.presentation.edit.EditScreen
 import cz.tonda2.podtacky.features.coaster.presentation.large_photo.LargePhotoScreen
 import cz.tonda2.podtacky.features.coaster.presentation.list.ListScreen
 import cz.tonda2.podtacky.features.coaster.presentation.search.SearchScreen
+import cz.tonda2.podtacky.features.folder.presentation.list.FolderListScreen
 import cz.tonda2.podtacky.features.profile.presentation.ProfileScreen
 
 @Composable
@@ -72,6 +73,9 @@ fun Navigation(
             }
             composable(route = Screen.ProfileScreen.route) {
                 ProfileScreen(navController = navController)
+            }
+            composable(route = Screen.FolderScreen.route) {
+                FolderListScreen(navController = navController)
             }
         }
     }

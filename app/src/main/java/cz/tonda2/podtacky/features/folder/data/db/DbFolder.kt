@@ -1,4 +1,4 @@
-package cz.tonda2.podtacky.features.coaster.data.db
+package cz.tonda2.podtacky.features.folder.data.db
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

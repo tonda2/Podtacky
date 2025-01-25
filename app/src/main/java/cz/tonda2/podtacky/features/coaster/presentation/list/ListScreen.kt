@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.presentation.BottomBar
+import cz.tonda2.podtacky.core.presentation.BottomBarScreenIndex
 import cz.tonda2.podtacky.core.presentation.CoasterList
 import cz.tonda2.podtacky.core.presentation.ExpandableFAB
 import cz.tonda2.podtacky.core.presentation.FABItem
@@ -137,7 +138,7 @@ fun ListScreen(
             )
         },
         bottomBar = {
-            BottomBar(navController = navController, isList = true)
+            BottomBar(navController = navController, selectedInd = BottomBarScreenIndex.LIST.index)
         }
     ) { paddingValues ->
         val coasters = screenState?.coasters ?: emptyList()

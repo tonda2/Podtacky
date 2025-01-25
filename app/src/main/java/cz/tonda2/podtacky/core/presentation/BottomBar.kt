@@ -16,16 +16,27 @@ import cz.tonda2.podtacky.R
 @Composable
 fun BottomBar(
     navController: NavController,
-    isList: Boolean
+    selectedInd: Int
 ) {
     BottomAppBar(containerColor = MaterialTheme.colorScheme.secondaryContainer) {
         NavigationBarItem(
             painter = painterResource(id = R.drawable.baseline_list_24),
             name = stringResource(R.string.sbirka),
-            selected = isList,
+            selected = selectedInd == BottomBarScreenIndex.LIST.index,
             onClick = {
-                if (!isList) {
+                if (selectedInd != BottomBarScreenIndex.LIST.index) {
                     navController.navigate(Screen.ListScreen.route)
+                }
+            }
+        )
+
+        NavigationBarItem(
+            painter = painterResource(id = R.drawable.baseline_folder_24),
+            name = stringResource(R.string.slozky),
+            selected = selectedInd == BottomBarScreenIndex.FOLDER.index,
+            onClick = {
+                if (selectedInd != BottomBarScreenIndex.FOLDER.index) {
+                    navController.navigate(Screen.FolderScreen.route)
                 }
             }
         )
@@ -33,9 +44,9 @@ fun BottomBar(
         NavigationBarItem(
             painter = painterResource(id = R.drawable.baseline_manage_accounts_24),
             name = stringResource(R.string.ucet),
-            selected = !isList,
+            selected = selectedInd == BottomBarScreenIndex.PROFILE.index,
             onClick = {
-                if (isList) {
+                if (selectedInd != BottomBarScreenIndex.PROFILE.index) {
                     navController.navigate(Screen.ProfileScreen.route)
                 }
             }
@@ -69,4 +80,12 @@ private fun RowScope.NavigationBarItem(
             Text(text = name, style = MaterialTheme.typography.labelMedium, color = contentColor)
         }
     )
+}
+
+enum class BottomBarScreenIndex(
+    val index: Int
+) {
+    LIST(0),
+    FOLDER(1),
+    PROFILE(2)
 }
