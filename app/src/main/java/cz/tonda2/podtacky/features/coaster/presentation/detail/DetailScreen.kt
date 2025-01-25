@@ -23,8 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import cz.tonda2.podtacky.R
+import cz.tonda2.podtacky.core.presentation.DeleteConfirmation
 import cz.tonda2.podtacky.core.presentation.PageIndicator
 import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
@@ -299,26 +298,4 @@ fun Field(
             color = colorValue,
         )
     }
-}
-
-@Composable
-fun DeleteConfirmation(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            Button(onClick = onConfirm) {
-                Text(stringResource(R.string.smazat))
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text(stringResource(R.string.zrusit))
-            }
-        },
-        title = { Text(text = stringResource(R.string.potvrdte_title)) },
-        text = { Text(stringResource(R.string.potvrzeni)) }
-    )
 }
