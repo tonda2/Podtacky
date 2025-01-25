@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,14 +35,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.presentation.BottomBar
 import cz.tonda2.podtacky.core.presentation.CoasterList
+import cz.tonda2.podtacky.core.presentation.ExpandableFAB
+import cz.tonda2.podtacky.core.presentation.FABItem
+import cz.tonda2.podtacky.core.presentation.Grayable
 import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.domain.CoasterSortType
 import org.koin.androidx.compose.koinViewModel
@@ -57,19 +60,28 @@ fun ListScreen(
 ) {
     val screenState by viewModel.screenStateLiveData.observeAsState()
     var showSortBottomSheet by remember { mutableStateOf(false) }
+    var isFabExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate(Screen.EditScreen.route + "/-1")
-                },
+            ExpandableFAB(
+                expanded = isFabExpanded,
+                onClick = { isFabExpanded = !isFabExpanded },
+                options = listOf(
+                    FABItem(
+                        ImageVector.vectorResource(id = R.drawable.baseline_create_new_folder_24),
+                        title = stringResource(R.string.add_folder),
+                        onClick = {}
+                    ),
+                    FABItem(
+                        Icons.Filled.Add,
+                        title = stringResource(R.string.add_coaster),
+                        onClick = { navController.navigate(Screen.EditScreen.route + "/-1") }
+                    )
+                ),
                 modifier = Modifier
                     .padding(8.dp)
                     .size(64.dp, 64.dp),
-                shape = CircleShape,
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Icon(Icons.Filled.Add, stringResource(R.string.add_coaster_button))
             }
@@ -111,7 +123,10 @@ fun ListScreen(
                                 contentDescription = stringResource(R.string.search_button)
                             )
                         }
-                        IconButton(onClick = { showSortBottomSheet = !showSortBottomSheet }) {
+                        IconButton(onClick = {
+                            isFabExpanded = false
+                            showSortBottomSheet = !showSortBottomSheet
+                        }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_sort_24),
                                 contentDescription = stringResource(R.string.sort)
@@ -127,31 +142,33 @@ fun ListScreen(
     ) { paddingValues ->
         val coasters = screenState?.coasters ?: emptyList()
 
-        if (showSortBottomSheet) {
-            ListSortBottomSheet(
-                options = CoasterSortType.entries,
-                selected = viewModel.getSelectedIndex(),
-                onDismissRequest = {
-                    showSortBottomSheet = false
-                },
-                onOptionClick = { order ->
-                    if (viewModel.updateSortOrder(order)) {
+        Grayable(hidden = isFabExpanded, onClick = { isFabExpanded = false }) {
+            if (showSortBottomSheet) {
+                ListSortBottomSheet(
+                    options = CoasterSortType.entries,
+                    selected = viewModel.getSelectedIndex(),
+                    onDismissRequest = {
                         showSortBottomSheet = false
+                    },
+                    onOptionClick = { order ->
+                        if (viewModel.updateSortOrder(order)) {
+                            showSortBottomSheet = false
+                        }
                     }
+                )
+            }
+
+            CoasterList(
+                coasters = coasters,
+                emptyText = stringResource(R.string.no_coasters),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                onItemClick = { coaster ->
+                    navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")
                 }
             )
         }
-
-        CoasterList(
-            coasters = coasters,
-            emptyText = stringResource(R.string.no_coasters),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            onItemClick = { coaster ->
-                navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")
-            }
-        )
     }
 }
 
