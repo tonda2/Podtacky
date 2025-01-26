@@ -36,7 +36,7 @@ fun BottomBar(
             selected = selectedInd == BottomBarScreenIndex.FOLDER.index,
             onClick = {
                 if (selectedInd != BottomBarScreenIndex.FOLDER.index) {
-                    navController.navigate(Screen.FolderScreen.route)
+                    navController.navigate(Screen.FolderScreen.route + "/-1?${Screen.FolderScreen.SHOW_ADD_POPUP}=false")
                 }
             }
         )

@@ -21,5 +21,8 @@ sealed class Screen(val route: String) {
 
     data object ProfileScreen : Screen("profile")
 
-    data object FolderScreen : Screen("folder")
+    data object FolderScreen : Screen("folder") {
+        const val ID = "id"
+        const val SHOW_ADD_POPUP = "showAdd"
+    }
 }

@@ -74,8 +74,18 @@ fun Navigation(
             composable(route = Screen.ProfileScreen.route) {
                 ProfileScreen(navController = navController)
             }
-            composable(route = Screen.FolderScreen.route) {
-                FolderListScreen(navController = navController)
+            composable(
+                route = Screen.FolderScreen.route + "/{id}?${Screen.FolderScreen.SHOW_ADD_POPUP}={${Screen.FolderScreen.SHOW_ADD_POPUP}}",
+                arguments = listOf(
+                    navArgument(name = "id") {
+                        type = NavType.LongType
+                    },
+                    navArgument(name = Screen.FolderScreen.SHOW_ADD_POPUP) {
+                        type = NavType.BoolType
+                    }
+                )
+            ) {
+                FolderListScreen(navController = navController, defaultShowAddPopup = it.arguments?.getBoolean(Screen.FolderScreen.SHOW_ADD_POPUP) ?: false)
             }
         }
     }

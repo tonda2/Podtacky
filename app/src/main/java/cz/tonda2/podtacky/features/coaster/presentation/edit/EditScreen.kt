@@ -101,7 +101,7 @@ fun EditScreen(
                             viewModel.deletePicture(screenState.frontUri, context)
                             viewModel.deletePicture(screenState.backUri, context)
                         }
-                        navController.navigateUp()
+                        navController.navigate(Screen.ListScreen.route)
                     }) {
                         Icon(
                             Icons.AutoMirrored.Filled.KeyboardArrowLeft,

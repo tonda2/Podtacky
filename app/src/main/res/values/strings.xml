@@ -43,6 +43,7 @@
     <string name="importovat_z_lohu">Importovat zálohu</string>
     <string name="beer_glass_emoji">🍺</string>
     <string name="no_coasters">Zatím nemáte žádné podtácky, přidejte si je tlačítkem +</string>
+    <string name="no_folders">Zatím nemáte žádné složky, přidejte si je tlačítkem +</string>
     <string name="nothing_found">Nebyly nalezeny žádné podtácky</string>
     <string name="coaster_image_cd">Coaster Image %1$s</string>
     <string name="large_coaster_image">Large coaster image %1$s</string>
@@ -50,6 +51,7 @@
     <string name="bottom_bar_icon">Bottom bar icon %1$s</string>
     <string name="coaster_image_edit_screen">Coaster image edit screen</string>
     <string name="a_single_coaster_description">A single coaster, id %1$s</string>
+    <string name="a_single_folder_description">A single folder, id %1$s</string>
     <string name="page_indicator_current_page">Page indicator, current page %1$s</string>
     <string name="_1_podtacek">1 podtácek</string>
     <string name="_2_4_podtacky">%1$s podtácky</string>
@@ -62,4 +64,6 @@
     <string name="select_date">Select date</string>
     <string name="add_folder">Přidat složku</string>
     <string name="slozky">Složky</string>
+    <string name="pridat">Přidat</string>
+    <string name="jmeno_slozky">Jméno složky</string>
 </resources>
