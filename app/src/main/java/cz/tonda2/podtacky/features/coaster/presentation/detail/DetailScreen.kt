@@ -58,8 +58,6 @@ import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.presentation.PageIndicator
 import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
-import cz.tonda2.podtacky.features.coaster.presentation.LoadingScreen
-import cz.tonda2.podtacky.features.coaster.presentation.ScreenState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -67,7 +65,7 @@ fun DetailScreen(
     navController: NavController,
     viewModel: DetailViewModel = koinViewModel()
 ) {
-    val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
+    val screenState by viewModel.detailUiState.collectAsStateWithLifecycle()
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -109,16 +107,9 @@ fun DetailScreen(
                 )
             } else {
                 Box(modifier = Modifier.padding(paddingValues)) {
-                    when (screenState.state) {
-                        ScreenState.Fill -> CoasterDetail(coaster) { index ->
-                            navController.navigate(
-                                Screen.LargePhotoScreen.route + "/${coaster.coasterId}?${Screen.LargePhotoScreen.START_INDEX}=${index}"
-                            )
-                        }
-                        ScreenState.Loading -> LoadingScreen(
-                            modifier = Modifier.padding(
-                                paddingValues
-                            )
+                    CoasterDetail(coaster) { index ->
+                        navController.navigate(
+                            Screen.LargePhotoScreen.route + "/${coaster.coasterId}?${Screen.LargePhotoScreen.START_INDEX}=${index}"
                         )
                     }
                 }
@@ -281,7 +272,7 @@ fun Field(
     colorTitle: Color = MaterialTheme.colorScheme.onSecondary,
     styleValue: TextStyle = MaterialTheme.typography.headlineSmall,
     colorValue: Color = MaterialTheme.colorScheme.onPrimary,
-    ) {
+) {
     Column(
         modifier = Modifier
             .semantics {

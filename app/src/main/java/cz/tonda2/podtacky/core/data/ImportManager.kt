@@ -10,9 +10,9 @@ import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.storage.StorageException
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
-import cz.tonda2.podtacky.features.coaster.data.db.toDomain
 import cz.tonda2.podtacky.features.coaster.data.firebase.firestore.FirestoreRepository
 import cz.tonda2.podtacky.features.coaster.data.firebase.storage.FirebaseStorageRepository
+import cz.tonda2.podtacky.features.coaster.data.toDomain
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

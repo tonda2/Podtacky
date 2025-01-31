@@ -8,10 +8,10 @@ import androidx.lifecycle.viewModelScope
 import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
-import cz.tonda2.podtacky.features.coaster.presentation.ScreenState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class DetailViewModel(
@@ -19,30 +19,27 @@ class DetailViewModel(
     private val coasterRepository: CoasterRepository
 ) : ViewModel() {
 
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
+    }
+
     private val id: Long
         get() = savedStateHandle[Screen.DetailScreen.ID] ?: 1L
 
-    private val _screenStateStream = MutableStateFlow(DetailScreenState())
-    val screenStateStream = _screenStateStream.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            _screenStateStream.update {
-                it.copy(coaster = coasterRepository.getCoasterById(id.toString()))
-            }
-        }
-    }
+    val detailUiState: StateFlow<DetailScreenState> = coasterRepository
+        .getCoasterById(id.toString())
+        .map { DetailScreenState(coaster = it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = DetailScreenState()
+        )
 
     fun delete(context: Context) {
-        _screenStateStream.update {
-            it.copy(
-                state = ScreenState.Loading
-            )
-        }
         viewModelScope.launch {
             val contentResolver = context.contentResolver
-            val frontUri = _screenStateStream.value.coaster?.frontUri
-            val backUri = _screenStateStream.value.coaster?.backUri
+            val frontUri = detailUiState.value.coaster?.frontUri
+            val backUri = detailUiState.value.coaster?.backUri
 
             try {
                 var delCount = 0
@@ -57,7 +54,7 @@ class DetailViewModel(
                 Log.e("Deleting", e.toString())
             }
 
-            val coaster = _screenStateStream.value.coaster
+            val coaster = detailUiState.value.coaster
             if (coaster != null) {
                 if (coaster.uploaded) {
                     coasterRepository.markDeleted(coaster.coasterId.toString())
@@ -67,15 +64,9 @@ class DetailViewModel(
                 }
             }
         }
-        _screenStateStream.update {
-            it.copy(
-                state = ScreenState.Fill
-            )
-        }
     }
 }
 
 data class DetailScreenState(
-    val coaster: Coaster? = null,
-    val state: ScreenState = ScreenState.Fill
+    val coaster: Coaster? = null
 )

@@ -8,6 +8,8 @@ import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -29,7 +31,9 @@ class LargePhotoViewModel(
         viewModelScope.launch {
             _screenStateStream.update {
                 it.copy(
-                    coaster = coasterRepository.getCoasterById(id.toString()),
+                    coaster = coasterRepository.getCoasterById(id.toString())
+                        .filterNotNull()
+                        .first(),
                     startIndex = startIndex
                 )
             }

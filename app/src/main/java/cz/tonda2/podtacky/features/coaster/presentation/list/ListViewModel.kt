@@ -1,31 +1,45 @@
 package cz.tonda2.podtacky.features.coaster.presentation.list
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.coaster.domain.CoasterSortType
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import java.text.SimpleDateFormat
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ListViewModel(
     private val coasterRepository: CoasterRepository
 ) : ViewModel() {
 
-    private val _screenStateLiveData = MutableLiveData<ListScreenState>()
-    val screenStateLiveData: LiveData<ListScreenState> = _screenStateLiveData
-
-    init {
-        viewModelScope.launch {
-            coasterRepository.getCoastersLive().observeForever { coasters ->
-                _screenStateLiveData.value = ListScreenState(
-                    coasters = sortCoastersByType(coasters?.filter { !it.deleted } ?: emptyList(), CoasterSortType.DATE)
-                )
-            }
-        }
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
     }
+
+    private val _order = MutableStateFlow(CoasterSortType.DATE)
+
+    val listUiState: StateFlow<ListScreenState> = _order
+        .flatMapLatest { order ->
+            coasterRepository.getUndeletedCoastersList()
+                .map {
+                    ListScreenState(
+                        coasters = sortCoastersByType(it, order),
+                        order = order
+                    )
+                }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = ListScreenState()
+        )
 
     private fun sortCoastersByType(coasters: List<Coaster>, order: CoasterSortType): List<Coaster> {
         val formatter = SimpleDateFormat("dd.MM.yyy")
@@ -38,19 +52,15 @@ class ListViewModel(
     }
 
     fun updateSortOrder(newOrder: CoasterSortType): Boolean {
-        val currentState = _screenStateLiveData.value ?: return false
-        if (currentState.order == newOrder) return false
+        val currentOrder = _order.value
+        if (currentOrder == newOrder) return false
 
-        _screenStateLiveData.value = currentState.copy(
-            coasters = sortCoastersByType(currentState.coasters, newOrder),
-            order = newOrder
-        )
-
+        _order.value = newOrder
         return true
     }
 
     fun getSelectedIndex(): Int {
-        return CoasterSortType.entries.indexOf(_screenStateLiveData.value?.order)
+        return CoasterSortType.entries.indexOf(_order.value)
     }
 }
 
