@@ -22,8 +22,8 @@ android {
         applicationId = "cz.tonda2.podtacky"
         minSdk = 24
         targetSdk = 34
-        versionCode = 15
-        versionName = "1.1.1"
+        versionCode = 16
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
