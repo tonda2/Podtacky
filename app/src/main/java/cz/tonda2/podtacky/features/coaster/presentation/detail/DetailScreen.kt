@@ -76,7 +76,7 @@ fun DetailScreen(
             topBar = {
                 DetailTopBar(
                     coaster = coaster,
-                    onBackClick = { navController.navigate(Screen.ListScreen.route) },
+                    onBackClick = { navController.navigateUp() },
                     onDeleteClick = { showDialog = true }
                 )
             },
@@ -102,7 +102,7 @@ fun DetailScreen(
                 DeleteConfirmation(
                     onConfirm = {
                         viewModel.delete(context)
-                        navController.navigateUp()
+                        navController.navigate(Screen.ListScreen.route)
                         showDialog = false
                     },
                     onDismiss = { showDialog = false }
