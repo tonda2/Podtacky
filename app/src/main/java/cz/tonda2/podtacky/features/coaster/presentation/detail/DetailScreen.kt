@@ -76,7 +76,7 @@ fun DetailScreen(
             topBar = {
                 DetailTopBar(
                     coaster = coaster,
-                    onBackClick = { navController.navigateUp() },
+                    onBackClick = { navController.navigate(Screen.ListScreen.route) },
                     onDeleteClick = { showDialog = true }
                 )
             },
