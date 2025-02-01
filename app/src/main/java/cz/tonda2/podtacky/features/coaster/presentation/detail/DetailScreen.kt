@@ -102,7 +102,7 @@ fun DetailScreen(
                 DeleteConfirmation(
                     onConfirm = {
                         viewModel.delete(context)
-                        navController.navigateUp()
+                        navController.navigate(Screen.ListScreen.route)
                         showDialog = false
                     },
                     onDismiss = { showDialog = false }
@@ -281,7 +281,7 @@ fun Field(
     colorTitle: Color = MaterialTheme.colorScheme.onSecondary,
     styleValue: TextStyle = MaterialTheme.typography.headlineSmall,
     colorValue: Color = MaterialTheme.colorScheme.onPrimary,
-    ) {
+) {
     Column(
         modifier = Modifier
             .semantics {

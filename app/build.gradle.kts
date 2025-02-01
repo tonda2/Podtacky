@@ -22,8 +22,8 @@ android {
         applicationId = "cz.tonda2.podtacky"
         minSdk = 24
         targetSdk = 34
-        versionCode = 15
-        versionName = "1.1.1"
+        versionCode = 20
+        versionName = "1.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -86,8 +86,6 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
 

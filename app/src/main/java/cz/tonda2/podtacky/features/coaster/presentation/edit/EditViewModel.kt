@@ -3,6 +3,9 @@ package cz.tonda2.podtacky.features.coaster.presentation.edit
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,9 +13,6 @@ import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.coaster.presentation.ScreenState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -27,58 +27,56 @@ class EditViewModel(
     private val id: Long
         get() = savedStateHandle[Screen.EditScreen.ID] ?: -1L
 
-    private val _screenStateStream = MutableStateFlow(EditScreenState())
-    val screenStateStream = _screenStateStream.asStateFlow()
+    var coasterUiState by mutableStateOf(EditScreenState())
+        private set
 
     init {
         viewModelScope.launch {
             if (id != -1L) {
                 val coaster = coasterRepository.getCoasterById(id.toString())
-                _screenStateStream.update {
-                    it.copy(
-                        title = "Upravit podtácek",
-                        oldCoaster = coaster,
-                        brewery = coaster.brewery,
-                        description = coaster.description,
-                        date = coaster.dateAdded,
-                        city = coaster.city,
-                        count = coaster.count.toString(),
-                        frontUri = coaster.frontUri,
-                        backUri = coaster.backUri
-                    )
-                }
+
+                coasterUiState = EditScreenState(
+                    title = "Upravit podtácek",
+                    oldCoaster = coaster,
+                    brewery = coaster?.brewery ?: "",
+                    description = coaster?.description ?: "",
+                    date = coaster?.dateAdded ?: "",
+                    city = coaster?.city ?: "",
+                    count = coaster?.count.toString(),
+                    frontUri = coaster?.frontUri ?: Uri.EMPTY,
+                    backUri = coaster?.backUri ?: Uri.EMPTY
+                )
             }
         }
     }
 
     fun saveEdit() {
-        val old = _screenStateStream.value.oldCoaster
+        val old = coasterUiState.oldCoaster
         if (
-            old?.brewery == _screenStateStream.value.brewery &&
-            old.description == _screenStateStream.value.description &&
-            old.dateAdded == _screenStateStream.value.date &&
-            old.city == _screenStateStream.value.city &&
-            old.count.toString() == _screenStateStream.value.count &&
-            old.frontUri == _screenStateStream.value.frontUri &&
-            old.backUri == _screenStateStream.value.backUri
+            old?.brewery == coasterUiState.brewery &&
+            old.description == coasterUiState.description &&
+            old.dateAdded == coasterUiState.date &&
+            old.city == coasterUiState.city &&
+            old.count.toString() == coasterUiState.count &&
+            old.frontUri == coasterUiState.frontUri &&
+            old.backUri == coasterUiState.backUri
         ) return
 
-        _screenStateStream.update {
-            it.copy(
-                state = ScreenState.Loading
-            )
-        }
+        coasterUiState = coasterUiState.copy(
+            state = ScreenState.Loading
+        )
+
         viewModelScope.launch {
             coasterRepository.addCoaster(
                 Coaster(
                     uid = UUID.randomUUID().toString(),
-                    brewery = _screenStateStream.value.brewery.trim(),
-                    description = _screenStateStream.value.description.trim(),
-                    dateAdded = _screenStateStream.value.date,
-                    city = _screenStateStream.value.city.trim(),
-                    count = _screenStateStream.value.count.toIntOrNull() ?: 1,
-                    frontUri = _screenStateStream.value.frontUri,
-                    backUri = _screenStateStream.value.backUri,
+                    brewery = coasterUiState.brewery.trim(),
+                    description = coasterUiState.description.trim(),
+                    dateAdded = coasterUiState.date,
+                    city = coasterUiState.city.trim(),
+                    count = coasterUiState.count.toIntOrNull() ?: 1,
+                    frontUri = coasterUiState.frontUri,
+                    backUri = coasterUiState.backUri,
                     uploaded = false,
                     deleted = false
                 )
@@ -87,22 +85,19 @@ class EditViewModel(
             if (old != null) {
                 if (old.uploaded) {
                     coasterRepository.markDeleted(old.coasterId.toString())
-                }
-                else {
+                } else {
                     coasterRepository.deleteCoaster(old)
                 }
             }
         }
-        _screenStateStream.update {
-            it.copy(
-                state = ScreenState.Fill
-            )
-        }
+        coasterUiState = coasterUiState.copy(
+            state = ScreenState.Fill
+        )
     }
 
     fun deletePicture(uri: Uri, context: Context) {
         if (uri != Uri.EMPTY) {
-            if (screenStateStream.value.frontUri == uri) {
+            if (coasterUiState.frontUri == uri) {
                 updateFrontUri(Uri.EMPTY)
             } else {
                 updateBackUri(Uri.EMPTY)
@@ -118,57 +113,47 @@ class EditViewModel(
     }
 
     fun updateBrewery(brewery: String) {
-        _screenStateStream.update {
-            it.copy(
-                brewery = brewery
-            )
-        }
+        coasterUiState = coasterUiState.copy(
+            brewery = brewery
+        )
     }
+
     fun updateDescription(description: String) {
-        _screenStateStream.update {
-            it.copy(
-                description = description
-            )
-        }
+        coasterUiState = coasterUiState.copy(
+            description = description
+        )
     }
+
     fun updateDate(date: String) {
-        _screenStateStream.update {
-            it.copy(
-                date = date
-            )
-        }
+        coasterUiState = coasterUiState.copy(
+            date = date
+        )
     }
+
     fun updateCity(city: String) {
-        _screenStateStream.update {
-            it.copy(
-                city = city
-            )
-        }
+        coasterUiState = coasterUiState.copy(
+            city = city
+        )
     }
+
     fun updateCount(count: String) {
         if (count.isNotEmpty() && count.toIntOrNull() == null) return
 
-        _screenStateStream.update {
-            it.copy(
-                count = count
-            )
-        }
+        coasterUiState = coasterUiState.copy(
+            count = count
+        )
     }
 
     fun updateFrontUri(uri: Uri) {
-        _screenStateStream.update {
-            it.copy(
-                frontUri = uri
-            )
-        }
+        coasterUiState = coasterUiState.copy(
+            frontUri = uri
+        )
     }
 
     fun updateBackUri(uri: Uri) {
-        _screenStateStream.update {
-            it.copy(
-                backUri = uri
-            )
-        }
+        coasterUiState = coasterUiState.copy(
+            backUri = uri
+        )
     }
 }
 
