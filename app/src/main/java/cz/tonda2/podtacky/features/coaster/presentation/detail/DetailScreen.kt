@@ -51,12 +51,15 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.presentation.PageIndicator
 import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
+import cz.tonda2.podtacky.features.coaster.presentation.LoadingScreen
+import cz.tonda2.podtacky.features.coaster.presentation.ScreenState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -64,7 +67,7 @@ fun DetailScreen(
     navController: NavController,
     viewModel: DetailViewModel = koinViewModel()
 ) {
-    val screenState = viewModel.detailUiState
+    val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -99,16 +102,23 @@ fun DetailScreen(
                 DeleteConfirmation(
                     onConfirm = {
                         viewModel.delete(context)
-                        navController.navigate(Screen.ListScreen.route)
+                        navController.navigateUp()
                         showDialog = false
                     },
                     onDismiss = { showDialog = false }
                 )
             } else {
                 Box(modifier = Modifier.padding(paddingValues)) {
-                    CoasterDetail(coaster) { index ->
-                        navController.navigate(
-                            Screen.LargePhotoScreen.route + "/${coaster.coasterId}?${Screen.LargePhotoScreen.START_INDEX}=${index}"
+                    when (screenState.state) {
+                        ScreenState.Fill -> CoasterDetail(coaster) { index ->
+                            navController.navigate(
+                                Screen.LargePhotoScreen.route + "/${coaster.coasterId}?${Screen.LargePhotoScreen.START_INDEX}=${index}"
+                            )
+                        }
+                        ScreenState.Loading -> LoadingScreen(
+                            modifier = Modifier.padding(
+                                paddingValues
+                            )
                         )
                     }
                 }
