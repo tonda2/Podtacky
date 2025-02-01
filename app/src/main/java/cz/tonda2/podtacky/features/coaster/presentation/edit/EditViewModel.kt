@@ -13,8 +13,6 @@ import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.coaster.presentation.ScreenState
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -36,18 +34,17 @@ class EditViewModel(
         viewModelScope.launch {
             if (id != -1L) {
                 val coaster = coasterRepository.getCoasterById(id.toString())
-                    .filterNotNull()
-                    .first()
+
                 coasterUiState = EditScreenState(
                     title = "Upravit podtácek",
                     oldCoaster = coaster,
-                    brewery = coaster.brewery,
-                    description = coaster.description,
-                    date = coaster.dateAdded,
-                    city = coaster.city,
-                    count = coaster.count.toString(),
-                    frontUri = coaster.frontUri,
-                    backUri = coaster.backUri
+                    brewery = coaster?.brewery ?: "",
+                    description = coaster?.description ?: "",
+                    date = coaster?.dateAdded ?: "",
+                    city = coaster?.city ?: "",
+                    count = coaster?.count.toString(),
+                    frontUri = coaster?.frontUri ?: Uri.EMPTY,
+                    backUri = coaster?.backUri ?: Uri.EMPTY
                 )
             }
         }

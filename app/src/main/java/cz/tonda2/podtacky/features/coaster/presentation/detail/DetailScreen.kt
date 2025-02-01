@@ -51,7 +51,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import cz.tonda2.podtacky.R
@@ -65,7 +64,7 @@ fun DetailScreen(
     navController: NavController,
     viewModel: DetailViewModel = koinViewModel()
 ) {
-    val screenState by viewModel.detailUiState.collectAsStateWithLifecycle()
+    val screenState = viewModel.detailUiState
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -100,7 +99,7 @@ fun DetailScreen(
                 DeleteConfirmation(
                     onConfirm = {
                         viewModel.delete(context)
-                        navController.navigateUp()
+                        navController.navigate(Screen.ListScreen.route)
                         showDialog = false
                     },
                     onDismiss = { showDialog = false }

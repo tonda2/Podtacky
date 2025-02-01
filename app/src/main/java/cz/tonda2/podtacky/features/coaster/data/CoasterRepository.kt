@@ -5,7 +5,6 @@ import cz.tonda2.podtacky.features.coaster.data.db.CoasterDao
 import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class CoasterRepository(
@@ -28,9 +27,9 @@ class CoasterRepository(
         }
     }
 
-    fun getCoasterById(id: String): Flow<Coaster?> {
+    suspend fun getCoasterById(id: String): Coaster? {
         val coaster = coasterDao.getCoasterById(id)
-        return coaster.map { it?.toDomain() }
+        return coaster?.toDomain()
     }
 
     fun searchCoasters(query: String): Flow<List<Coaster>> {
@@ -40,7 +39,7 @@ class CoasterRepository(
     }
 
     suspend fun isCoasterDuplicate(coaster: Coaster): Boolean {
-        return coasterDao.getCoasterByUid(coaster.uid).first() != null
+        return coasterDao.getCoasterByUid(coaster.uid) != null
     }
 
     suspend fun markUploaded(id: String) {

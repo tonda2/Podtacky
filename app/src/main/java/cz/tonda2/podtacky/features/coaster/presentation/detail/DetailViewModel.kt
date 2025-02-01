@@ -2,16 +2,15 @@ package cz.tonda2.podtacky.features.coaster.presentation.detail
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class DetailViewModel(
@@ -19,27 +18,27 @@ class DetailViewModel(
     private val coasterRepository: CoasterRepository
 ) : ViewModel() {
 
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
-    }
-
     private val id: Long
         get() = savedStateHandle[Screen.DetailScreen.ID] ?: 1L
 
-    val detailUiState: StateFlow<DetailScreenState> = coasterRepository
-        .getCoasterById(id.toString())
-        .map { DetailScreenState(coaster = it) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = DetailScreenState()
-        )
+    var detailUiState by mutableStateOf(DetailScreenState())
+        private set
+
+    init {
+        viewModelScope.launch {
+            val coaster = coasterRepository.getCoasterById(id.toString())
+
+            detailUiState = DetailScreenState(
+                coaster = coaster
+            )
+        }
+    }
 
     fun delete(context: Context) {
         viewModelScope.launch {
             val contentResolver = context.contentResolver
-            val frontUri = detailUiState.value.coaster?.frontUri
-            val backUri = detailUiState.value.coaster?.backUri
+            val frontUri = detailUiState.coaster?.frontUri
+            val backUri = detailUiState.coaster?.backUri
 
             try {
                 var delCount = 0
@@ -54,7 +53,7 @@ class DetailViewModel(
                 Log.e("Deleting", e.toString())
             }
 
-            val coaster = detailUiState.value.coaster
+            val coaster = detailUiState.coaster
             if (coaster != null) {
                 if (coaster.uploaded) {
                     coasterRepository.markDeleted(coaster.coasterId.toString())
