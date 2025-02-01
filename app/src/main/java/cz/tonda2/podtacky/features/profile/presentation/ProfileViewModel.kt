@@ -11,7 +11,6 @@ import cz.tonda2.podtacky.features.profile.data.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -28,12 +27,12 @@ class ProfileViewModel(
     init {
         viewModelScope.launch {
             combine(
-                userRepository.userStream.filterNotNull(),
+                userRepository.userStream,
                 coasterRepository.getUndeletedCoastersList()
             ) { user, coasters ->
                 ProfileScreenState(
-                    id = user.id,
-                    name = user.name,
+                    id = user?.id,
+                    name = user?.name,
                     coasters = coasters,
                     downloading = _profileUiState.value.downloading,
                     downloadCount = _profileUiState.value.downloadCount
