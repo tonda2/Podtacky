@@ -20,7 +20,7 @@ class BackupManager(
     suspend fun createBackup() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        val coasters = coasterRepository.getCoastersFlow().first()
+        val coasters = coasterRepository.getAllCoasters().first()
         val toDelete = coasters.filter { c -> c.deleted }
         val toUpload = coasters.filter { c -> !c.deleted && !c.uploaded }
 

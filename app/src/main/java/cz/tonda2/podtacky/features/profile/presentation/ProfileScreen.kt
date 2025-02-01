@@ -38,7 +38,7 @@ fun ProfileScreen(
     navController: NavController,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
-    val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
+    val screenState by viewModel.profileUiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = FirebaseAuthUIActivityResultContract(),

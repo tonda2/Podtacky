@@ -27,7 +27,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.presentation.BottomBar
@@ -59,7 +59,7 @@ fun ListScreen(
     viewModel: ListViewModel = koinViewModel(),
     navController: NavController
 ) {
-    val screenState by viewModel.screenStateLiveData.observeAsState()
+    val listUiState by viewModel.listUiState.collectAsStateWithLifecycle()
     var showSortBottomSheet by remember { mutableStateOf(false) }
     var isFabExpanded by remember { mutableStateOf(false) }
 
@@ -94,7 +94,7 @@ fun ListScreen(
                         Text(text = stringResource(R.string.list_title))
                         Text(
                             text =
-                            when (screenState?.coasters?.size ?: 0) {
+                            when (listUiState.coasters.size) {
                                 1 -> {
                                     stringResource(R.string._1_podtacek)
                                 }
@@ -102,13 +102,13 @@ fun ListScreen(
                                 in 1..4 -> {
                                     stringResource(
                                         R.string._2_4_podtacky,
-                                        screenState?.coasters?.size ?: 0
+                                        listUiState.coasters.size
                                     )
                                 }
 
                                 else -> stringResource(
                                     R.string._5_podtacku,
-                                    screenState?.coasters?.size ?: 0
+                                    listUiState.coasters.size
                                 )
                             },
                             style = MaterialTheme.typography.bodySmall,
@@ -141,7 +141,7 @@ fun ListScreen(
             BottomBar(navController = navController, selectedInd = BottomBarScreenIndex.LIST.index)
         }
     ) { paddingValues ->
-        val coasters = screenState?.coasters ?: emptyList()
+        val coasters = listUiState.coasters
 
         Grayable(hidden = isFabExpanded, onClick = { isFabExpanded = false }) {
             if (showSortBottomSheet) {

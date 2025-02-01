@@ -61,7 +61,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -84,7 +83,7 @@ fun EditScreen(
     navController: NavController,
     viewModel: EditViewModel = koinViewModel()
 ) {
-    val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
+    val screenState = viewModel.coasterUiState
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 

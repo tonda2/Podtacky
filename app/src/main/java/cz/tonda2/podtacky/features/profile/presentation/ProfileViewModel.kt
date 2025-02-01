@@ -9,7 +9,8 @@ import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.profile.data.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -20,19 +21,24 @@ class ProfileViewModel(
     private val coasterRepository: CoasterRepository
 ) : ViewModel() {
 
-    private val _screenStateStream = MutableStateFlow(ProfileScreenState())
-    val screenStateStream = _screenStateStream.asStateFlow()
+    private val _profileUiState = MutableStateFlow(ProfileScreenState())
+    val profileUiState: StateFlow<ProfileScreenState> = _profileUiState
 
     init {
         viewModelScope.launch {
-            userRepository.userStream.collect { user ->
-                _screenStateStream.update {
-                    it.copy(
-                        id = user?.id,
-                        name = user?.name,
-                        coasters = coasterRepository.getUndeletedCoastersList()
-                    )
-                }
+            combine(
+                userRepository.userStream,
+                coasterRepository.getUndeletedCoastersList()
+            ) { user, coasters ->
+                ProfileScreenState(
+                    id = user?.id,
+                    name = user?.name,
+                    coasters = coasters,
+                    downloading = _profileUiState.value.downloading,
+                    downloadCount = _profileUiState.value.downloadCount
+                )
+            }.collect { newState ->
+                _profileUiState.value = newState
             }
         }
     }
@@ -49,17 +55,17 @@ class ProfileViewModel(
 
     fun import(context: Context) {
         viewModelScope.launch {
-            _screenStateStream.update {
+            _profileUiState.update {
                 it.copy(downloading = true, downloadCount = 0)
             }
 
             importManager.importBackup(context) {
-                _screenStateStream.update {
-                    it.copy(downloadCount = _screenStateStream.value.downloadCount + 1)
+                _profileUiState.update {
+                    it.copy(downloadCount = _profileUiState.value.downloadCount + 1)
                 }
             }
 
-            _screenStateStream.update {
+            _profileUiState.update {
                 it.copy(downloading = false, downloadCount = 0)
             }
         }

@@ -1,6 +1,5 @@
 package cz.tonda2.podtacky.features.coaster.data.db
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -13,10 +12,7 @@ interface CoasterDao {
 
     @Transaction
     @Query("SELECT * FROM coasters")
-    fun getCoasters(): LiveData<List<DbCoaster>>
-
-    @Query("SELECT * FROM coasters ORDER BY dateAdded DESC")
-    fun getCoastersFlow(): Flow<List<DbCoaster>>
+    fun getCoasters(): Flow<List<DbCoaster>>
 
     @Query("SELECT * FROM coasters WHERE coasterId = :id")
     suspend fun getCoasterById(id: String): DbCoaster?
