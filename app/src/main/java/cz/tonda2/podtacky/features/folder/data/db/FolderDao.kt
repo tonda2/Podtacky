@@ -20,6 +20,14 @@ interface FolderDao {
     @Query("SELECT * FROM folders")
     fun getFolders(): Flow<List<DbFolder>>
 
+    @Transaction
+    @Query("SELECT * FROM folders WHERE parentId = :id")
+    fun getSubFolders(id: String): Flow<List<DbFolder>>
+
+    @Transaction
+    @Query("SELECT * FROM folders WHERE parentId is NULL")
+    fun getFoldersWithoutParent(): Flow<List<DbFolder>>
+
     @Query("SELECT * FROM folders WHERE folderId = :id")
     suspend fun getFolderById(id: String): DbFolder?
 

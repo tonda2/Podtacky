@@ -16,6 +16,18 @@ class FolderRepository(
         }
     }
 
+    fun getSubFolders(parentId: String): Flow<List<Folder>> {
+        return folderDao.getSubFolders(parentId).map { list ->
+            list.map { dbFolder -> dbFolder.toDomain() }
+        }
+    }
+
+    fun getFoldersWithoutParent(): Flow<List<Folder>> {
+        return folderDao.getFoldersWithoutParent().map { list ->
+            list.map { dbFolder -> dbFolder.toDomain() }
+        }
+    }
+
     suspend fun getFolderById(folderId: String): Folder? {
         return folderDao.getFolderById(folderId)?.toDomain()
     }

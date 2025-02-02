@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,7 +44,7 @@ fun FolderListScreen(
     defaultShowAddPopup: Boolean
 ) {
 
-    val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
+    val screenState by viewModel.folderListUiState.collectAsStateWithLifecycle()
 
     var isFabExpanded by remember { mutableStateOf(false) }
     var showAddPopup by remember { mutableStateOf(defaultShowAddPopup) }
@@ -78,7 +79,17 @@ fun FolderListScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = stringResource(R.string.slozky))
+                    Text(text = screenState.parentFolder?.name ?: stringResource(R.string.slozky))
+                },
+                navigationIcon = {
+                    if (screenState.parentFolder != null) {
+                        IconButton(onClick = { navController.navigateUp() }) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = stringResource(R.string.back_button)
+                            )
+                        }
+                    }
                 },
                 actions = {
                     Row {
@@ -116,13 +127,13 @@ fun FolderListScreen(
         } else {
             Grayable(hidden = isFabExpanded, onClick = { isFabExpanded = false }) {
                 FolderList(
-                    folders = listOf(),
+                    folders = screenState.subFolders,
                     emptyText = stringResource(R.string.no_folders),
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
                     onItemClick = { folder ->
-                        navController.navigate(Screen.DetailScreen.route + "/${folder.folderId}")
+                        navController.navigate(Screen.FolderScreen.route + "/${folder.folderId}?${Screen.FolderScreen.SHOW_ADD_POPUP}=false")
                     }
                 )
             }

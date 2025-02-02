@@ -4,63 +4,51 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.tonda2.podtacky.core.presentation.Screen
+import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.folder.data.FolderRepository
 import cz.tonda2.podtacky.features.folder.domain.Folder
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class FolderListViewModel(
     private val savedStateHandle: SavedStateHandle,
-    private val folderRepository: FolderRepository
+    private val folderRepository: FolderRepository,
+    private val coasterRepository: CoasterRepository
 ) : ViewModel() {
-
-    private val _screenStateStream = MutableStateFlow(FolderListScreenState())
-    val screenStateStream = _screenStateStream.asStateFlow()
 
     private val id: Long
         get() = savedStateHandle[Screen.FolderScreen.ID] ?: -1L
 
+    private val _folderListUiState = MutableStateFlow(FolderListScreenState())
+    val folderListUiState: StateFlow<FolderListScreenState> = _folderListUiState
+
     init {
         viewModelScope.launch {
-            /**
-             * TODO
-             * Pokud id není -1, jsem už ve složce -> nadpis jméno parenta, dát šipku zpět
-             * Přes dao najít všechny složky s tímhle id jako parentem (pokud -1, tak null)
-             * Pak použít FolderWIthCoasters pro najití podtácků v téhle složce -> jak pro ty bez šložky? Možná udělat hlavní složku 'vše', aby každý měl?
-             */
-//            if (id != -1L) {
-//                val coaster = coasterRepository.getCoasterById(id.toString())
-//                _screenStateStream.update {
-//                    it.copy(
-//                        title = "Upravit podtácek",
-//                        oldCoaster = coaster,
-//                        brewery = coaster.brewery,
-//                        description = coaster.description,
-//                        date = coaster.dateAdded,
-//                        city = coaster.city,
-//                        count = coaster.count.toString(),
-//                        frontUri = coaster.frontUri,
-//                        backUri = coaster.backUri
-//                    )
-//                }
-//            }
+            combine(
+                if (id == -1L) folderRepository.getFoldersWithoutParent() else folderRepository.getSubFolders(id.toString()),
+                if (id == -1L) coasterRepository.getCoastersWithoutFolder() else coasterRepository.getCoastersInFolder(id.toString())
+            ) { subfolders, coasters ->
+                FolderListScreenState(
+                    parentFolder = folderRepository.getFolderById(id.toString()),
+                    subFolders = subfolders,
+                    coasters = coasters
+                )
+            }.collect { newState ->
+                _folderListUiState.value = newState
+            }
         }
     }
 
     fun updateNewFolderName(name: String) {
-        _screenStateStream.update {
-            it.copy(
-                newFolderName = name
-            )
-        }
+        _folderListUiState.value = _folderListUiState.value.copy(newFolderName = name)
     }
 
     fun addFolder() {
         val newFolder = Folder(
-            name = _screenStateStream.value.newFolderName,
+            name = _folderListUiState.value.newFolderName.trim(),
             parentId = if (id != -1L) id else null,
             uploaded = false,
             deleted = false

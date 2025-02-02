@@ -1,8 +1,8 @@
 package cz.tonda2.podtacky.core.presentation
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.tonda2.podtacky.R
@@ -60,14 +61,18 @@ private fun FolderItem(
     onOptionsClick: () -> Unit
 ) {
     Row(modifier = modifier) {
-        Text(
+        Box(
             modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(start = 8.dp),
-            text = folder.name,
-            style = MaterialTheme.typography.headlineLarge
-        )
-        Spacer(modifier = Modifier.weight(1f))
+                .weight(1f)
+                .padding(start = 8.dp)
+        ) {
+            Text(
+                text = folder.name,
+                style = MaterialTheme.typography.headlineLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
         IconButton(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
@@ -76,7 +81,7 @@ private fun FolderItem(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_three_dots),
-                contentDescription = stringResource(R.string.back_button)
+                contentDescription = stringResource(R.string.folder_options)
             )
         }
     }
