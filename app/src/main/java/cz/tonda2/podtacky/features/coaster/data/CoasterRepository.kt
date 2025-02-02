@@ -27,6 +27,18 @@ class CoasterRepository(
         }
     }
 
+    fun getCoastersInFolder(folderId: String): Flow<List<Coaster>> {
+        return coasterDao.getCoastersByFolder(folderId).map { list ->
+            list.map { dbCoaster -> dbCoaster.toDomain() }
+        }
+    }
+
+    fun getCoastersWithoutFolder(): Flow<List<Coaster>> {
+        return coasterDao.getCoastersWithoutFolder().map { list ->
+            list.map { dbCoaster -> dbCoaster.toDomain() }
+        }
+    }
+
     suspend fun getCoasterById(id: String): Coaster? {
         val coaster = coasterDao.getCoasterById(id)
         return coaster?.toDomain()
