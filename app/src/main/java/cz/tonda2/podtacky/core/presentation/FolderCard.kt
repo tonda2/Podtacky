@@ -63,12 +63,13 @@ private fun FolderItem(
     Row(modifier = modifier) {
         Box(
             modifier = Modifier
+                .align(Alignment.CenterVertically)
                 .weight(1f)
                 .padding(start = 8.dp)
         ) {
             Text(
                 text = folder.name,
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -79,7 +80,11 @@ fun FolderListScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = screenState.parentFolder?.name ?: stringResource(R.string.slozky))
+                    Text(
+                        text = screenState.parentFolder?.name ?: stringResource(R.string.slozky),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 },
                 navigationIcon = {
                     if (screenState.parentFolder != null) {
