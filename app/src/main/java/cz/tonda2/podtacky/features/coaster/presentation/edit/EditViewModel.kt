@@ -56,7 +56,7 @@ class EditViewModel(
             }
 
             val folder = folderRepository.getFolderById(folderId.toString())
-            val folderList = folderRepository.getFoldersWithoutParent().first()
+            val folderList = (if (folder == null) folderRepository.getFoldersWithoutParent() else folderRepository.getSubFolders(folderId.toString())).first()
             coasterUiState = coasterUiState.copy(
                 oldFolder = folder,
                 newFolder = folder,

@@ -305,7 +305,7 @@ fun EntryEditScreen(
                 onDismiss = {
                     showFolderPicker = false
                     viewModel.resetNewFolder()
-                    viewModel.updateFolderList(null)
+                    viewModel.updateFolderList(screenState.oldFolder?.folderId)
                 }
             )
         }
