@@ -32,7 +32,7 @@ import cz.tonda2.podtacky.core.presentation.BottomBar
 import cz.tonda2.podtacky.core.presentation.BottomBarScreenIndex
 import cz.tonda2.podtacky.core.presentation.ExpandableFAB
 import cz.tonda2.podtacky.core.presentation.FABItem
-import cz.tonda2.podtacky.core.presentation.FolderList
+import cz.tonda2.podtacky.core.presentation.FolderAndCoasterList
 import cz.tonda2.podtacky.core.presentation.Grayable
 import cz.tonda2.podtacky.core.presentation.Screen
 import org.koin.androidx.compose.koinViewModel
@@ -131,14 +131,18 @@ fun FolderListScreen(
             )
         } else {
             Grayable(hidden = isFabExpanded, onClick = { isFabExpanded = false }) {
-                FolderList(
+                FolderAndCoasterList(
                     folders = screenState.subFolders,
+                    coasters = screenState.coasters,
                     emptyText = stringResource(R.string.no_folders),
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
-                    onItemClick = { folder ->
+                    onFolderClick = { folder ->
                         navController.navigate(Screen.FolderScreen.route + "/${folder.folderId}?${Screen.FolderScreen.SHOW_ADD_POPUP}=false")
+                    },
+                    onCoasterClick = { coaster ->
+                        navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")
                     }
                 )
             }

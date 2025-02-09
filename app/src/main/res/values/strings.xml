@@ -72,5 +72,5 @@
     <string name="select_folder">Select folder</string>
     <string name="ulozit_sem">Uložit sem</string>
     <string name="vyberte_slozku">Vyberte složku</string>
-    <string name="folder_picker_empty">Nejsou tu žádné složky ani podtácky</string>
+    <string name="folder_picker_empty">Nejsou tu žádné další složky</string>
 </resources>
