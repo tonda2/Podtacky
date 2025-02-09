@@ -12,6 +12,7 @@ sealed class Screen(val route: String) {
 
     data object EditScreen : Screen("edit") {
         const val ID = "id"
+        const val FOLDER_ID = "folderId"
     }
 
     data object LargePhotoScreen : Screen("photo") {

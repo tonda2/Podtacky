@@ -68,6 +68,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.data.compressImage
 import cz.tonda2.podtacky.core.data.createImageFile
+import cz.tonda2.podtacky.core.presentation.FolderPickerPopup
 import cz.tonda2.podtacky.core.presentation.PageIndicator
 import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.presentation.LoadingScreen
@@ -162,6 +163,7 @@ fun EntryEditScreen(
 ) {
     val context = LocalContext.current
     var showDatePicker by remember { mutableStateOf(false) }
+    var showFolderPicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
     var selectedDate by remember {
         mutableStateOf("")
@@ -231,6 +233,21 @@ fun EntryEditScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
         EntryField(
+            query = screenState.newFolder?.name ?: stringResource(R.string.bez_slozky),
+            placeholder = stringResource(R.string.slozka),
+            readOnly = true,
+            trailingIcon = {
+                IconButton(onClick = { showFolderPicker = !showFolderPicker }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_folder_24),
+                        contentDescription = stringResource(R.string.select_folder)
+                    )
+                }
+            },
+            onQueryChange = {}
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        EntryField(
             query = screenState.count,
             placeholder = stringResource(R.string.count),
             onQueryChange = viewModel::updateCount,
@@ -267,6 +284,24 @@ fun EntryEditScreen(
                 selectedDate = datePickerState.selectedDateMillis?.let { convertMillisToDate(it) } ?: screenState.date
                 DatePicker(state = datePickerState)
             }
+        }
+
+        if (showFolderPicker) {
+            FolderPickerPopup(
+                folders = screenState.folderList,
+                onItemClick = { folder ->
+                    viewModel.updateNewFolder(folder)
+                    viewModel.updateFolderList(folder.folderId)
+                },
+                onConfirm = {
+                    showFolderPicker = false
+                },
+                onDismiss = {
+                    showFolderPicker = false
+                    viewModel.resetNewFolder()
+                    viewModel.updateFolderList(null)
+                }
+            )
         }
     }
 }

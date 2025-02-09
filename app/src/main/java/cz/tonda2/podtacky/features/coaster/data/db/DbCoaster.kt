@@ -18,4 +18,3 @@ data class DbCoaster(
     val uploaded: Boolean = false,
     val deleted: Boolean = false
 )
-

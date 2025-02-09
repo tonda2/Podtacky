@@ -75,6 +75,7 @@ fun DbCoaster.toDomain(): Coaster {
     return Coaster(
         uid = uid,
         coasterId = coasterId,
+        folderId = folderId,
         brewery = brewery,
         description = description,
         dateAdded = dateAdded,
@@ -91,6 +92,7 @@ fun Coaster.toDb(): DbCoaster {
     return DbCoaster(
         coasterId = coasterId,
         uid = uid,
+        folderId = folderId,
         brewery = brewery,
         description = description,
         dateAdded = dateAdded,

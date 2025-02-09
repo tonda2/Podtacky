@@ -57,6 +57,7 @@ class BackupManager(
 
         return firestoreRepository.addCoaster(userId, Coaster(
             uid = coaster.uid,
+            folderId = coaster.folderId,
             coasterId = coaster.coasterId,
             brewery = coaster.brewery,
             description = coaster.description,

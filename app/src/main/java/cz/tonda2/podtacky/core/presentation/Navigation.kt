@@ -59,6 +59,19 @@ fun Navigation(
                 EditScreen(navController = navController)
             }
             composable(
+                route = Screen.EditScreen.route + "/{id}?${Screen.EditScreen.FOLDER_ID}={folderId}",
+                arguments = listOf(
+                    navArgument(name = "id") {
+                        type = NavType.LongType
+                    },
+                    navArgument(name = Screen.EditScreen.FOLDER_ID) {
+                        type = NavType.LongType
+                    }
+                )
+            ) {
+                EditScreen(navController = navController)
+            }
+            composable(
                 route = Screen.LargePhotoScreen.route + "/{id}?${Screen.LargePhotoScreen.START_INDEX}={startIndex}",
                 arguments = listOf(
                     navArgument(name = "id") {

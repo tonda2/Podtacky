@@ -67,7 +67,7 @@ fun FolderListScreen(
                     FABItem(
                         Icons.Filled.Add,
                         title = stringResource(R.string.add_coaster),
-                        onClick = { navController.navigate(Screen.EditScreen.route + "/-1") }
+                        onClick = { navController.navigate(Screen.EditScreen.route + "/-1?${Screen.EditScreen.FOLDER_ID}=${screenState.parentFolder?.folderId ?: -1}") }
                     )
                 ),
                 modifier = Modifier

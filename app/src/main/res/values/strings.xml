@@ -67,4 +67,10 @@
     <string name="pridat">Přidat</string>
     <string name="jmeno_slozky">Jméno složky</string>
     <string name="folder_options">Folder options</string>
+    <string name="bez_slozky">Bez složky</string>
+    <string name="slozka">Složka</string>
+    <string name="select_folder">Select folder</string>
+    <string name="ulozit_sem">Uložit sem</string>
+    <string name="vyberte_slozku">Vyberte složku</string>
+    <string name="folder_picker_empty">Nejsou tu žádné složky ani podtácky</string>
 </resources>

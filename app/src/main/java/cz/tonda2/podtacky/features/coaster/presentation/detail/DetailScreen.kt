@@ -83,7 +83,7 @@ fun DetailScreen(
                 FloatingActionButton(
                     onClick = {
                         navController.navigate(
-                            Screen.EditScreen.route + "/${coaster.coasterId}"
+                            Screen.EditScreen.route + "/${coaster.coasterId}?${Screen.EditScreen.FOLDER_ID}=${coaster.folderId}"
                         )
                     },
                     modifier = Modifier
@@ -109,7 +109,7 @@ fun DetailScreen(
             } else {
                 Box(modifier = Modifier.padding(paddingValues)) {
                     when (screenState.state) {
-                        ScreenState.Fill -> CoasterDetail(coaster) { index ->
+                        ScreenState.Fill -> CoasterDetail(coaster, screenState.folderName) { index ->
                             navController.navigate(
                                 Screen.LargePhotoScreen.route + "/${coaster.coasterId}?${Screen.LargePhotoScreen.START_INDEX}=${index}"
                             )
@@ -161,6 +161,7 @@ fun DetailTopBar(
 @Composable
 fun CoasterDetail(
     coaster: Coaster,
+    folderName: String,
     onPhotoClick: (Int) -> Unit
 ) {
     Column(
@@ -184,7 +185,7 @@ fun CoasterDetail(
                 thickness = 1.dp
             )
             Spacer(modifier = Modifier.height(14.dp))
-            DetailLowerPart(coaster)
+            DetailLowerPart(coaster, folderName)
             Spacer(modifier = Modifier.height(14.dp))
         }
     }
@@ -250,7 +251,8 @@ fun DetailTopPart(
 
 @Composable
 fun DetailLowerPart(
-    coaster: Coaster
+    coaster: Coaster,
+    folderName: String
 ) {
     Column(
         modifier = Modifier
@@ -261,6 +263,7 @@ fun DetailLowerPart(
         Field(title = stringResource(R.string.description), value = coaster.description)
         Field(title = stringResource(R.string.count), value = coaster.count.toString())
         Field(title = stringResource(R.string.added_date), value = coaster.dateAdded)
+        Field(title = stringResource(R.string.slozka), value = folderName)
 
         if (coaster.uploaded) {
             Icon(
