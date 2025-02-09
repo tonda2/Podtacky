@@ -16,6 +16,7 @@ import androidx.room.PrimaryKey
 )
 data class DbFolder(
     @PrimaryKey(autoGenerate = true) val folderId: Long = 0,
+    val uid: String = "",
     val name: String = "",
     val parentId: Long? = null,
     val uploaded: Boolean = false,

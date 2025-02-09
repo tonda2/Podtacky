@@ -93,6 +93,7 @@ private fun FolderItem(
 fun FolderCardPreview() {
     FolderCard(
         folder = Folder(
+            uid = "",
             name = "Středočeský kraj",
             parentId = null,
             uploaded = false,

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class FolderListViewModel(
     private val savedStateHandle: SavedStateHandle,
@@ -48,6 +49,7 @@ class FolderListViewModel(
 
     fun addFolder() {
         val newFolder = Folder(
+            uid = UUID.randomUUID().toString(),
             name = _folderListUiState.value.newFolderName.trim(),
             parentId = if (id != -1L) id else null,
             uploaded = false,

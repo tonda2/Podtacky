@@ -51,6 +51,7 @@ class FolderRepository(
 
 fun DbFolder.toDomain() = Folder(
     folderId = folderId,
+    uid = uid,
     name = name,
     parentId = parentId,
     uploaded = uploaded,
@@ -59,6 +60,7 @@ fun DbFolder.toDomain() = Folder(
 
 fun Folder.toDb() = DbFolder(
     folderId = folderId,
+    uid = uid,
     name = name,
     parentId = parentId,
     uploaded = uploaded,
