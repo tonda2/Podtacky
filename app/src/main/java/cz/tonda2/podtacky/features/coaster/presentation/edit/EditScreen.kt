@@ -289,6 +289,12 @@ fun EntryEditScreen(
         if (showFolderPicker) {
             FolderPickerPopup(
                 folders = screenState.folderList,
+                showBackArrow = screenState.newFolder != null,
+                onBackClick = {
+                    val parentId = screenState.newFolder?.parentId
+                    viewModel.updateNewFolder(parentId)
+                    viewModel.updateFolderList(parentId)
+                },
                 onItemClick = { folder ->
                     viewModel.updateNewFolder(folder)
                     viewModel.updateFolderList(folder.folderId)

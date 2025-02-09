@@ -179,6 +179,14 @@ class EditViewModel(
         )
     }
 
+    fun updateNewFolder(id: Long?) {
+        viewModelScope.launch {
+            val folder = folderRepository.getFolderById(id?.toString() ?: "-1")
+
+            updateNewFolder(folder)
+        }
+    }
+
     fun resetNewFolder() {
         updateNewFolder(coasterUiState.oldFolder)
     }
