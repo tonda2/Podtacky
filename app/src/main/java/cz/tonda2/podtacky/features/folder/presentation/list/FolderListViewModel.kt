@@ -20,8 +20,8 @@ class FolderListViewModel(
     private val coasterRepository: CoasterRepository
 ) : ViewModel() {
 
-    private val id: Long
-        get() = savedStateHandle[Screen.FolderScreen.ID] ?: -1L
+    private val uid: String
+        get() = savedStateHandle[Screen.FolderScreen.UID] ?: "-"
 
     private val _folderListUiState = MutableStateFlow(FolderListScreenState())
     val folderListUiState: StateFlow<FolderListScreenState> = _folderListUiState
@@ -29,11 +29,11 @@ class FolderListViewModel(
     init {
         viewModelScope.launch {
             combine(
-                if (id == -1L) folderRepository.getFoldersWithoutParent() else folderRepository.getSubFolders(id.toString()),
-                if (id == -1L) coasterRepository.getCoastersWithoutFolder() else coasterRepository.getCoastersInFolder(id.toString())
+                if (uid == "-") folderRepository.getFoldersWithoutParent() else folderRepository.getSubFolders(uid),
+                if (uid == "-") coasterRepository.getCoastersWithoutFolder() else coasterRepository.getCoastersInFolder(uid)
             ) { subfolders, coasters ->
                 FolderListScreenState(
-                    parentFolder = folderRepository.getFolderById(id.toString()),
+                    parentFolder = folderRepository.getFolderByUid(uid),
                     subFolders = subfolders,
                     coasters = coasters
                 )
@@ -49,9 +49,9 @@ class FolderListViewModel(
 
     fun addFolder() {
         val newFolder = Folder(
-            uid = UUID.randomUUID().toString(),
+            folderUid = UUID.randomUUID().toString(),
             name = _folderListUiState.value.newFolderName.trim(),
-            parentId = if (id != -1L) id else null,
+            parentUid = if (uid != "-") uid else null,
             uploaded = false,
             deleted = false
         )

@@ -16,8 +16,8 @@ class FolderRepository(
         }
     }
 
-    fun getSubFolders(parentId: String): Flow<List<Folder>> {
-        return folderDao.getSubFolders(parentId).map { list ->
+    fun getSubFolders(parentUid: String): Flow<List<Folder>> {
+        return folderDao.getSubFolders(parentUid).map { list ->
             list.map { dbFolder -> dbFolder.toDomain() }
         }
     }
@@ -28,8 +28,8 @@ class FolderRepository(
         }
     }
 
-    suspend fun getFolderById(folderId: String): Folder? {
-        return folderDao.getFolderById(folderId)?.toDomain()
+    suspend fun getFolderByUid(folderUid: String): Folder? {
+        return folderDao.getFolderByUid(folderUid)?.toDomain()
     }
 
     suspend fun addFolder(folder: Folder) {
@@ -40,29 +40,27 @@ class FolderRepository(
         return folderDao.delete(folder.toDb())
     }
 
-    suspend fun markUploaded(id: String) {
-        folderDao.markUploaded(id)
+    suspend fun markUploaded(uid: String) {
+        folderDao.markUploaded(uid)
     }
 
-    suspend fun markDeleted(id: String) {
-        folderDao.markDeleted(id)
+    suspend fun markDeleted(uid: String) {
+        folderDao.markDeleted(uid)
     }
 }
 
 fun DbFolder.toDomain() = Folder(
-    folderId = folderId,
-    uid = uid,
+    folderUid = folderUid,
     name = name,
-    parentId = parentId,
+    parentUid = parentUid,
     uploaded = uploaded,
     deleted = deleted
 )
 
 fun Folder.toDb() = DbFolder(
-    folderId = folderId,
-    uid = uid,
+    folderUid = folderUid,
     name = name,
-    parentId = parentId,
+    parentUid = parentUid,
     uploaded = uploaded,
     deleted = deleted
 )

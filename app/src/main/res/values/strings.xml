@@ -51,7 +51,7 @@
     <string name="bottom_bar_icon">Bottom bar icon %1$s</string>
     <string name="coaster_image_edit_screen">Coaster image edit screen</string>
     <string name="a_single_coaster_description">A single coaster, id %1$s</string>
-    <string name="a_single_folder_description">A single folder, id %1$s</string>
+    <string name="a_single_folder_description">A single folder, name %1$s</string>
     <string name="page_indicator_current_page">Page indicator, current page %1$s</string>
     <string name="_1_podtacek">1 podtácek</string>
     <string name="_2_4_podtacky">%1$s podtácky</string>

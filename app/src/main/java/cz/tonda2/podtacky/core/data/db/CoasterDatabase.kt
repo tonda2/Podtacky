@@ -34,15 +34,15 @@ private val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS folders (
-                folderId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                folderUid TEXT PRIMARY KEY NOT NULL,
                 name TEXT NOT NULL,
-                parentId INTEGER,
+                parentUid TEXT,
                 uploaded INTEGER NOT NULL DEFAULT 0,
                 deleted INTEGER NOT NULL DEFAULT 0,
-                FOREIGN KEY(parentId) REFERENCES folders(folderId) ON DELETE NO ACTION
+                FOREIGN KEY(parentUid) REFERENCES folders(folderUid) ON DELETE NO ACTION
             )
         """.trimIndent())
 
-        db.execSQL("ALTER TABLE coasters ADD COLUMN folderId INTEGER")
+        db.execSQL("ALTER TABLE coasters ADD COLUMN folderUid TEXT")
     }
 }

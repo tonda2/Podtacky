@@ -73,7 +73,7 @@ class ImportManager(
 
         val newCoaster = Coaster(
             uid = coaster.uid,
-            folderId = coaster.folderId,
+            folderUid = coaster.folderUid,
             brewery = coaster.brewery,
             description = coaster.description,
             dateAdded = coaster.dateAdded,

@@ -33,9 +33,9 @@ class DetailViewModel(
                 val coaster = coasterRepository.getCoasterById(id.toString())
                 it.copy(
                     coaster = coaster,
-                    folderName = if (coaster?.folderId == null) ""
-                    else folderRepository.getFolderById(
-                        coaster.folderId.toString()
+                    folderName = if (coaster?.folderUid == null) ""
+                    else folderRepository.getFolderByUid(
+                        coaster.folderUid.toString()
                     )?.name ?: ""
                 )
             }

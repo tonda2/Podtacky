@@ -21,20 +21,20 @@ interface FolderDao {
     fun getFolders(): Flow<List<DbFolder>>
 
     @Transaction
-    @Query("SELECT * FROM folders WHERE parentId = :id")
-    fun getSubFolders(id: String): Flow<List<DbFolder>>
+    @Query("SELECT * FROM folders WHERE parentUid = :uid")
+    fun getSubFolders(uid: String): Flow<List<DbFolder>>
 
     @Transaction
-    @Query("SELECT * FROM folders WHERE parentId is NULL")
+    @Query("SELECT * FROM folders WHERE parentUid is NULL")
     fun getFoldersWithoutParent(): Flow<List<DbFolder>>
 
-    @Query("SELECT * FROM folders WHERE folderId = :id")
-    suspend fun getFolderById(id: String): DbFolder?
+    @Query("SELECT * FROM folders WHERE folderUid = :uid")
+    suspend fun getFolderByUid(uid: String): DbFolder?
 
-    @Query("UPDATE folders SET uploaded = 1 WHERE folderId = :id")
-    suspend fun markUploaded(id: String)
+    @Query("UPDATE folders SET uploaded = 1 WHERE folderUid = :uid")
+    suspend fun markUploaded(uid: String)
 
-    @Query("UPDATE folders SET deleted = 1 WHERE folderId = :id")
-    suspend fun markDeleted(id: String)
+    @Query("UPDATE folders SET deleted = 1 WHERE folderUid = :uid")
+    suspend fun markDeleted(uid: String)
 
 }

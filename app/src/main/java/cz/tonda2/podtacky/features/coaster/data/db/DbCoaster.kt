@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "coasters")
 data class DbCoaster(
     @PrimaryKey(autoGenerate = true) val coasterId: Long = 0,
-    val folderId: Long? = null,
+    val folderUid: String? = null,
     val uid: String = "",
     val brewery: String = "",
     val description: String = "",

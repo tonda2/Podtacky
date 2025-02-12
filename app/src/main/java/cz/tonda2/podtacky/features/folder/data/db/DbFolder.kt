@@ -9,16 +9,15 @@ import androidx.room.PrimaryKey
     foreignKeys = [
         ForeignKey(
             entity = DbFolder::class,
-            parentColumns = arrayOf("folderId"),
-            childColumns = arrayOf("parentId")
+            parentColumns = arrayOf("folderUid"),
+            childColumns = arrayOf("parentUid")
         )
     ]
 )
 data class DbFolder(
-    @PrimaryKey(autoGenerate = true) val folderId: Long = 0,
-    val uid: String = "",
+    @PrimaryKey(autoGenerate = false) val folderUid: String = "",
     val name: String = "",
-    val parentId: Long? = null,
+    val parentUid: String? = null,
     val uploaded: Boolean = false,
     val deleted: Boolean = false
 )

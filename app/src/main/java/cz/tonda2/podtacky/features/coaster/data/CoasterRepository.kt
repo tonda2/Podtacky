@@ -27,8 +27,8 @@ class CoasterRepository(
         }
     }
 
-    fun getCoastersInFolder(folderId: String): Flow<List<Coaster>> {
-        return coasterDao.getCoastersByFolder(folderId).map { list ->
+    fun getCoastersInFolder(folderUid: String): Flow<List<Coaster>> {
+        return coasterDao.getCoastersByFolder(folderUid).map { list ->
             list.map { dbCoaster -> dbCoaster.toDomain() }
         }
     }
@@ -75,7 +75,7 @@ fun DbCoaster.toDomain(): Coaster {
     return Coaster(
         uid = uid,
         coasterId = coasterId,
-        folderId = folderId,
+        folderUid = folderUid,
         brewery = brewery,
         description = description,
         dateAdded = dateAdded,
@@ -92,7 +92,7 @@ fun Coaster.toDb(): DbCoaster {
     return DbCoaster(
         coasterId = coasterId,
         uid = uid,
-        folderId = folderId,
+        folderUid = folderUid,
         brewery = brewery,
         description = description,
         dateAdded = dateAdded,

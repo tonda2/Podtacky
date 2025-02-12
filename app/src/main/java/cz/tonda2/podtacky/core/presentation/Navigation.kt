@@ -59,13 +59,13 @@ fun Navigation(
                 EditScreen(navController = navController)
             }
             composable(
-                route = Screen.EditScreen.route + "/{id}?${Screen.EditScreen.FOLDER_ID}={folderId}",
+                route = Screen.EditScreen.route + "/{id}?${Screen.EditScreen.FOLDER_UID}={folderUid}",
                 arguments = listOf(
                     navArgument(name = "id") {
                         type = NavType.LongType
                     },
-                    navArgument(name = Screen.EditScreen.FOLDER_ID) {
-                        type = NavType.LongType
+                    navArgument(name = Screen.EditScreen.FOLDER_UID) {
+                        type = NavType.StringType
                     }
                 )
             ) {
@@ -88,10 +88,10 @@ fun Navigation(
                 ProfileScreen(navController = navController)
             }
             composable(
-                route = Screen.FolderScreen.route + "/{id}?${Screen.FolderScreen.SHOW_ADD_POPUP}={${Screen.FolderScreen.SHOW_ADD_POPUP}}",
+                route = Screen.FolderScreen.route + "/{uid}?${Screen.FolderScreen.SHOW_ADD_POPUP}={${Screen.FolderScreen.SHOW_ADD_POPUP}}",
                 arguments = listOf(
-                    navArgument(name = "id") {
-                        type = NavType.LongType
+                    navArgument(name = Screen.FolderScreen.UID) {
+                        type = NavType.StringType
                     },
                     navArgument(name = Screen.FolderScreen.SHOW_ADD_POPUP) {
                         type = NavType.BoolType

@@ -14,10 +14,10 @@ interface CoasterDao {
     @Query("SELECT * FROM coasters")
     fun getCoasters(): Flow<List<DbCoaster>>
 
-    @Query("SELECT * FROM coasters WHERE folderId = :id ORDER BY dateAdded DESC")
-    fun getCoastersByFolder(id: String): Flow<List<DbCoaster>>
+    @Query("SELECT * FROM coasters WHERE folderUid = :uid ORDER BY dateAdded DESC")
+    fun getCoastersByFolder(uid: String): Flow<List<DbCoaster>>
 
-    @Query("SELECT * FROM coasters WHERE folderId is null ORDER BY dateAdded DESC")
+    @Query("SELECT * FROM coasters WHERE folderUid is null ORDER BY dateAdded DESC")
     fun getCoastersWithoutFolder(): Flow<List<DbCoaster>>
 
     @Query("SELECT * FROM coasters WHERE coasterId = :id")

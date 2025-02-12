@@ -31,8 +31,8 @@ class EditViewModel(
     private val id: Long
         get() = savedStateHandle[Screen.EditScreen.ID] ?: -1L
 
-    private val folderId: Long
-        get() = savedStateHandle[Screen.EditScreen.FOLDER_ID] ?: -1L
+    private val folderUid: String
+        get() = savedStateHandle[Screen.EditScreen.FOLDER_UID] ?: ""
 
     var coasterUiState by mutableStateOf(EditScreenState())
         private set
@@ -55,8 +55,8 @@ class EditViewModel(
                 )
             }
 
-            val folder = folderRepository.getFolderById(folderId.toString())
-            val folderList = (if (folder == null) folderRepository.getFoldersWithoutParent() else folderRepository.getSubFolders(folderId.toString())).first()
+            val folder = folderRepository.getFolderByUid(folderUid)
+            val folderList = (if (folder == null) folderRepository.getFoldersWithoutParent() else folderRepository.getSubFolders(folderUid)).first()
             coasterUiState = coasterUiState.copy(
                 oldFolder = folder,
                 newFolder = folder,
@@ -75,7 +75,7 @@ class EditViewModel(
             old.count.toString() == coasterUiState.count &&
             old.frontUri == coasterUiState.frontUri &&
             old.backUri == coasterUiState.backUri &&
-            old.folderId == coasterUiState.newFolder?.folderId
+            old.folderUid == coasterUiState.newFolder?.folderUid
         ) return
 
         coasterUiState = coasterUiState.copy(
@@ -86,7 +86,7 @@ class EditViewModel(
             coasterRepository.addCoaster(
                 Coaster(
                     uid = UUID.randomUUID().toString(),
-                    folderId = coasterUiState.newFolder?.folderId,
+                    folderUid = coasterUiState.newFolder?.folderUid,
                     brewery = coasterUiState.brewery.trim(),
                     description = coasterUiState.description.trim(),
                     dateAdded = coasterUiState.date,
@@ -179,9 +179,9 @@ class EditViewModel(
         )
     }
 
-    fun updateNewFolder(id: Long?) {
+    fun updateNewFolder(uid: String?) {
         viewModelScope.launch {
-            val folder = folderRepository.getFolderById(id?.toString() ?: "-1")
+            val folder = folderRepository.getFolderByUid(uid ?: "")
 
             updateNewFolder(folder)
         }
@@ -191,9 +191,9 @@ class EditViewModel(
         updateNewFolder(coasterUiState.oldFolder)
     }
 
-    fun updateFolderList(parentId: Long?) {
+    fun updateFolderList(parentUid: String?) {
         viewModelScope.launch {
-            val folderFlow = if (parentId == null) folderRepository.getFoldersWithoutParent() else folderRepository.getSubFolders(parentId.toString())
+            val folderFlow = if (parentUid == null) folderRepository.getFoldersWithoutParent() else folderRepository.getSubFolders(parentUid)
             val folderList = folderFlow.first()
 
             coasterUiState = coasterUiState.copy(

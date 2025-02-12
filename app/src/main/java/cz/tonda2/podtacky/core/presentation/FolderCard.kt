@@ -46,7 +46,7 @@ fun FolderCard(
                 .semantics {
                     contentDescription = context.getString(
                         R.string.a_single_folder_description,
-                        folder.folderId.toString()
+                        folder.name
                     )
                 },
             onOptionsClick = { /* TODO */ }
@@ -93,9 +93,9 @@ private fun FolderItem(
 fun FolderCardPreview() {
     FolderCard(
         folder = Folder(
-            uid = "",
+            folderUid = "testovaci_slozka",
             name = "Středočeský kraj",
-            parentId = null,
+            parentUid = null,
             uploaded = false,
             deleted = false
         )

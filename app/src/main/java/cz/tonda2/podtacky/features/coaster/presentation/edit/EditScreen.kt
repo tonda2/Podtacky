@@ -291,13 +291,13 @@ fun EntryEditScreen(
                 folders = screenState.folderList,
                 showBackArrow = screenState.newFolder != null,
                 onBackClick = {
-                    val parentId = screenState.newFolder?.parentId
-                    viewModel.updateNewFolder(parentId)
-                    viewModel.updateFolderList(parentId)
+                    val parentUid = screenState.newFolder?.parentUid
+                    viewModel.updateNewFolder(parentUid)
+                    viewModel.updateFolderList(parentUid)
                 },
                 onItemClick = { folder ->
                     viewModel.updateNewFolder(folder)
-                    viewModel.updateFolderList(folder.folderId)
+                    viewModel.updateFolderList(folder.folderUid)
                 },
                 onConfirm = {
                     showFolderPicker = false
@@ -305,7 +305,7 @@ fun EntryEditScreen(
                 onDismiss = {
                     showFolderPicker = false
                     viewModel.resetNewFolder()
-                    viewModel.updateFolderList(screenState.oldFolder?.folderId)
+                    viewModel.updateFolderList(screenState.oldFolder?.folderUid)
                 }
             )
         }

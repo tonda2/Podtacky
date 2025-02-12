@@ -83,7 +83,7 @@ fun DetailScreen(
                 FloatingActionButton(
                     onClick = {
                         navController.navigate(
-                            Screen.EditScreen.route + "/${coaster.coasterId}?${Screen.EditScreen.FOLDER_ID}=${coaster.folderId}"
+                            Screen.EditScreen.route + "/${coaster.coasterId}?${Screen.EditScreen.FOLDER_UID}=${coaster.folderUid ?: "-"}"
                         )
                     },
                     modifier = Modifier

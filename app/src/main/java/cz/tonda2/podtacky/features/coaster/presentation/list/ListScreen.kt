@@ -72,7 +72,7 @@ fun ListScreen(
                     FABItem(
                         ImageVector.vectorResource(id = R.drawable.baseline_create_new_folder_24),
                         title = stringResource(R.string.add_folder),
-                        onClick = { navController.navigate(Screen.FolderScreen.route + "/-1?${Screen.FolderScreen.SHOW_ADD_POPUP}=true") }
+                        onClick = { navController.navigate(Screen.FolderScreen.route + "/-?${Screen.FolderScreen.SHOW_ADD_POPUP}=true") }
                     ),
                     FABItem(
                         Icons.Filled.Add,
