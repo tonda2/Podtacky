@@ -34,8 +34,8 @@ class FolderListViewModel(
             ) { subfolders, coasters ->
                 FolderListScreenState(
                     parentFolder = folderRepository.getFolderByUid(uid),
-                    subFolders = subfolders,
-                    coasters = coasters
+                    subFolders = subfolders.sortedBy { it.name.lowercase() },
+                    coasters = coasters.filter { c -> !c.deleted }
                 )
             }.collect { newState ->
                 _folderListUiState.value = newState
