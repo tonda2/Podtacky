@@ -13,6 +13,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.features.folder.domain.Folder
@@ -29,9 +32,13 @@ import cz.tonda2.podtacky.features.folder.domain.Folder
 @Composable
 fun FolderCard(
     folder: Folder,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    showOptions: Boolean = true,
+    onRenameClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    var menuExpanded by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier.clickable(onClick = onClick),
@@ -49,7 +56,11 @@ fun FolderCard(
                         folder.name
                     )
                 },
-            onOptionsClick = { /* TODO */ }
+            showOptions = showOptions,
+            menuExpanded = menuExpanded,
+            toggleMenu = { menuExpanded = !menuExpanded },
+            onRenameClick = onRenameClick,
+            onDeleteClick = onDeleteClick
         )
     }
 }
@@ -58,14 +69,18 @@ fun FolderCard(
 private fun FolderItem(
     folder: Folder,
     modifier: Modifier,
-    onOptionsClick: () -> Unit
+    showOptions: Boolean,
+    menuExpanded: Boolean,
+    toggleMenu: () -> Unit,
+    onRenameClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
     Row(modifier = modifier) {
         Box(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .weight(1f)
-                .padding(start = 8.dp)
+                .padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
         ) {
             Text(
                 text = folder.name,
@@ -74,32 +89,24 @@ private fun FolderItem(
                 overflow = TextOverflow.Ellipsis
             )
         }
-        IconButton(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(end = 8.dp),
-            onClick = { onOptionsClick() }
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_three_dots),
-                contentDescription = stringResource(R.string.folder_options)
-            )
+        if (showOptions) {
+            IconButton(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(end = 8.dp),
+                onClick = { toggleMenu() }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_three_dots),
+                    contentDescription = stringResource(R.string.folder_options)
+                )
+                FolderOptionMenu(
+                    expanded = menuExpanded,
+                    onDismiss = { toggleMenu() },
+                    onRenameClick = { onRenameClick() },
+                    onDeleteClick = { onDeleteClick() }
+                )
+            }
         }
-    }
-}
-
-@Composable
-@Preview
-fun FolderCardPreview() {
-    FolderCard(
-        folder = Folder(
-            folderUid = "testovaci_slozka",
-            name = "Středočeský kraj",
-            parentUid = null,
-            uploaded = false,
-            deleted = false
-        )
-    ) {
-
     }
 }

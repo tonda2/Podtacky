@@ -73,4 +73,7 @@
     <string name="ulozit_sem">Uložit sem</string>
     <string name="vyberte_slozku">Vyberte složku</string>
     <string name="folder_picker_empty">Nejsou tu žádné další složky</string>
+    <string name="prejmenovat">Přejmenovat</string>
+    <string name="rename">Rename folder</string>
+    <string name="smazat_slozku">Delete folder</string>
 </resources>

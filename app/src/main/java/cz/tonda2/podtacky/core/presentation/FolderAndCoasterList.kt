@@ -35,10 +35,11 @@ fun FolderAndCoasterList(
         ) {
             items(folders) { folder ->
                 FolderCard(
-                    folder = folder
-                ) {
-                    onFolderClick(folder)
-                }
+                    folder = folder,
+                    onClick = { onFolderClick(folder) },
+                    onRenameClick = {},
+                    onDeleteClick = {}
+                )
             }
             items(coasters) { coaster ->
                 CoasterCard(

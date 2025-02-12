@@ -32,10 +32,10 @@ fun FolderList(
         ) {
             items(folders) { folder ->
                 FolderCard(
-                    folder = folder
-                ) {
-                    onItemClick(folder)
-                }
+                    folder = folder,
+                    onClick = { onItemClick(folder) },
+                    showOptions = false
+                )
             }
         }
     }
