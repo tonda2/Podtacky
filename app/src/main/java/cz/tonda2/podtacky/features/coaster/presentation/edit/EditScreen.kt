@@ -288,6 +288,7 @@ fun EntryEditScreen(
 
         if (showFolderPicker) {
             FolderPickerPopup(
+                title = screenState.newFolder?.name,
                 folders = screenState.folderList,
                 showBackArrow = screenState.newFolder != null,
                 onBackClick = {

@@ -22,6 +22,7 @@ import cz.tonda2.podtacky.features.folder.domain.Folder
 
 @Composable
 fun FolderPickerPopup(
+    title: String?,
     folders: List<Folder>,
     showBackArrow: Boolean,
     onBackClick: () -> Unit,
@@ -56,7 +57,7 @@ fun FolderPickerPopup(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                 ) {
-                    Text(text = stringResource(R.string.vyberte_slozku))
+                    Text(text = title ?: stringResource(R.string.vyberte_slozku))
                 }
             }
         },
