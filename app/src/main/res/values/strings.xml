@@ -77,4 +77,5 @@
     <string name="rename">Rename folder</string>
     <string name="smazat_slozku">Delete folder</string>
     <string name="prejmenovat_slozku">Přejmenovat složku</string>
+    <string name="folder_delete_confirm">Opravdu chcete složku smazat? Její obsah bude přesunut do nadsložky.</string>
 </resources>

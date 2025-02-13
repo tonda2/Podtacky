@@ -9,6 +9,7 @@ import cz.tonda2.podtacky.R
 
 @Composable
 fun DeleteConfirmation(
+    text: String = stringResource(R.string.potvrzeni),
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -25,6 +26,6 @@ fun DeleteConfirmation(
             }
         },
         title = { Text(text = stringResource(R.string.potvrdte_title)) },
-        text = { Text(stringResource(R.string.potvrzeni)) }
+        text = { Text(text = text) }
     )
 }

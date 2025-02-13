@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.presentation.BottomBar
 import cz.tonda2.podtacky.core.presentation.BottomBarScreenIndex
+import cz.tonda2.podtacky.core.presentation.DeleteConfirmation
 import cz.tonda2.podtacky.core.presentation.ExpandableFAB
 import cz.tonda2.podtacky.core.presentation.FABItem
 import cz.tonda2.podtacky.core.presentation.FolderAndCoasterList
@@ -48,7 +49,8 @@ fun FolderListScreen(
     val screenState by viewModel.folderListUiState.collectAsStateWithLifecycle()
 
     var isFabExpanded by remember { mutableStateOf(false) }
-    var showRenamePopup by remember { mutableStateOf(defaultShowAddPopup) }
+    var showRenamePopup by remember { mutableStateOf(false) }
+    var showDeletePopup by remember { mutableStateOf(false) }
     var showAddPopup by remember { mutableStateOf(defaultShowAddPopup) }
 
     Scaffold(
@@ -147,6 +149,18 @@ fun FolderListScreen(
                 textFieldPlaceholder = stringResource(R.string.jmeno_slozky)
             )
         }
+        else if (showDeletePopup) {
+            DeleteConfirmation(
+                text = stringResource(R.string.folder_delete_confirm),
+                onConfirm = {
+                    viewModel.deleteFolder()
+                    showDeletePopup = false
+                },
+                onDismiss = {
+                    showDeletePopup = false
+                }
+            )
+        }
         else {
             Grayable(hidden = isFabExpanded, onClick = { isFabExpanded = false }) {
                 FolderAndCoasterList(
@@ -160,7 +174,8 @@ fun FolderListScreen(
                         navController.navigate(Screen.FolderScreen.route + "/${folder.folderUid}?${Screen.FolderScreen.SHOW_ADD_POPUP}=false")
                     },
                     onFolderDeleteClick = { folder ->
-                        viewModel.deleteFolder(folder)
+                        viewModel.setToDelete(folder)
+                        showDeletePopup = true
                     },
                     onFolderRenameClick = { folder ->
                         viewModel.startRename(folder)

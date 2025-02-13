@@ -62,8 +62,10 @@ class FolderListViewModel(
         }
     }
 
-    fun deleteFolder(folder: Folder) {
+    fun deleteFolder() {
         viewModelScope.launch {
+            val folder = _folderListUiState.value.folderToDelete ?: return@launch
+
             val subFolders = folderRepository.getSubFolders(folder.folderUid).first()
             subFolders.forEach { subFolder ->
                 val newFolder = subFolder.copy(parentUid = folder.parentUid, uploaded = false)
@@ -95,6 +97,10 @@ class FolderListViewModel(
         _folderListUiState.value = _folderListUiState.value.copy(folderBeingRenamed = folder, changedName = folder.name)
     }
 
+    fun setToDelete(folder: Folder) {
+        _folderListUiState.value = _folderListUiState.value.copy(folderToDelete = folder)
+    }
+
     fun updateRename(name: String) {
         _folderListUiState.value = _folderListUiState.value.copy(changedName = name)
     }
@@ -115,4 +121,5 @@ data class FolderListScreenState(
     val coasters: List<Coaster> = emptyList(),
     val folderBeingRenamed: Folder? = null,
     val changedName: String = "",
+    val folderToDelete: Folder? = null
 )
