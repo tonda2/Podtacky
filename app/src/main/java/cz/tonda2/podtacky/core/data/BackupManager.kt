@@ -63,8 +63,12 @@ class BackupManager(
                 folderRepository.markUploaded(folder.folderUid)
             }
             else {
-                Firebase.crashlytics.recordException(RuntimeException("Failed to upload folder ${folder} to Firestore"))
+                Firebase.crashlytics.recordException(RuntimeException("Failed to upload folder $folder to Firestore"))
             }
+        }
+
+        toDelete.forEach { folder ->
+            deleteFolder(userId, folder)
         }
     }
 
@@ -94,7 +98,7 @@ class BackupManager(
         ))
     }
 
-    private suspend fun deleteCoaster(userId: String, coaster: Coaster): Boolean{
+    private suspend fun deleteCoaster(userId: String, coaster: Coaster): Boolean {
         firestoreRepository.deleteCoaster(userId, coaster.uid)
         coasterRepository.deleteCoaster(coaster)
         return true
@@ -102,5 +106,11 @@ class BackupManager(
 
     private suspend fun uploadFolder(userId: String, folder: Folder): Boolean {
         return firestoreRepository.addFolder(userId, folder)
+    }
+
+    private suspend fun deleteFolder(userId: String, folder: Folder): Boolean {
+        firestoreRepository.deleteFolder(userId, folder.folderUid)
+        folderRepository.deleteFolder(folder)
+        return true
     }
 }

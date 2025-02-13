@@ -97,4 +97,14 @@ class FirestoreRepository(
             return false
         }
     }
+
+    fun deleteFolder(userId: String, uid: String) {
+        firestore.collection(MAIN_COLLECTION)
+            .document(userId)
+            .collection(FOLDER_COLLECTION)
+            .document(uid)
+            .delete()
+            .addOnSuccessListener { Log.d("FS DELETE", "Folder deleted from FS!") }
+            .addOnFailureListener { e -> Log.w("FS DELETE", "Error deleting folder from FS", e) }
+    }
 }
