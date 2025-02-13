@@ -48,6 +48,7 @@ fun FolderListScreen(
     val screenState by viewModel.folderListUiState.collectAsStateWithLifecycle()
 
     var isFabExpanded by remember { mutableStateOf(false) }
+    var showRenamePopup by remember { mutableStateOf(defaultShowAddPopup) }
     var showAddPopup by remember { mutableStateOf(defaultShowAddPopup) }
 
     Scaffold(
@@ -129,7 +130,24 @@ fun FolderListScreen(
                 onTextValueChange = viewModel::updateNewFolderName,
                 textFieldPlaceholder = stringResource(R.string.jmeno_slozky)
             )
-        } else {
+        }
+        else if (showRenamePopup) {
+            AddFolderPopup(
+                title = stringResource(R.string.prejmenovat_slozku),
+                confirmButtonText = stringResource(R.string.prejmenovat),
+                onConfirm = {
+                    viewModel.renameFolder()
+                    showRenamePopup = false
+                },
+                onDismiss = {
+                    showRenamePopup = false
+                },
+                textValue = screenState.changedName,
+                onTextValueChange = viewModel::updateRename,
+                textFieldPlaceholder = stringResource(R.string.jmeno_slozky)
+            )
+        }
+        else {
             Grayable(hidden = isFabExpanded, onClick = { isFabExpanded = false }) {
                 FolderAndCoasterList(
                     folders = screenState.subFolders,
@@ -143,6 +161,10 @@ fun FolderListScreen(
                     },
                     onFolderDeleteClick = { folder ->
                         viewModel.deleteFolder(folder)
+                    },
+                    onFolderRenameClick = { folder ->
+                        viewModel.startRename(folder)
+                        showRenamePopup = true
                     },
                     onCoasterClick = { coaster ->
                         navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")

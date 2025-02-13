@@ -90,11 +90,29 @@ class FolderListViewModel(
             }
         }
     }
+
+    fun startRename(folder: Folder) {
+        _folderListUiState.value = _folderListUiState.value.copy(folderBeingRenamed = folder, changedName = folder.name)
+    }
+
+    fun updateRename(name: String) {
+        _folderListUiState.value = _folderListUiState.value.copy(changedName = name)
+    }
+
+    fun renameFolder() {
+        viewModelScope.launch {
+            val folder = _folderListUiState.value.folderBeingRenamed ?: return@launch
+            val newFolder = folder.copy(name = _folderListUiState.value.changedName, uploaded = false)
+            folderRepository.updateFolder(newFolder)
+        }
+    }
 }
 
 data class FolderListScreenState(
     val parentFolder: Folder? = null,
     val newFolderName: String = "",
     val subFolders: List<Folder> = emptyList(),
-    val coasters: List<Coaster> = emptyList()
+    val coasters: List<Coaster> = emptyList(),
+    val folderBeingRenamed: Folder? = null,
+    val changedName: String = "",
 )

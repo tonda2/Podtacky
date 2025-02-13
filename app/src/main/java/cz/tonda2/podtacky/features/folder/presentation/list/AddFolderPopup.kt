@@ -12,6 +12,9 @@ import cz.tonda2.podtacky.R
 
 @Composable
 fun AddFolderPopup(
+    title: String = stringResource(R.string.add_folder),
+    confirmButtonText: String = stringResource(R.string.pridat),
+    dismissButtonText: String = stringResource(R.string.zrusit),
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     textValue: String,
@@ -21,16 +24,16 @@ fun AddFolderPopup(
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            Button(onClick = onConfirm) {
-                Text(stringResource(R.string.pridat))
+            Button(onClick = onConfirm, enabled = textValue.isNotEmpty()) {
+                Text(text = confirmButtonText)
             }
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text(stringResource(R.string.zrusit))
+                Text(text = dismissButtonText)
             }
         },
-        title = { Text(stringResource(R.string.add_folder)) },
+        title = { Text(text = title) },
         text = {
             TextField(
                 value = textValue,
