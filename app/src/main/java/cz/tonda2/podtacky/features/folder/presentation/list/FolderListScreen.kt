@@ -141,6 +141,9 @@ fun FolderListScreen(
                     onFolderClick = { folder ->
                         navController.navigate(Screen.FolderScreen.route + "/${folder.folderUid}?${Screen.FolderScreen.SHOW_ADD_POPUP}=false")
                     },
+                    onFolderDeleteClick = { folder ->
+                        viewModel.deleteFolder(folder)
+                    },
                     onCoasterClick = { coaster ->
                         navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")
                     }

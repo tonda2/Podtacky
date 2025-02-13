@@ -40,6 +40,10 @@ class FolderRepository(
         return folderDao.delete(folder.toDb())
     }
 
+    suspend fun updateFolder(folder: Folder) {
+        return folderDao.update(folder.toDb())
+    }
+
     suspend fun markUploaded(uid: String) {
         folderDao.markUploaded(uid)
     }

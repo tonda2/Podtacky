@@ -18,7 +18,8 @@ fun FolderAndCoasterList(
     emptyText: String,
     modifier: Modifier,
     onFolderClick: (Folder) -> Unit,
-    onCoasterClick: (Coaster) -> Unit
+    onCoasterClick: (Coaster) -> Unit,
+    onFolderDeleteClick: (Folder) -> Unit
 ) {
     if (folders.isEmpty() && coasters.isEmpty()) {
         NoResults(
@@ -38,7 +39,7 @@ fun FolderAndCoasterList(
                     folder = folder,
                     onClick = { onFolderClick(folder) },
                     onRenameClick = {},
-                    onDeleteClick = {}
+                    onDeleteClick = { onFolderDeleteClick(folder) }
                 )
             }
             items(coasters) { coaster ->

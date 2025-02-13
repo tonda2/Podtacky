@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,6 +16,9 @@ interface FolderDao {
 
     @Delete
     suspend fun delete(folder: DbFolder)
+
+    @Update
+    suspend fun update(folder: DbFolder)
 
     @Transaction
     @Query("SELECT * FROM folders")

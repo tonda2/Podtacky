@@ -11,6 +11,7 @@ import cz.tonda2.podtacky.features.folder.domain.Folder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -34,7 +35,7 @@ class FolderListViewModel(
             ) { subfolders, coasters ->
                 FolderListScreenState(
                     parentFolder = folderRepository.getFolderByUid(uid),
-                    subFolders = subfolders.sortedBy { it.name.lowercase() },
+                    subFolders = subfolders.filter { f -> !f.deleted }.sortedBy { it.name.lowercase() },
                     coasters = coasters.filter { c -> !c.deleted }
                 )
             }.collect { newState ->
@@ -58,6 +59,35 @@ class FolderListViewModel(
 
         viewModelScope.launch {
             folderRepository.addFolder(newFolder)
+        }
+    }
+
+    fun deleteFolder(folder: Folder) {
+        viewModelScope.launch {
+            val subFolders = folderRepository.getSubFolders(folder.folderUid).first()
+            subFolders.forEach { subFolder ->
+                val newFolder = subFolder.copy(parentUid = folder.parentUid, uploaded = false)
+                folderRepository.updateFolder(newFolder)
+            }
+
+            val coastersInFolder = coasterRepository.getCoastersInFolder(folder.folderUid).first()
+            coastersInFolder.forEach { coaster ->
+                coasterRepository.addCoaster(coaster.copy(coasterId = 0L, folderUid = folder.parentUid, uploaded = false))
+
+                if (coaster.uploaded) {
+                    coasterRepository.markDeleted(coaster.coasterId.toString())
+                } else {
+                    coasterRepository.deleteCoaster(coaster)
+                }
+            }
+
+            // Delete at the end to keep FK working
+            if (folder.uploaded) {
+                folderRepository.markDeleted(folder.folderUid)
+            }
+            else {
+                folderRepository.deleteFolder(folder)
+            }
         }
     }
 }
