@@ -6,4 +6,7 @@ data class Folder(
     val parentUid: String?,
     val uploaded: Boolean,
     val deleted: Boolean
-)
+) {
+    // For firestore get method
+    constructor() : this("", "", null, false, false)
+}

@@ -14,6 +14,8 @@ import cz.tonda2.podtacky.features.coaster.data.firebase.firestore.FirestoreRepo
 import cz.tonda2.podtacky.features.coaster.data.firebase.storage.FirebaseStorageRepository
 import cz.tonda2.podtacky.features.coaster.data.toDomain
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
+import cz.tonda2.podtacky.features.folder.data.FolderRepository
+import cz.tonda2.podtacky.features.folder.domain.Folder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -22,12 +24,18 @@ import kotlinx.coroutines.withContext
 class ImportManager(
     private val firestoreRepository: FirestoreRepository,
     private val firebaseStorageRepository: FirebaseStorageRepository,
-    private val coasterRepository: CoasterRepository
+    private val coasterRepository: CoasterRepository,
+    private val folderRepository: FolderRepository
 ) {
 
-    suspend fun importBackup(context: Context, onFileDownload: () -> Unit) {
+    suspend fun importBackup(context: Context, onCoasterDownload: () -> Unit) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        importFolderBackup(userId)
+        importCoasterBackup(userId, context, onCoasterDownload)
+    }
+
+    private suspend fun importCoasterBackup(userId: String, context: Context, onCoasterDownload: () -> Unit) {
         val backedData: Flow<List<DbCoaster>>
         try {
             backedData = firestoreRepository.getCoasters(userId)
@@ -42,7 +50,7 @@ class ImportManager(
             backedData.first().forEach { dbCoaster ->
                 try {
                     importCoaster(dbCoaster, context)
-                    onFileDownload()
+                    onCoasterDownload()
                 }
                 catch (e: StorageException) {
                     Log.e("IMPORT", "Failed to import coaster uid: ${dbCoaster.uid} for user id: $userId", e)
@@ -52,8 +60,46 @@ class ImportManager(
         }
     }
 
+    private suspend fun importFolderBackup(userId: String) {
+        val folderBackup: List<Folder>
+        try {
+            val rawBackup = firestoreRepository.getFolders(userId)
+            folderBackup = sortFoldersForImport(rawBackup.first())
+        }
+        catch (e: Exception) {
+            Log.e("IMPORT", "Couldn't get folders from firestore for user id: $userId!", e)
+            Firebase.crashlytics.recordException(e)
+            return
+        }
+
+        withContext(Dispatchers.IO) {
+            folderBackup.forEach { folder ->
+                importFolder(folder)
+            }
+        }
+    }
+
     private suspend fun importCoaster(coaster: DbCoaster, context: Context) {
-        if (coasterRepository.isCoasterDuplicate(coaster.toDomain())) {
+        val localCoasters = coasterRepository.getCoastersByUid(coaster.uid).first()
+
+        // locally coaster exists, check it's folder and update, if it's different
+        if (localCoasters.isNotEmpty()) {
+            val undeleted = localCoasters.firstOrNull { !it.deleted }
+            val deleted = localCoasters.firstOrNull { it.deleted }
+
+            // Coaster was edited, undo changes and delete coaster mark as deleted
+            if (undeleted != null && deleted != null) {
+                coasterRepository.updateCoaster(
+                    coaster.copy(
+                        coasterId = undeleted.coasterId,
+                        frontUri = undeleted.frontUri.toString(),
+                        backUri = undeleted.backUri.toString()
+                    ).toDomain()
+                )
+
+                coasterRepository.deleteCoaster(deleted)
+            }
+
             return
         }
 
@@ -86,5 +132,39 @@ class ImportManager(
         )
 
         coasterRepository.addCoaster(newCoaster)
+    }
+
+    private suspend fun importFolder(folder: Folder) {
+        if (folderRepository.getFolderByUid(folder.folderUid) == null) {
+            folderRepository.addFolder(folder)
+        }
+        else {
+            folderRepository.updateFolder(folder)
+        }
+    }
+
+    /**
+     * Sorts folders in a way so each folder will only come after all it's parents.
+     * If imported in this order, no FK will be violated.
+     */
+    private fun sortFoldersForImport(folders: List<Folder>): List<Folder> {
+        val folderMap = folders.associateBy { it.folderUid }
+        val sortedFolders = mutableListOf<Folder>()
+        val visited = mutableSetOf<String>()
+
+        fun visit(folder: Folder) {
+            if (visited.contains(folder.folderUid)) return
+
+            // If folder has a parent, it needs to be imported first to not violate FK -> recursively add all parents
+            folder.parentUid?.let { parentId ->
+                folderMap[parentId]?.let { visit(it) }
+            }
+
+            sortedFolders.add(folder)
+            visited.add(folder.folderUid)
+        }
+
+        folders.forEach { visit(it) }
+        return sortedFolders
     }
 }

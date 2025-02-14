@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -24,7 +25,7 @@ interface CoasterDao {
     suspend fun getCoasterById(id: String): DbCoaster?
 
     @Query("SELECT * FROM coasters WHERE uid = :uid")
-    suspend fun getCoasterByUid(uid: String): DbCoaster?
+    fun getCoastersByUid(uid: String): Flow<List<DbCoaster>>
 
     @Query(
         "SELECT * FROM coasters " +
@@ -44,4 +45,7 @@ interface CoasterDao {
 
     @Delete
     suspend fun delete(coaster: DbCoaster)
+
+    @Update
+    suspend fun update(coaster: DbCoaster)
 }
