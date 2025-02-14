@@ -50,12 +50,8 @@ class CoasterRepository(
         }
     }
 
-    fun getCoastersByUid(uid: String): Flow<List<Coaster>> {
-        return coasterDao.getCoastersByUid(uid).map { list ->
-            list.map {
-                dbCoaster -> dbCoaster.toDomain()
-            }
-        }
+    suspend fun isCoasterDuplicate(coaster: Coaster): Boolean {
+        return coasterDao.getCoasterByUid(coaster.uid) != null
     }
 
     suspend fun markUploaded(id: String) {

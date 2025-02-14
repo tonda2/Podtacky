@@ -80,26 +80,7 @@ class ImportManager(
     }
 
     private suspend fun importCoaster(coaster: DbCoaster, context: Context) {
-        val localCoasters = coasterRepository.getCoastersByUid(coaster.uid).first()
-
-        // locally coaster exists, check it's folder and update, if it's different
-        if (localCoasters.isNotEmpty()) {
-            val undeleted = localCoasters.firstOrNull { !it.deleted }
-            val deleted = localCoasters.firstOrNull { it.deleted }
-
-            // Coaster was edited, undo changes and delete coaster mark as deleted
-            if (undeleted != null && deleted != null) {
-                coasterRepository.updateCoaster(
-                    coaster.copy(
-                        coasterId = undeleted.coasterId,
-                        frontUri = undeleted.frontUri.toString(),
-                        backUri = undeleted.backUri.toString()
-                    ).toDomain()
-                )
-
-                coasterRepository.deleteCoaster(deleted)
-            }
-
+        if (coasterRepository.isCoasterDuplicate(coaster.toDomain())) {
             return
         }
 

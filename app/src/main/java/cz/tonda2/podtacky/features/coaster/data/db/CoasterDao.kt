@@ -25,7 +25,7 @@ interface CoasterDao {
     suspend fun getCoasterById(id: String): DbCoaster?
 
     @Query("SELECT * FROM coasters WHERE uid = :uid")
-    fun getCoastersByUid(uid: String): Flow<List<DbCoaster>>
+    suspend fun getCoasterByUid(uid: String): DbCoaster?
 
     @Query(
         "SELECT * FROM coasters " +
