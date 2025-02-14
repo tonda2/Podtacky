@@ -60,7 +60,7 @@ class EditViewModel(
             coasterUiState = coasterUiState.copy(
                 oldFolder = folder,
                 newFolder = folder,
-                folderList = folderList.filter { f -> !f.deleted }
+                folderList = folderList.filter { f -> !f.deleted }.sortedBy { it.name.lowercase() }
             )
         }
     }
@@ -197,7 +197,7 @@ class EditViewModel(
             val folderList = folderFlow.first()
 
             coasterUiState = coasterUiState.copy(
-                folderList = folderList.filter { f -> !f.deleted }
+                folderList = folderList.filter { f -> !f.deleted }.sortedBy { it.name.lowercase() },
             )
         }
     }
