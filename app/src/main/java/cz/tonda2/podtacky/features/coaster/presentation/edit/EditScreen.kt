@@ -118,7 +118,14 @@ fun EditScreen(
             FloatingActionButton(
                 onClick = {
                     viewModel.saveEdit()
-                    navController.navigate(Screen.ListScreen.route)
+
+                    val folder = screenState.newFolder
+                    if (folder == null) {
+                        navController.navigate(Screen.ListScreen.route)
+                    }
+                    else {
+                        navController.navigate(Screen.FolderScreen.route + "/${screenState.newFolder?.folderUid ?: "-"}?${Screen.FolderScreen.SHOW_ADD_POPUP}=false")
+                    }
                 },
                 modifier = Modifier
                     .padding(8.dp)
