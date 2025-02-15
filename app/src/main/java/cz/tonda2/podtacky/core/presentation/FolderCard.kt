@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -75,12 +76,25 @@ private fun FolderItem(
     onRenameClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    Row(modifier = modifier) {
+    Row(
+        modifier = modifier.padding(start = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Box(
             modifier = Modifier
-                .align(Alignment.CenterVertically)
+                .size(60.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                modifier = Modifier.size(45.dp),
+                painter = painterResource(id = R.drawable.baseline_folder_24),
+                contentDescription = stringResource(R.string.folder_icon)
+            )
+        }
+        Box(
+            modifier = Modifier
                 .weight(1f)
-                .padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
+                .padding(start = 16.dp)
         ) {
             Text(
                 text = folder.name,
