@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.tonda2.podtacky.R
-import cz.tonda2.podtacky.core.presentation.CoasterList
+import cz.tonda2.podtacky.core.presentation.FolderAndCoasterList
 import cz.tonda2.podtacky.core.presentation.Screen
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -56,15 +56,18 @@ fun SearchScreen(
                 })
         }
     ) { paddingValues ->
-        val coasters = screenState.result
-
-        CoasterList(
-            coasters = coasters,
+        FolderAndCoasterList(
+            folders = screenState.resultFolders,
+            coasters = screenState.resultCoasters,
+            showFolderOptions = false,
             emptyText = stringResource(R.string.nothing_found),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            onItemClick = { coaster ->
+            onFolderClick = { folder ->
+                navController.navigate(Screen.FolderScreen.route + "/${folder.folderUid}?${Screen.FolderScreen.SHOW_ADD_POPUP}=false")
+            },
+            onCoasterClick = { coaster ->
                 navController.navigate(Screen.DetailScreen.route + "/${coaster.coasterId}")
             }
         )

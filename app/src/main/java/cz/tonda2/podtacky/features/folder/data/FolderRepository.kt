@@ -51,6 +51,12 @@ class FolderRepository(
     suspend fun markDeleted(uid: String) {
         folderDao.markDeleted(uid)
     }
+
+    fun searchFolders(query: String): Flow<List<Folder>> {
+        return folderDao.searchFolders(query).map { list ->
+            list.map { dbFolder -> dbFolder.toDomain() }
+        }
+    }
 }
 
 fun DbFolder.toDomain() = Folder(

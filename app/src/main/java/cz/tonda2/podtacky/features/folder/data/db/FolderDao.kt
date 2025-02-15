@@ -41,4 +41,6 @@ interface FolderDao {
     @Query("UPDATE folders SET deleted = 1 WHERE folderUid = :uid")
     suspend fun markDeleted(uid: String)
 
+    @Query("SELECT * FROM folders WHERE LOWER(name) like '%' || LOWER(:query) || '%'")
+    fun searchFolders(query: String): Flow<List<DbFolder>>
 }

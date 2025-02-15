@@ -15,12 +15,13 @@ import cz.tonda2.podtacky.features.folder.domain.Folder
 fun FolderAndCoasterList(
     folders: List<Folder>,
     coasters: List<Coaster>,
+    showFolderOptions: Boolean = true,
     emptyText: String,
     modifier: Modifier,
     onFolderClick: (Folder) -> Unit,
     onCoasterClick: (Coaster) -> Unit,
-    onFolderRenameClick: (Folder) -> Unit,
-    onFolderDeleteClick: (Folder) -> Unit
+    onFolderRenameClick: (Folder) -> Unit = {},
+    onFolderDeleteClick: (Folder) -> Unit = {}
 ) {
     if (folders.isEmpty() && coasters.isEmpty()) {
         NoResults(
@@ -38,6 +39,7 @@ fun FolderAndCoasterList(
             items(folders) { folder ->
                 FolderCard(
                     folder = folder,
+                    showOptions = showFolderOptions,
                     onClick = { onFolderClick(folder) },
                     onRenameClick = { onFolderRenameClick(folder) },
                     onDeleteClick = { onFolderDeleteClick(folder) }
