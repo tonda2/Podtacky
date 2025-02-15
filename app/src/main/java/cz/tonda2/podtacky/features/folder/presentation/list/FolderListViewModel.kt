@@ -108,7 +108,7 @@ class FolderListViewModel(
     fun renameFolder() {
         viewModelScope.launch {
             val folder = _folderListUiState.value.folderBeingRenamed ?: return@launch
-            val newFolder = folder.copy(name = _folderListUiState.value.changedName, uploaded = false)
+            val newFolder = folder.copy(name = _folderListUiState.value.changedName.trim(), uploaded = false)
             folderRepository.updateFolder(newFolder)
         }
     }

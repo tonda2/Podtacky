@@ -38,6 +38,7 @@ fun AddFolderPopup(
             TextField(
                 value = textValue,
                 onValueChange = onTextValueChange,
+                singleLine = true,
                 placeholder = {
                     Text(
                         text = textFieldPlaceholder,
