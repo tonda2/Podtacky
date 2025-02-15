@@ -91,7 +91,9 @@ fun FolderListScreen(
                 },
                 navigationIcon = {
                     if (screenState.parentFolder != null) {
-                        IconButton(onClick = { navController.navigateUp() }) {
+                        IconButton(onClick = {
+                            navController.navigate(Screen.FolderScreen.route + "/${screenState.parentFolder?.parentUid ?: "-"}?${Screen.FolderScreen.SHOW_ADD_POPUP}=false")
+                        }) {
                             Icon(
                                 Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                                 contentDescription = stringResource(R.string.back_button)
