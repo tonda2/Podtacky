@@ -1,8 +1,11 @@
 package cz.tonda2.podtacky.features.profile.presentation
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import cz.tonda2.podtacky.core.data.BackupManager
 import cz.tonda2.podtacky.core.data.ImportManager
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
@@ -59,10 +62,15 @@ class ProfileViewModel(
                 it.copy(downloading = true, downloadCount = 0)
             }
 
-            importManager.importBackup(context) {
-                _profileUiState.update {
-                    it.copy(downloadCount = _profileUiState.value.downloadCount + 1)
+            runCatching {
+                importManager.importBackup(context) {
+                    _profileUiState.update {
+                        it.copy(downloadCount = _profileUiState.value.downloadCount + 1)
+                    }
                 }
+            }.onFailure { e ->
+                Log.e("IMPORT", "Import from Backup failed!", e)
+                Firebase.crashlytics.recordException(e)
             }
 
             _profileUiState.update {

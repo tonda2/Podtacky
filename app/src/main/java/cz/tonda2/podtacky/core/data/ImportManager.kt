@@ -17,7 +17,6 @@ import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.folder.data.FolderRepository
 import cz.tonda2.podtacky.features.folder.domain.Folder
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
@@ -36,15 +35,7 @@ class ImportManager(
     }
 
     private suspend fun importCoasterBackup(userId: String, context: Context, onCoasterDownload: () -> Unit) {
-        val backedData: Flow<List<DbCoaster>>
-        try {
-            backedData = firestoreRepository.getCoasters(userId)
-        }
-        catch (e: Exception) {
-            Log.e("IMPORT", "Couldn't get coasters from firestore for user id: $userId!", e)
-            Firebase.crashlytics.recordException(e)
-            return
-        }
+        val backedData = firestoreRepository.getCoasters(userId)
 
         withContext(Dispatchers.IO) {
             backedData.first().forEach { dbCoaster ->
@@ -61,16 +52,8 @@ class ImportManager(
     }
 
     private suspend fun importFolderBackup(userId: String) {
-        val folderBackup: List<Folder>
-        try {
-            val rawBackup = firestoreRepository.getFolders(userId)
-            folderBackup = sortFoldersForImport(rawBackup.first())
-        }
-        catch (e: Exception) {
-            Log.e("IMPORT", "Couldn't get folders from firestore for user id: $userId!", e)
-            Firebase.crashlytics.recordException(e)
-            return
-        }
+        val rawBackup = firestoreRepository.getFolders(userId)
+        val folderBackup = sortFoldersForImport(rawBackup.first())
 
         withContext(Dispatchers.IO) {
             folderBackup.forEach { folder ->
