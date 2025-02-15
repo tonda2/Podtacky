@@ -105,7 +105,7 @@ class BackupManager(
     }
 
     private suspend fun uploadFolder(userId: String, folder: Folder): Boolean {
-        return firestoreRepository.addFolder(userId, folder)
+        return firestoreRepository.addFolder(userId, folder.copy(uploaded = true))
     }
 
     private suspend fun deleteFolder(userId: String, folder: Folder): Boolean {

@@ -104,7 +104,7 @@ class FirestoreRepository(
             .collection(FOLDER_COLLECTION)
             .document(uid)
             .delete()
-            .addOnSuccessListener { Log.d("FS DELETE", "Folder deleted from FS!") }
-            .addOnFailureListener { e -> Log.w("FS DELETE", "Error deleting folder from FS", e) }
+            .addOnSuccessListener { Log.d("FS DELETE", "Folder $uid deleted from FS!") }
+            .addOnFailureListener { e -> Log.w("FS DELETE", "Error deleting folder $uid from FS", e) }
     }
 }
