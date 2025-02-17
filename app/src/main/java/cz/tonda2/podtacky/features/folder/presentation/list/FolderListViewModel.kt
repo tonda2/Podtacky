@@ -83,13 +83,9 @@ class FolderListViewModel(
                 }
             }
 
-            // Delete at the end to keep FK working
-            if (folder.uploaded) {
-                folderRepository.markDeleted(folder.folderUid)
-            }
-            else {
-                folderRepository.deleteFolder(folder)
-            }
+            // Only mark as deleted in case folder was renamed and then deleted before being uploaded
+            // After rename, uploaded is set to false - can't tell if it's false because it isn't backed up or because it was renamed
+            folderRepository.markDeleted(folder.folderUid)
         }
     }
 
