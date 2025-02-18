@@ -3,6 +3,7 @@ package cz.tonda2.podtacky.features.folder.presentation.list
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.tonda2.podtacky.core.data.PreferencesManager
 import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.core.presentation.sortCoastersByType
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
@@ -20,7 +21,8 @@ import java.util.UUID
 class FolderListViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val folderRepository: FolderRepository,
-    private val coasterRepository: CoasterRepository
+    private val coasterRepository: CoasterRepository,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
     private val uid: String
@@ -29,7 +31,7 @@ class FolderListViewModel(
     private val _folderListUiState = MutableStateFlow(FolderListScreenState())
     val folderListUiState: StateFlow<FolderListScreenState> = _folderListUiState
 
-    private val _order = MutableStateFlow(CoasterSortType.BREWERY)
+    private val _order = MutableStateFlow(preferencesManager.getSortOrder())
 
     init {
         viewModelScope.launch {
@@ -125,6 +127,7 @@ class FolderListViewModel(
         if (currentOrder == newOrder) return false
 
         _order.value = newOrder
+        preferencesManager.saveSortOrder(newOrder)
         return true
     }
 }

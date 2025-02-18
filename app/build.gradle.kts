@@ -22,7 +22,7 @@ android {
         applicationId = "cz.tonda2.podtacky"
         minSdk = 24
         targetSdk = 34
-        versionCode = 22
+        versionCode = 23
         versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

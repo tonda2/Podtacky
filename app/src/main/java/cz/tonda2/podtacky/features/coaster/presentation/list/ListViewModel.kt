@@ -2,6 +2,7 @@ package cz.tonda2.podtacky.features.coaster.presentation.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.tonda2.podtacky.core.data.PreferencesManager
 import cz.tonda2.podtacky.core.presentation.sortCoastersByType
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
@@ -16,14 +17,15 @@ import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ListViewModel(
-    private val coasterRepository: CoasterRepository
+    private val coasterRepository: CoasterRepository,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
 
-    private val _order = MutableStateFlow(CoasterSortType.BREWERY)
+    private val _order = MutableStateFlow(preferencesManager.getSortOrder())
 
     val listUiState: StateFlow<ListScreenState> = _order
         .flatMapLatest { order ->
@@ -46,6 +48,7 @@ class ListViewModel(
         if (currentOrder == newOrder) return false
 
         _order.value = newOrder
+        preferencesManager.saveSortOrder(newOrder)
         return true
     }
 
