@@ -24,7 +24,7 @@ fun AddFolderPopup(
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            Button(onClick = onConfirm, enabled = textValue.isNotEmpty()) {
+            Button(onClick = onConfirm, enabled = textValue.trim().isNotEmpty()) {
                 Text(text = confirmButtonText)
             }
         },
