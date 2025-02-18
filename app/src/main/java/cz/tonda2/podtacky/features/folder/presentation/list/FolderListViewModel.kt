@@ -4,8 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.tonda2.podtacky.core.presentation.Screen
+import cz.tonda2.podtacky.core.presentation.sortCoastersByType
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
+import cz.tonda2.podtacky.features.coaster.domain.CoasterSortType
 import cz.tonda2.podtacky.features.folder.data.FolderRepository
 import cz.tonda2.podtacky.features.folder.domain.Folder
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,16 +29,19 @@ class FolderListViewModel(
     private val _folderListUiState = MutableStateFlow(FolderListScreenState())
     val folderListUiState: StateFlow<FolderListScreenState> = _folderListUiState
 
+    private val _order = MutableStateFlow(CoasterSortType.BREWERY)
+
     init {
         viewModelScope.launch {
             combine(
                 if (uid == "-") folderRepository.getFoldersWithoutParent() else folderRepository.getSubFolders(uid),
-                if (uid == "-") coasterRepository.getCoastersWithoutFolder() else coasterRepository.getCoastersInFolder(uid)
-            ) { subfolders, coasters ->
+                if (uid == "-") coasterRepository.getCoastersWithoutFolder() else coasterRepository.getCoastersInFolder(uid),
+                _order
+            ) { subfolders, coasters, order ->
                 FolderListScreenState(
                     parentFolder = folderRepository.getFolderByUid(uid),
                     subFolders = subfolders.filter { f -> !f.deleted }.sortedBy { it.name.lowercase() },
-                    coasters = coasters.filter { c -> !c.deleted }.sortedBy { it.brewery.lowercase() }
+                    coasters = sortCoastersByType(coasters.filter { c -> !c.deleted }, order)
                 )
             }.collect { newState ->
                 _folderListUiState.value = newState
@@ -110,6 +115,18 @@ class FolderListViewModel(
             folderRepository.updateFolder(newFolder)
         }
     }
+
+    fun getSelectedIndex(): Int {
+        return CoasterSortType.entries.indexOf(_order.value)
+    }
+
+    fun updateSortOrder(newOrder: CoasterSortType): Boolean {
+        val currentOrder = _order.value
+        if (currentOrder == newOrder) return false
+
+        _order.value = newOrder
+        return true
+    }
 }
 
 data class FolderListScreenState(
@@ -119,5 +136,6 @@ data class FolderListScreenState(
     val coasters: List<Coaster> = emptyList(),
     val folderBeingRenamed: Folder? = null,
     val changedName: String = "",
-    val folderToDelete: Folder? = null
+    val folderToDelete: Folder? = null,
+    val coasterOrder: CoasterSortType = CoasterSortType.BREWERY
 )

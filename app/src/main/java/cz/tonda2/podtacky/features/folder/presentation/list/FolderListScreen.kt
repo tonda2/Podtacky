@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,7 +36,9 @@ import cz.tonda2.podtacky.core.presentation.ExpandableFAB
 import cz.tonda2.podtacky.core.presentation.FABItem
 import cz.tonda2.podtacky.core.presentation.FolderAndCoasterList
 import cz.tonda2.podtacky.core.presentation.Grayable
+import cz.tonda2.podtacky.core.presentation.ListSortBottomSheet
 import cz.tonda2.podtacky.core.presentation.Screen
+import cz.tonda2.podtacky.features.coaster.domain.CoasterSortType
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,6 +55,7 @@ fun FolderListScreen(
     var showRenamePopup by remember { mutableStateOf(false) }
     var showDeletePopup by remember { mutableStateOf(false) }
     var showAddPopup by remember { mutableStateOf(defaultShowAddPopup) }
+    var showSortBottomSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
@@ -107,6 +111,15 @@ fun FolderListScreen(
                             Icon(
                                 Icons.Default.Search,
                                 contentDescription = stringResource(R.string.search_button)
+                            )
+                        }
+                        IconButton(onClick = {
+                            isFabExpanded = false
+                            showSortBottomSheet = !showSortBottomSheet
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_sort_24),
+                                contentDescription = stringResource(R.string.sort)
                             )
                         }
                     }
@@ -165,6 +178,21 @@ fun FolderListScreen(
         }
         else {
             Grayable(hidden = isFabExpanded, onClick = { isFabExpanded = false }) {
+                if (showSortBottomSheet) {
+                    ListSortBottomSheet(
+                        options = CoasterSortType.entries,
+                        selected = viewModel.getSelectedIndex(),
+                        onDismissRequest = {
+                            showSortBottomSheet = false
+                        },
+                        onOptionClick = { order ->
+                            if (viewModel.updateSortOrder(order)) {
+                                showSortBottomSheet = false
+                            }
+                        }
+                    )
+                }
+
                 FolderAndCoasterList(
                     folders = screenState.subFolders,
                     coasters = screenState.coasters,
