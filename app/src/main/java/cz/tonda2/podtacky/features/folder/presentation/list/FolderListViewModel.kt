@@ -81,7 +81,7 @@ class FolderListViewModel(
 
             val coastersInFolder = coasterRepository.getCoastersInFolder(folder.folderUid).first()
             coastersInFolder.forEach { coaster ->
-                coasterRepository.addCoaster(coaster.copy(coasterId = 0L, folderUid = folder.parentUid, uploaded = false))
+                coasterRepository.addCoaster(coaster.copy(coasterId = 0L, uid = UUID.randomUUID().toString(), folderUid = folder.parentUid, uploaded = false))
 
                 if (coaster.uploaded) {
                     coasterRepository.markDeleted(coaster.coasterId.toString())
