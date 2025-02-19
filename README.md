@@ -33,4 +33,4 @@ The app can be downloaded from Google play
 
 ### Screenshots
 
-<img src="screenshots/sc1.jpg" alt="Main list screen" style="width:20%;"/>  <img src="screenshots/sc2.jpg" alt="Search screen" style="width:20%;"/>  <img src="screenshots/sc3.jpg" alt="Coaster detail screen" style="width:20%;"/>  <img src="screenshots/sc4.jpg" alt="Coaster edit screen" style="width:20%;"/>
+<img src="screenshots/sc1.jpg" alt="Main list screen" style="width:20%;"/>  <img src="screenshots/sc2.jpg" alt="Folder list screen" style="width:20%;"/>  <img src="screenshots/sc3.jpg" alt="Folder detail screen" style="width:20%;"/>  <img src="screenshots/sc4.jpg" alt="Coaster detail screen" style="width:20%;"/> <img src="screenshots/sc5.jpg" alt="Coaster edit screen" style="width:20%;"/> <img src="screenshots/sc6.jpg" alt="Search screen" style="width:20%;"/>
