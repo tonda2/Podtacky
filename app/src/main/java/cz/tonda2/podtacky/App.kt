@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import cz.tonda2.podtacky.core.di.coreModule
 import cz.tonda2.podtacky.features.coaster.data.BackupWorker
 import cz.tonda2.podtacky.features.coaster.di.coasterModule
+import cz.tonda2.podtacky.features.folder.di.folderModule
 import cz.tonda2.podtacky.features.profile.di.profileModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -20,7 +21,7 @@ class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(coreModule, coasterModule, profileModule)
+            modules(coreModule, coasterModule, profileModule, folderModule)
             setupBackupWorker()
         }
     }

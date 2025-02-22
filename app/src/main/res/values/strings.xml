@@ -43,6 +43,7 @@
     <string name="importovat_z_lohu">Importovat zálohu</string>
     <string name="beer_glass_emoji">🍺</string>
     <string name="no_coasters">Zatím nemáte žádné podtácky, přidejte si je tlačítkem +</string>
+    <string name="no_folders">Zatím tu nic není. Přidejte sem složku nebo podtácek tlačítkem +</string>
     <string name="nothing_found">Nebyly nalezeny žádné podtácky</string>
     <string name="coaster_image_cd">Coaster Image %1$s</string>
     <string name="large_coaster_image">Large coaster image %1$s</string>
@@ -50,6 +51,7 @@
     <string name="bottom_bar_icon">Bottom bar icon %1$s</string>
     <string name="coaster_image_edit_screen">Coaster image edit screen</string>
     <string name="a_single_coaster_description">A single coaster, id %1$s</string>
+    <string name="a_single_folder_description">A single folder, name %1$s</string>
     <string name="page_indicator_current_page">Page indicator, current page %1$s</string>
     <string name="_1_podtacek">1 podtácek</string>
     <string name="_2_4_podtacky">%1$s podtácky</string>
@@ -60,4 +62,21 @@
     <string name="number_of_backedup">Zálohováných podtácků:</string>
     <string name="ulozit">Uložit</string>
     <string name="select_date">Select date</string>
+    <string name="add_folder">Přidat složku</string>
+    <string name="slozky">Složky</string>
+    <string name="pridat">Přidat</string>
+    <string name="jmeno_slozky">Jméno složky</string>
+    <string name="folder_options">Folder options</string>
+    <string name="bez_slozky">Bez složky</string>
+    <string name="slozka">Složka</string>
+    <string name="select_folder">Select folder</string>
+    <string name="ulozit_sem">Uložit sem</string>
+    <string name="vyberte_slozku">Vyberte složku</string>
+    <string name="folder_picker_empty">Nejsou tu žádné další složky</string>
+    <string name="prejmenovat">Přejmenovat</string>
+    <string name="rename">Rename folder</string>
+    <string name="smazat_slozku">Delete folder</string>
+    <string name="prejmenovat_slozku">Přejmenovat složku</string>
+    <string name="folder_delete_confirm">Opravdu chcete složku smazat? Její obsah bude přesunut do nadsložky.</string>
+    <string name="folder_icon">Folder icon</string>
 </resources>

@@ -15,6 +15,7 @@ import cz.tonda2.podtacky.features.coaster.presentation.edit.EditScreen
 import cz.tonda2.podtacky.features.coaster.presentation.large_photo.LargePhotoScreen
 import cz.tonda2.podtacky.features.coaster.presentation.list.ListScreen
 import cz.tonda2.podtacky.features.coaster.presentation.search.SearchScreen
+import cz.tonda2.podtacky.features.folder.presentation.list.FolderListScreen
 import cz.tonda2.podtacky.features.profile.presentation.ProfileScreen
 
 @Composable
@@ -58,6 +59,19 @@ fun Navigation(
                 EditScreen(navController = navController)
             }
             composable(
+                route = Screen.EditScreen.route + "/{id}?${Screen.EditScreen.FOLDER_UID}={folderUid}",
+                arguments = listOf(
+                    navArgument(name = "id") {
+                        type = NavType.LongType
+                    },
+                    navArgument(name = Screen.EditScreen.FOLDER_UID) {
+                        type = NavType.StringType
+                    }
+                )
+            ) {
+                EditScreen(navController = navController)
+            }
+            composable(
                 route = Screen.LargePhotoScreen.route + "/{id}?${Screen.LargePhotoScreen.START_INDEX}={startIndex}",
                 arguments = listOf(
                     navArgument(name = "id") {
@@ -72,6 +86,19 @@ fun Navigation(
             }
             composable(route = Screen.ProfileScreen.route) {
                 ProfileScreen(navController = navController)
+            }
+            composable(
+                route = Screen.FolderScreen.route + "/{uid}?${Screen.FolderScreen.SHOW_ADD_POPUP}={${Screen.FolderScreen.SHOW_ADD_POPUP}}",
+                arguments = listOf(
+                    navArgument(name = Screen.FolderScreen.UID) {
+                        type = NavType.StringType
+                    },
+                    navArgument(name = Screen.FolderScreen.SHOW_ADD_POPUP) {
+                        type = NavType.BoolType
+                    }
+                )
+            ) {
+                FolderListScreen(navController = navController, defaultShowAddPopup = it.arguments?.getBoolean(Screen.FolderScreen.SHOW_ADD_POPUP) ?: false)
             }
         }
     }

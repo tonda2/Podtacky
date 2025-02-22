@@ -9,10 +9,13 @@ import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.data.firebase.firestore.FirestoreRepository
 import cz.tonda2.podtacky.features.coaster.data.firebase.storage.FirebaseStorageRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
+import cz.tonda2.podtacky.features.folder.data.FolderRepository
+import cz.tonda2.podtacky.features.folder.domain.Folder
 import kotlinx.coroutines.flow.first
 
 class BackupManager(
     private val coasterRepository: CoasterRepository,
+    private val folderRepository: FolderRepository,
     private val firestoreRepository: FirestoreRepository,
     private val firebaseStorageRepository: FirebaseStorageRepository
 ) {
@@ -20,6 +23,11 @@ class BackupManager(
     suspend fun createBackup() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        createCoasterBackup(userId)
+        createFolderBackup(userId)
+    }
+
+    private suspend fun createCoasterBackup(userId: String) {
         val coasters = coasterRepository.getAllCoasters().first()
         val toDelete = coasters.filter { c -> c.deleted }
         val toUpload = coasters.filter { c -> !c.deleted && !c.uploaded }
@@ -32,7 +40,7 @@ class BackupManager(
                 count += 1
             }
             else {
-                Firebase.crashlytics.recordException(RuntimeException("Failed to upload pictures for coaster ${coaster.coasterId}"))
+                Firebase.crashlytics.recordException(RuntimeException("Failed to upload coaster ${coaster} to Firestore"))
             }
         }
 
@@ -43,6 +51,25 @@ class BackupManager(
         }
 
         Log.d("BACKUP", "$count/${toDelete.size + toUpload.size} coasters backed up!")
+    }
+
+    private suspend fun createFolderBackup(userId: String) {
+        val folders = folderRepository.getAllFolders().first()
+        val toDelete = folders.filter { f -> f.deleted }
+        val toUpload = folders.filter { f -> !f.deleted && !f.uploaded }
+
+        toUpload.forEach { folder ->
+            if (uploadFolder(userId, folder)) {
+                folderRepository.markUploaded(folder.folderUid)
+            }
+            else {
+                Firebase.crashlytics.recordException(RuntimeException("Failed to upload folder $folder to Firestore"))
+            }
+        }
+
+        toDelete.forEach { folder ->
+            deleteFolder(userId, folder)
+        }
     }
 
     private suspend fun uploadCoaster(userId: String, coaster: Coaster): Boolean {
@@ -57,6 +84,7 @@ class BackupManager(
 
         return firestoreRepository.addCoaster(userId, Coaster(
             uid = coaster.uid,
+            folderUid = coaster.folderUid,
             coasterId = coaster.coasterId,
             brewery = coaster.brewery,
             description = coaster.description,
@@ -70,9 +98,19 @@ class BackupManager(
         ))
     }
 
-    private suspend fun deleteCoaster(userId: String, coaster: Coaster): Boolean{
+    private suspend fun deleteCoaster(userId: String, coaster: Coaster): Boolean {
         firestoreRepository.deleteCoaster(userId, coaster.uid)
         coasterRepository.deleteCoaster(coaster)
+        return true
+    }
+
+    private suspend fun uploadFolder(userId: String, folder: Folder): Boolean {
+        return firestoreRepository.addFolder(userId, folder.copy(uploaded = true))
+    }
+
+    private suspend fun deleteFolder(userId: String, folder: Folder): Boolean {
+        firestoreRepository.deleteFolder(userId, folder.folderUid)
+        folderRepository.deleteFolder(folder)
         return true
     }
 }

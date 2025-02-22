@@ -23,8 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import cz.tonda2.podtacky.R
+import cz.tonda2.podtacky.core.presentation.DeleteConfirmation
 import cz.tonda2.podtacky.core.presentation.PageIndicator
 import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
@@ -84,7 +83,7 @@ fun DetailScreen(
                 FloatingActionButton(
                     onClick = {
                         navController.navigate(
-                            Screen.EditScreen.route + "/${coaster.coasterId}"
+                            Screen.EditScreen.route + "/${coaster.coasterId}?${Screen.EditScreen.FOLDER_UID}=${coaster.folderUid ?: "-"}"
                         )
                     },
                     modifier = Modifier
@@ -110,7 +109,7 @@ fun DetailScreen(
             } else {
                 Box(modifier = Modifier.padding(paddingValues)) {
                     when (screenState.state) {
-                        ScreenState.Fill -> CoasterDetail(coaster) { index ->
+                        ScreenState.Fill -> CoasterDetail(coaster, screenState.folderName) { index ->
                             navController.navigate(
                                 Screen.LargePhotoScreen.route + "/${coaster.coasterId}?${Screen.LargePhotoScreen.START_INDEX}=${index}"
                             )
@@ -162,6 +161,7 @@ fun DetailTopBar(
 @Composable
 fun CoasterDetail(
     coaster: Coaster,
+    folderName: String,
     onPhotoClick: (Int) -> Unit
 ) {
     Column(
@@ -185,7 +185,7 @@ fun CoasterDetail(
                 thickness = 1.dp
             )
             Spacer(modifier = Modifier.height(14.dp))
-            DetailLowerPart(coaster)
+            DetailLowerPart(coaster, folderName)
             Spacer(modifier = Modifier.height(14.dp))
         }
     }
@@ -251,7 +251,8 @@ fun DetailTopPart(
 
 @Composable
 fun DetailLowerPart(
-    coaster: Coaster
+    coaster: Coaster,
+    folderName: String
 ) {
     Column(
         modifier = Modifier
@@ -262,6 +263,7 @@ fun DetailLowerPart(
         Field(title = stringResource(R.string.description), value = coaster.description)
         Field(title = stringResource(R.string.count), value = coaster.count.toString())
         Field(title = stringResource(R.string.added_date), value = coaster.dateAdded)
+        Field(title = stringResource(R.string.slozka), value = folderName)
 
         if (coaster.uploaded) {
             Icon(
@@ -299,26 +301,4 @@ fun Field(
             color = colorValue,
         )
     }
-}
-
-@Composable
-fun DeleteConfirmation(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            Button(onClick = onConfirm) {
-                Text(stringResource(R.string.smazat))
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text(stringResource(R.string.zrusit))
-            }
-        },
-        title = { Text(text = stringResource(R.string.potvrdte_title)) },
-        text = { Text(stringResource(R.string.potvrzeni)) }
-    )
 }

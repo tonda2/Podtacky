@@ -27,6 +27,18 @@ class CoasterRepository(
         }
     }
 
+    fun getCoastersInFolder(folderUid: String): Flow<List<Coaster>> {
+        return coasterDao.getCoastersByFolder(folderUid).map { list ->
+            list.map { dbCoaster -> dbCoaster.toDomain() }
+        }
+    }
+
+    fun getCoastersWithoutFolder(): Flow<List<Coaster>> {
+        return coasterDao.getCoastersWithoutFolder().map { list ->
+            list.map { dbCoaster -> dbCoaster.toDomain() }
+        }
+    }
+
     suspend fun getCoasterById(id: String): Coaster? {
         val coaster = coasterDao.getCoasterById(id)
         return coaster?.toDomain()
@@ -57,12 +69,17 @@ class CoasterRepository(
     suspend fun deleteCoaster(coaster: Coaster) {
         return coasterDao.delete(coaster.toDb())
     }
+
+    suspend fun updateCoaster(coaster: Coaster) {
+        return coasterDao.update(coaster.toDb())
+    }
 }
 
 fun DbCoaster.toDomain(): Coaster {
     return Coaster(
         uid = uid,
         coasterId = coasterId,
+        folderUid = folderUid,
         brewery = brewery,
         description = description,
         dateAdded = dateAdded,
@@ -79,6 +96,7 @@ fun Coaster.toDb(): DbCoaster {
     return DbCoaster(
         coasterId = coasterId,
         uid = uid,
+        folderUid = folderUid,
         brewery = brewery,
         description = description,
         dateAdded = dateAdded,

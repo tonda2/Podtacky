@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
+import cz.tonda2.podtacky.features.folder.data.FolderRepository
+import cz.tonda2.podtacky.features.folder.domain.Folder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -11,7 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
-    private val coasterRepository: CoasterRepository
+    private val coasterRepository: CoasterRepository,
+    private val folderRepository: FolderRepository
 ) : ViewModel() {
 
     private val _screenStateStream = MutableStateFlow(SearchScreenState())
@@ -31,7 +34,14 @@ class SearchViewModel(
         _screenStateStream.update {
             it.copy(
                 query = _screenStateStream.value.query.trim(),
-                result = coasterRepository.searchCoasters(_screenStateStream.value.query.trim()).first().filter { coaster -> !coaster.deleted }
+                resultCoasters = coasterRepository.searchCoasters(_screenStateStream.value.query.trim())
+                    .first()
+                    .filter { coaster -> !coaster.deleted }
+                    .sortedBy { coaster -> coaster.brewery.lowercase() },
+                resultFolders = folderRepository.searchFolders(_screenStateStream.value.query.trim())
+                    .first()
+                    .filter { folder -> !folder.deleted }
+                    .sortedBy { folder -> folder.name.lowercase() }
             )
         }
     }
@@ -40,7 +50,8 @@ class SearchViewModel(
         _screenStateStream.update {
             it.copy(
                 query = "",
-                result = emptyList()
+                resultCoasters = emptyList(),
+                resultFolders = emptyList()
             )
         }
     }
@@ -48,5 +59,6 @@ class SearchViewModel(
 
 data class SearchScreenState(
     val query: String = "",
-    val result: List<Coaster> = emptyList()
+    val resultCoasters: List<Coaster> = emptyList(),
+    val resultFolders: List<Folder> = emptyList()
 )

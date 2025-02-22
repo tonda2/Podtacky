@@ -9,6 +9,7 @@ import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.coaster.presentation.ScreenState
+import cz.tonda2.podtacky.features.folder.data.FolderRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
 
 class DetailViewModel(
     private val savedStateHandle: SavedStateHandle,
-    private val coasterRepository: CoasterRepository
+    private val coasterRepository: CoasterRepository,
+    private val folderRepository: FolderRepository
 ) : ViewModel() {
 
     private val id: Long
@@ -28,7 +30,14 @@ class DetailViewModel(
     init {
         viewModelScope.launch {
             _screenStateStream.update {
-                it.copy(coaster = coasterRepository.getCoasterById(id.toString()))
+                val coaster = coasterRepository.getCoasterById(id.toString())
+                it.copy(
+                    coaster = coaster,
+                    folderName = if (coaster?.folderUid == null) ""
+                    else folderRepository.getFolderByUid(
+                        coaster.folderUid.toString()
+                    )?.name ?: ""
+                )
             }
         }
     }
@@ -77,5 +86,6 @@ class DetailViewModel(
 
 data class DetailScreenState(
     val coaster: Coaster? = null,
+    val folderName: String = "",
     val state: ScreenState = ScreenState.Fill
 )
