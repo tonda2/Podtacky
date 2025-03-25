@@ -35,12 +35,16 @@ class BackupManager(
         var count = 0
 
         toUpload.forEach { coaster ->
-            if (uploadCoaster(userId, coaster)) {
-                coasterRepository.markUploaded(coaster.coasterId.toString())
-                count += 1
+            try {
+                if (uploadCoaster(userId, coaster)) {
+                    coasterRepository.markUploaded(coaster.coasterId.toString())
+                    count += 1
+                } else {
+                    Firebase.crashlytics.recordException(RuntimeException("Failed to upload coaster $coaster to Firestore"))
+                }
             }
-            else {
-                Firebase.crashlytics.recordException(RuntimeException("Failed to upload coaster ${coaster} to Firestore"))
+            catch (e: Exception) {
+                Firebase.crashlytics.recordException(e)
             }
         }
 
