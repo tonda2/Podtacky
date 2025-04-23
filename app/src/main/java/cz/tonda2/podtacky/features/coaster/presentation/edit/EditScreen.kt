@@ -50,7 +50,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -192,7 +191,9 @@ fun EntryEditScreen(
                 modifier = Modifier.size(164.dp),
                 onFrontUpdate = { uri -> viewModel.updateFrontUri(uri) },
                 onBackUpdate = { uri -> viewModel.updateBackUri(uri) },
-                onPhotoClick = { uri -> viewModel.deletePicture(uri, context) }
+                onPhotoClick = { uri -> viewModel.deletePicture(uri, context) },
+                newPhotoUri = { viewModel.getNewPhotoUri() },
+                onPhotoUriCreate = { uri -> viewModel.updateNewPhotoUri(uri) }
             )
             Column(
                 modifier = Modifier
@@ -327,7 +328,9 @@ fun PhotoSlider(
     modifier: Modifier = Modifier,
     onFrontUpdate: (Uri) -> Unit,
     onBackUpdate: (Uri) -> Unit,
-    onPhotoClick: (Uri) -> Unit
+    onPhotoClick: (Uri) -> Unit,
+    newPhotoUri : () -> Uri,
+    onPhotoUriCreate: (Uri) -> Unit
 ) {
     Box(
         modifier = modifier,
@@ -338,7 +341,7 @@ fun PhotoSlider(
         HorizontalPager(
             state = pagerState
         ) { page ->
-            PictureBox(photos[page], page, onFrontUpdate, onBackUpdate, onPhotoClick)
+            PictureBox(photos[page], page, onFrontUpdate, onBackUpdate, onPhotoClick, newPhotoUri, onPhotoUriCreate)
         }
 
         PageIndicator(count = pagerState.pageCount, current = pagerState.currentPage)
@@ -352,10 +355,11 @@ fun PictureBox(
     page: Int,
     onFrontUpdate: (Uri) -> Unit,
     onBackUpdate: (Uri) -> Unit,
-    onPhotoClick: (Uri) -> Unit
+    onPhotoClick: (Uri) -> Unit,
+    newPhotoUri: () -> Uri,
+    updatePhotoUri: (Uri) -> Unit
 ) {
     val context = LocalContext.current
-    var photoUri by rememberSaveable { mutableStateOf<Uri>(Uri.EMPTY) }
     val permission = Manifest.permission.CAMERA
     val permissionState = rememberMultiplePermissionsState(listOf(permission))
 
@@ -363,7 +367,8 @@ fun PictureBox(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
-            photoUri = compressImage(context, photoUri, compressRate = 0.2)
+            // TODO do viewmodelu??, aby se to nedělo na hlavním vlákně
+            val photoUri = compressImage(context, newPhotoUri(), compressRate = 0.2)
 
             when (page) {
                 0 -> onFrontUpdate(photoUri)
@@ -392,8 +397,8 @@ fun PictureBox(
                 .background(Color.Gray)
                 .clickable {
                     if (permissionState.allPermissionsGranted) {
-                        photoUri = createImageFile(context)
-                        takePictureLauncher.launch(photoUri)
+                        updatePhotoUri(createImageFile(context))
+                        takePictureLauncher.launch(newPhotoUri())
                     } else {
                         context.startActivity(
                             Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {

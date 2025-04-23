@@ -201,6 +201,14 @@ class EditViewModel(
             )
         }
     }
+
+    fun updateNewPhotoUri(uri: Uri) {
+        coasterUiState = coasterUiState.copy(
+            newPhotoUri = uri
+        )
+    }
+
+    fun getNewPhotoUri() = coasterUiState.newPhotoUri
 }
 
 data class EditScreenState(
@@ -216,7 +224,8 @@ data class EditScreenState(
     val oldFolder: Folder? = null,
     val newFolder: Folder? = null,
     val folderList: List<Folder> = listOf(),
-    val state: ScreenState = ScreenState.Fill
+    val state: ScreenState = ScreenState.Fill,
+    val newPhotoUri: Uri = Uri.EMPTY
 )
 
 fun Date.toString(format: String): String {
