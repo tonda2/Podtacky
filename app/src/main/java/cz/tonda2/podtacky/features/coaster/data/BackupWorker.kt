@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -18,6 +20,8 @@ class BackupWorker(context: Context, workerParameters: WorkerParameters) : Corou
 
     private suspend fun backup() {
         Log.d("BACKUP WORKER", "Starting periodic backup")
-        backupManager.createBackup()
+        withContext(Dispatchers.IO) {
+            backupManager.createBackup()
+        }
     }
 }

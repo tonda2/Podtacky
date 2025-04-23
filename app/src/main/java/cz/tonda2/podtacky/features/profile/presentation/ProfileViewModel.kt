@@ -11,6 +11,7 @@ import cz.tonda2.podtacky.core.data.ImportManager
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.profile.data.UserRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -51,7 +52,7 @@ class ProfileViewModel(
     }
 
     fun backup() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             backupManager.createBackup()
         }
     }
