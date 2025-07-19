@@ -20,7 +20,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -31,7 +30,6 @@ import androidx.navigation.NavController
 import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.presentation.FolderAndCoasterList
 import cz.tonda2.podtacky.core.presentation.Screen
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -40,7 +38,6 @@ fun SearchScreen(
     viewModel: SearchViewModel = koinViewModel()
 ) {
     val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -50,9 +47,7 @@ fun SearchScreen(
                 onQueryChange = viewModel::updateQuery,
                 onClearClick = { viewModel.clear() },
                 onSearchClick = {
-                    coroutineScope.launch {
-                        viewModel.searchCoasters()
-                    }
+                    viewModel.searchCoasters()
                 })
         }
     ) { paddingValues ->

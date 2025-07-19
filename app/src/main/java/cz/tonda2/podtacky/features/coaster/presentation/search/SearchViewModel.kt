@@ -30,19 +30,21 @@ class SearchViewModel(
         }
     }
 
-    suspend fun searchCoasters() {
-        _screenStateStream.update {
-            it.copy(
-                query = _screenStateStream.value.query.trim(),
-                resultCoasters = coasterRepository.searchCoasters(_screenStateStream.value.query.trim())
-                    .first()
-                    .filter { coaster -> !coaster.deleted }
-                    .sortedBy { coaster -> coaster.brewery.lowercase() },
-                resultFolders = folderRepository.searchFolders(_screenStateStream.value.query.trim())
-                    .first()
-                    .filter { folder -> !folder.deleted }
-                    .sortedBy { folder -> folder.name.lowercase() }
-            )
+    fun searchCoasters() {
+        viewModelScope.launch {
+            _screenStateStream.update {
+                it.copy(
+                    query = _screenStateStream.value.query.trim(),
+                    resultCoasters = coasterRepository.searchCoasters(_screenStateStream.value.query.trim())
+                        .first()
+                        .filter { coaster -> !coaster.deleted }
+                        .sortedBy { coaster -> coaster.brewery.lowercase() },
+                    resultFolders = folderRepository.searchFolders(_screenStateStream.value.query.trim())
+                        .first()
+                        .filter { folder -> !folder.deleted }
+                        .sortedBy { folder -> folder.name.lowercase() }
+                )
+            }
         }
     }
 
