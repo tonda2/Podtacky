@@ -1,5 +1,6 @@
 package cz.tonda2.podtacky.core.di
 
+import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -19,4 +20,5 @@ val coreModule = module {
     single { PreferencesManager(androidContext()) }
     singleOf(::BackupManager)
     singleOf(::ImportManager)
+    single { get<Context>().resources }
 }
