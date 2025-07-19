@@ -16,14 +16,14 @@ plugins {
 
 android {
     namespace = "cz.tonda2.podtacky"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "cz.tonda2.podtacky"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 28
-        versionName = "1.2.2"
+        targetSdk = 35
+        versionCode = 29
+        versionName = "1.2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
