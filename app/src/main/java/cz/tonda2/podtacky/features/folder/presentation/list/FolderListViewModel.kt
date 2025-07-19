@@ -1,20 +1,25 @@
 package cz.tonda2.podtacky.features.folder.presentation.list
 
+import android.content.res.Resources
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.tonda2.podtacky.R
 import cz.tonda2.podtacky.core.data.PreferencesManager
 import cz.tonda2.podtacky.core.presentation.Screen
 import cz.tonda2.podtacky.core.presentation.sortCoastersByType
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.coaster.domain.CoasterSortType
+import cz.tonda2.podtacky.features.coaster.presentation.list.ListScreenTitleType
 import cz.tonda2.podtacky.features.folder.data.FolderRepository
 import cz.tonda2.podtacky.features.folder.domain.Folder
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -22,8 +27,13 @@ class FolderListViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val folderRepository: FolderRepository,
     private val coasterRepository: CoasterRepository,
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val resources: Resources
 ) : ViewModel() {
+
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
+    }
 
     private val uid: String
         get() = savedStateHandle[Screen.FolderScreen.UID] ?: "-"
@@ -32,18 +42,49 @@ class FolderListViewModel(
     val folderListUiState: StateFlow<FolderListScreenState> = _folderListUiState
 
     private val _order = MutableStateFlow(preferencesManager.getSortOrder())
+    private val _titleType = MutableStateFlow(ListScreenTitleType.UNIQUE)
+
+    val titleText: StateFlow<String> = combine(
+        folderListUiState,
+        _titleType
+    ) { state, titleType ->
+        when (titleType) {
+            ListScreenTitleType.UNIQUE -> {
+                val count = state.coasters.size
+                when (count) {
+                    1 -> resources.getString(R.string._1_podtacek)
+                    in 2..4 -> resources.getString(R.string._2_4_podtacky, count)
+                    else -> resources.getString(R.string._5_podtacku, count)
+                }
+            }
+            ListScreenTitleType.TOTAL -> {
+                val totalCount = state.coasters.sumOf { it.count }
+                when (totalCount) {
+                    1 -> resources.getString(R.string._1_kus)
+                    in 2..4 -> resources.getString(R.string._2_4_kusy, totalCount)
+                    else -> resources.getString(R.string._5_kusu, totalCount)
+                }
+            }
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+        initialValue = resources.getString(R.string._5_podtacku, 0)
+    )
 
     init {
         viewModelScope.launch {
             combine(
                 if (uid == "-") folderRepository.getFoldersWithoutParent() else folderRepository.getSubFolders(uid),
                 if (uid == "-") coasterRepository.getCoastersWithoutFolder() else coasterRepository.getCoastersInFolder(uid),
-                _order
-            ) { subfolders, coasters, order ->
+                _order,
+                _titleType
+            ) { subfolders, coasters, order, titleType ->
                 FolderListScreenState(
                     parentFolder = folderRepository.getFolderByUid(uid),
                     subFolders = subfolders.filter { f -> !f.deleted }.sortedBy { it.name.lowercase() },
-                    coasters = sortCoastersByType(coasters.filter { c -> !c.deleted }, order)
+                    coasters = sortCoastersByType(coasters.filter { c -> !c.deleted }, order),
+                    titleType = titleType
                 )
             }.collect { newState ->
                 _folderListUiState.value = newState
@@ -130,6 +171,13 @@ class FolderListViewModel(
         preferencesManager.saveSortOrder(newOrder)
         return true
     }
+
+    fun switchTitle() {
+        _titleType.value = when (_titleType.value) {
+            ListScreenTitleType.TOTAL -> ListScreenTitleType.UNIQUE
+            ListScreenTitleType.UNIQUE -> ListScreenTitleType.TOTAL
+        }
+    }
 }
 
 data class FolderListScreenState(
@@ -140,5 +188,6 @@ data class FolderListScreenState(
     val folderBeingRenamed: Folder? = null,
     val changedName: String = "",
     val folderToDelete: Folder? = null,
-    val coasterOrder: CoasterSortType = CoasterSortType.BREWERY
+    val coasterOrder: CoasterSortType = CoasterSortType.BREWERY,
+    val titleType: ListScreenTitleType = ListScreenTitleType.UNIQUE
 )
