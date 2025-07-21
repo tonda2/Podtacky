@@ -4,6 +4,7 @@ import androidx.core.net.toUri
 import cz.tonda2.podtacky.features.coaster.data.db.CoasterDao
 import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
 import cz.tonda2.podtacky.features.coaster.data.db.buildNormalizedSearchString
+import cz.tonda2.podtacky.features.coaster.data.db.normalizeForSearch
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -46,7 +47,8 @@ class CoasterRepository(
     }
 
     fun searchCoasters(query: String): Flow<List<Coaster>> {
-        return coasterDao.searchCoasters(query).map { list ->
+        val normalizedQuery = query.normalizeForSearch()
+        return coasterDao.searchCoasters(normalizedQuery).map { list ->
             list.map { dbCoaster -> dbCoaster.toDomain() }
         }
     }

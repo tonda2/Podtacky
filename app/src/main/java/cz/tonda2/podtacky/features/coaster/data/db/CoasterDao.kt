@@ -29,10 +29,10 @@ interface CoasterDao {
 
     @Query(
         "SELECT * FROM coasters " +
-                "WHERE LOWER(brewery) like '%' || LOWER(:query) || '%' OR " +
-                "LOWER(description) like '%' || LOWER(:query) || '%'" +
-                "ORDER BY dateAdded DESC")
-    fun searchCoasters(query: String): Flow<List<DbCoaster>>
+                "WHERE normalizedSearchText like '%' || :normalizedQuery || '%'" +
+                "ORDER BY dateAdded DESC"
+    )
+    fun searchCoasters(normalizedQuery: String): Flow<List<DbCoaster>>
 
     @Query("UPDATE coasters SET uploaded = 1 WHERE coasterId = :id")
     suspend fun markUploaded(id: String)
