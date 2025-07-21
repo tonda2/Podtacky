@@ -1,6 +1,6 @@
 package cz.tonda2.podtacky.features.coaster.data
 
-import android.net.Uri
+import androidx.core.net.toUri
 import cz.tonda2.podtacky.features.coaster.data.db.CoasterDao
 import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
@@ -85,8 +85,8 @@ fun DbCoaster.toDomain(): Coaster {
         dateAdded = dateAdded,
         city = city,
         count = count,
-        frontUri = Uri.parse(frontUri) ?: Uri.EMPTY,
-        backUri = Uri.parse(backUri) ?: Uri.EMPTY,
+        frontUri = frontUri.toUri(),
+        backUri = backUri.toUri(),
         uploaded = uploaded,
         deleted = deleted
     )

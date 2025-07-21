@@ -2,6 +2,7 @@ package cz.tonda2.podtacky.core.data
 
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.crashlytics
@@ -86,19 +87,10 @@ class BackupManager(
             return false
         }
 
-        return firestoreRepository.addCoaster(userId, Coaster(
-            uid = coaster.uid,
-            folderUid = coaster.folderUid,
-            coasterId = coaster.coasterId,
-            brewery = coaster.brewery,
-            description = coaster.description,
-            dateAdded = coaster.dateAdded,
-            city = coaster.city,
-            count = coaster.count,
-            frontUri = Uri.parse(frontPath),
-            backUri = Uri.parse(backPath),
-            uploaded = true,
-            deleted = coaster.deleted
+        return firestoreRepository.addCoaster(userId, coaster.copy(
+            frontUri = frontPath.toUri(),
+            backUri = backPath.toUri(),
+            uploaded = true
         ))
     }
 
