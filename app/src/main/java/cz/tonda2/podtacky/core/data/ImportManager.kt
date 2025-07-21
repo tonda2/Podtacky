@@ -80,14 +80,7 @@ class ImportManager(
             if (!downloaded) return
         }
 
-        val newCoaster = Coaster(
-            uid = coaster.uid,
-            folderUid = coaster.folderUid,
-            brewery = coaster.brewery,
-            description = coaster.description,
-            dateAdded = coaster.dateAdded,
-            city = coaster.city,
-            count = coaster.count,
+        val newCoaster = coaster.copy(
             frontUri = frontUri,
             backUri = backUri,
             uploaded = true,

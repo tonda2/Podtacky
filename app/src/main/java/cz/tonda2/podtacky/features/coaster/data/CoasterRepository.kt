@@ -3,6 +3,7 @@ package cz.tonda2.podtacky.features.coaster.data
 import androidx.core.net.toUri
 import cz.tonda2.podtacky.features.coaster.data.db.CoasterDao
 import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
+import cz.tonda2.podtacky.features.coaster.data.db.buildNormalizedSearchString
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -105,6 +106,7 @@ fun Coaster.toDb(): DbCoaster {
         frontUri = frontUri.toString(),
         backUri = backUri.toString(),
         uploaded = uploaded,
-        deleted = deleted
+        deleted = deleted,
+        normalizedSearchText = buildNormalizedSearchString(brewery, description)
     )
 }
