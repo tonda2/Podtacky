@@ -1,11 +1,11 @@
 package cz.tonda2.podtacky.features.coaster.data.firebase.firestore
 
 import android.util.Log
+import androidx.core.net.toUri
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
-import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
 import cz.tonda2.podtacky.features.coaster.data.firebase.storage.FirebaseStorageRepository
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.folder.domain.Folder
@@ -25,13 +25,13 @@ class FirestoreRepository(
     }
 
     // Hazi vyjimku pokud neni internet!!!
-    fun getCoasters(userId: String): Flow<List<DbCoaster>> = flow {
+    fun getCoasters(userId: String): Flow<List<FsCoaster>> = flow {
         val collection = firestore.collection(MAIN_COLLECTION)
             .document(userId)
             .collection(COASTER_COLLECTION)
 
         val query = collection.get(Source.SERVER).await()
-        emit(query.toObjects(DbCoaster::class.java))
+        emit(query.toObjects(FsCoaster::class.java))
     }
 
     fun getFolders(userId: String): Flow<List<Folder>> = flow {
@@ -45,11 +45,12 @@ class FirestoreRepository(
 
     suspend fun addCoaster(userId: String, coaster: Coaster): Boolean {
         try {
+            val fsCoaster = coaster.toFs()
             firestore.collection(MAIN_COLLECTION)
                 .document(userId)
                 .collection(COASTER_COLLECTION)
-                .document(coaster.uid)
-                .set(coaster)
+                .document(fsCoaster.uid)
+                .set(fsCoaster)
                 .await()
             return true
         }
@@ -59,11 +60,11 @@ class FirestoreRepository(
         }
     }
 
-    fun deleteCoaster(userId: String, uid: String) {
+    fun deleteCoaster(userId: String, coaster: Coaster) {
         firestore.collection(MAIN_COLLECTION)
             .document(userId)
             .collection(COASTER_COLLECTION)
-            .document(uid)
+            .document(coaster.uid)
             .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -98,13 +99,41 @@ class FirestoreRepository(
         }
     }
 
-    fun deleteFolder(userId: String, uid: String) {
+    fun deleteFolder(userId: String, folder: Folder) {
         firestore.collection(MAIN_COLLECTION)
             .document(userId)
             .collection(FOLDER_COLLECTION)
-            .document(uid)
+            .document(folder.folderUid)
             .delete()
-            .addOnSuccessListener { Log.d("FS DELETE", "Folder $uid deleted from FS!") }
-            .addOnFailureListener { e -> Log.w("FS DELETE", "Error deleting folder $uid from FS", e) }
+            .addOnSuccessListener { Log.d("FS DELETE", "Folder $folder deleted from FS!") }
+            .addOnFailureListener { e -> Log.w("FS DELETE", "Error deleting folder $folder from FS", e) }
     }
 }
+
+fun Coaster.toFs(): FsCoaster = FsCoaster(
+    uid = uid,
+    folderUid = folderUid,
+    brewery = brewery,
+    description = description,
+    dateAdded = dateAdded,
+    city = city,
+    count = count,
+    frontUri = frontUri.toString(),
+    backUri = backUri.toString(),
+    uploaded = uploaded,
+    deleted = deleted
+)
+
+fun FsCoaster.toDomain(): Coaster = Coaster(
+    uid = uid,
+    folderUid = folderUid,
+    brewery = brewery,
+    description = description,
+    dateAdded = dateAdded,
+    city = city,
+    count = count,
+    frontUri = frontUri.toUri(),
+    backUri = backUri.toUri(),
+    uploaded = uploaded,
+    deleted = deleted
+)

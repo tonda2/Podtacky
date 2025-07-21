@@ -95,7 +95,7 @@ class BackupManager(
     }
 
     private suspend fun deleteCoaster(userId: String, coaster: Coaster): Boolean {
-        firestoreRepository.deleteCoaster(userId, coaster.uid)
+        firestoreRepository.deleteCoaster(userId, coaster)
         coasterRepository.deleteCoaster(coaster)
         return true
     }
@@ -105,7 +105,7 @@ class BackupManager(
     }
 
     private suspend fun deleteFolder(userId: String, folder: Folder): Boolean {
-        firestoreRepository.deleteFolder(userId, folder.folderUid)
+        firestoreRepository.deleteFolder(userId, folder)
         folderRepository.deleteFolder(folder)
         return true
     }

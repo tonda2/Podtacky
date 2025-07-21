@@ -40,10 +40,10 @@ class FirebaseStorageRepository(
         }
     }
 
-    suspend fun downloadPicture(context: Context, path: String, uri: Uri): Boolean {
-        if (path.isEmpty()) return false
+    suspend fun downloadPicture(context: Context, downloadUri: Uri, saveUri: Uri): Boolean {
+        if (downloadUri == Uri.EMPTY) return false
 
-        val imgRef = storageRef.child(path)
+        val imgRef = storageRef.child(downloadUri.toString())
 
         val downloadedBytes = imgRef.getBytes(Long.MAX_VALUE).await()
         if (downloadedBytes.isEmpty()) {
@@ -52,10 +52,10 @@ class FirebaseStorageRepository(
 
         val bitmap = BitmapFactory.decodeByteArray(downloadedBytes, 0, downloadedBytes.size)
         return try {
-            saveImageToUri(context, bitmap, uri)
+            saveImageToUri(context, bitmap, saveUri)
             true
         } catch (e: IOException) {
-            Log.e("STORAGE", "Failed to download $path", e)
+            Log.e("STORAGE", "Failed to download $downloadUri", e)
             false
         }
     }
