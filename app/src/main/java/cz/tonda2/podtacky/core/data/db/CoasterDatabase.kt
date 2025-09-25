@@ -8,11 +8,12 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import cz.tonda2.podtacky.features.coaster.data.db.CoasterDao
 import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
+import cz.tonda2.podtacky.features.coaster.data.db.buildNormalizedSearchString
 import cz.tonda2.podtacky.features.folder.data.db.DbFolder
 import cz.tonda2.podtacky.features.folder.data.db.FolderDao
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [DbCoaster::class, DbFolder::class]
 )
 abstract class CoasterDatabase : RoomDatabase() {
@@ -25,6 +26,7 @@ abstract class CoasterDatabase : RoomDatabase() {
         fun newInstance(context: Context): CoasterDatabase {
             return Room.databaseBuilder(context, CoasterDatabase::class.java, "coaster.db")
                 .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_2_3)
                 .build()
         }
     }
@@ -44,5 +46,27 @@ private val MIGRATION_1_2 = object : Migration(1, 2) {
         """.trimIndent())
 
         db.execSQL("ALTER TABLE coasters ADD COLUMN folderUid TEXT")
+    }
+}
+
+private val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE coasters ADD COLUMN normalizedSearchText TEXT NOT NULL DEFAULT ''")
+
+        db.query("SELECT coasterId, brewery, description FROM coasters").use { cursor ->
+            while (cursor.moveToNext()) {
+                val id = cursor.getString(0)
+                val brewery = cursor.getString(1)
+                val description = cursor.getString(2)
+                val normalizedSearchText = buildNormalizedSearchString(brewery, description)
+
+                db.execSQL(
+                    "UPDATE coasters SET normalizedSearchText = ? WHERE coasterId = ?",
+                    arrayOf(normalizedSearchText, id)
+                )
+            }
+        }
+
+        db.execSQL("CREATE INDEX IF NOT EXISTS coaster_normalized_text_index ON coasters(normalizedSearchText)")
     }
 }

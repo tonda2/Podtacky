@@ -2,6 +2,7 @@ package cz.tonda2.podtacky.core.data
 
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.crashlytics
@@ -86,24 +87,15 @@ class BackupManager(
             return false
         }
 
-        return firestoreRepository.addCoaster(userId, Coaster(
-            uid = coaster.uid,
-            folderUid = coaster.folderUid,
-            coasterId = coaster.coasterId,
-            brewery = coaster.brewery,
-            description = coaster.description,
-            dateAdded = coaster.dateAdded,
-            city = coaster.city,
-            count = coaster.count,
-            frontUri = Uri.parse(frontPath),
-            backUri = Uri.parse(backPath),
-            uploaded = true,
-            deleted = coaster.deleted
+        return firestoreRepository.addCoaster(userId, coaster.copy(
+            frontUri = frontPath.toUri(),
+            backUri = backPath.toUri(),
+            uploaded = true
         ))
     }
 
     private suspend fun deleteCoaster(userId: String, coaster: Coaster): Boolean {
-        firestoreRepository.deleteCoaster(userId, coaster.uid)
+        firestoreRepository.deleteCoaster(userId, coaster)
         coasterRepository.deleteCoaster(coaster)
         return true
     }
@@ -113,7 +105,7 @@ class BackupManager(
     }
 
     private suspend fun deleteFolder(userId: String, folder: Folder): Boolean {
-        firestoreRepository.deleteFolder(userId, folder.folderUid)
+        firestoreRepository.deleteFolder(userId, folder)
         folderRepository.deleteFolder(folder)
         return true
     }

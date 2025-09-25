@@ -9,10 +9,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.crashlytics
 import com.google.firebase.storage.StorageException
 import cz.tonda2.podtacky.features.coaster.data.CoasterRepository
-import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
 import cz.tonda2.podtacky.features.coaster.data.firebase.firestore.FirestoreRepository
+import cz.tonda2.podtacky.features.coaster.data.firebase.firestore.toDomain
 import cz.tonda2.podtacky.features.coaster.data.firebase.storage.FirebaseStorageRepository
-import cz.tonda2.podtacky.features.coaster.data.toDomain
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import cz.tonda2.podtacky.features.folder.data.FolderRepository
 import cz.tonda2.podtacky.features.folder.domain.Folder
@@ -38,13 +37,13 @@ class ImportManager(
         val backedData = firestoreRepository.getCoasters(userId)
 
         withContext(Dispatchers.IO) {
-            backedData.first().forEach { dbCoaster ->
+            backedData.first().map { c -> c.toDomain() }.forEach { coaster ->
                 try {
-                    importCoaster(dbCoaster, context)
+                    importCoaster(coaster, context)
                     onCoasterDownload()
                 }
                 catch (e: StorageException) {
-                    Log.e("IMPORT", "Failed to import coaster uid: ${dbCoaster.uid} for user id: $userId", e)
+                    Log.e("IMPORT", "Failed to import coaster uid: ${coaster.uid} for user id: $userId", e)
                     Firebase.crashlytics.recordException(e)
                 }
             }
@@ -62,33 +61,26 @@ class ImportManager(
         }
     }
 
-    private suspend fun importCoaster(coaster: DbCoaster, context: Context) {
-        if (coasterRepository.isCoasterDuplicate(coaster.toDomain())) {
+    private suspend fun importCoaster(coaster: Coaster, context: Context) {
+        if (coasterRepository.isCoasterDuplicate(coaster)) {
             return
         }
 
         var frontUri = Uri.EMPTY
         var backUri = Uri.EMPTY
 
-        if (coaster.frontUri.isNotEmpty()) {
+        if (coaster.frontUri != Uri.EMPTY) {
             frontUri = createImageFile(context)
             val downloaded = firebaseStorageRepository.downloadPicture(context, coaster.frontUri, frontUri)
             if (!downloaded) return
         }
-        if (coaster.backUri.isNotEmpty()) {
+        if (coaster.backUri != Uri.EMPTY) {
             backUri = createImageFile(context)
             val downloaded = firebaseStorageRepository.downloadPicture(context, coaster.backUri, backUri)
             if (!downloaded) return
         }
 
-        val newCoaster = Coaster(
-            uid = coaster.uid,
-            folderUid = coaster.folderUid,
-            brewery = coaster.brewery,
-            description = coaster.description,
-            dateAdded = coaster.dateAdded,
-            city = coaster.city,
-            count = coaster.count,
+        val newCoaster = coaster.copy(
             frontUri = frontUri,
             backUri = backUri,
             uploaded = true,

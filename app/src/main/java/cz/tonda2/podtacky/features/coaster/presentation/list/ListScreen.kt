@@ -1,5 +1,7 @@
 package cz.tonda2.podtacky.features.coaster.presentation.list
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,6 +52,7 @@ fun ListScreen(
     val listUiState by viewModel.listUiState.collectAsStateWithLifecycle()
     var showSortBottomSheet by remember { mutableStateOf(false) }
     var isFabExpanded by remember { mutableStateOf(false) }
+    val titleText by viewModel.titleText.collectAsStateWithLifecycle()
 
     Scaffold(
         floatingActionButton = {
@@ -78,30 +81,21 @@ fun ListScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text(text = stringResource(R.string.list_title))
-                        Text(
-                            text =
-                            when (listUiState.coasters.size) {
-                                1 -> {
-                                    stringResource(R.string._1_podtacek)
-                                }
-
-                                in 1..4 -> {
-                                    stringResource(
-                                        R.string._2_4_podtacky,
-                                        listUiState.coasters.size
-                                    )
-                                }
-
-                                else -> stringResource(
-                                    R.string._5_podtacku,
-                                    listUiState.coasters.size
-                                )
-                            },
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.LightGray
+                    Box(
+                        modifier = Modifier.clickable(
+                            onClick = {
+                                viewModel.switchTitle()
+                            }
                         )
+                    ) {
+                        Column {
+                            Text(text = stringResource(R.string.list_title))
+                            Text(
+                                text = titleText,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.LightGray
+                            )
+                        }
                     }
                 },
                 actions = {

@@ -1,8 +1,10 @@
 package cz.tonda2.podtacky.features.coaster.data
 
-import android.net.Uri
+import androidx.core.net.toUri
 import cz.tonda2.podtacky.features.coaster.data.db.CoasterDao
 import cz.tonda2.podtacky.features.coaster.data.db.DbCoaster
+import cz.tonda2.podtacky.features.coaster.data.db.buildNormalizedSearchString
+import cz.tonda2.podtacky.features.coaster.data.db.normalizeForSearch
 import cz.tonda2.podtacky.features.coaster.domain.Coaster
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -45,7 +47,8 @@ class CoasterRepository(
     }
 
     fun searchCoasters(query: String): Flow<List<Coaster>> {
-        return coasterDao.searchCoasters(query).map { list ->
+        val normalizedQuery = query.normalizeForSearch()
+        return coasterDao.searchCoasters(normalizedQuery).map { list ->
             list.map { dbCoaster -> dbCoaster.toDomain() }
         }
     }
@@ -85,8 +88,8 @@ fun DbCoaster.toDomain(): Coaster {
         dateAdded = dateAdded,
         city = city,
         count = count,
-        frontUri = Uri.parse(frontUri) ?: Uri.EMPTY,
-        backUri = Uri.parse(backUri) ?: Uri.EMPTY,
+        frontUri = frontUri.toUri(),
+        backUri = backUri.toUri(),
         uploaded = uploaded,
         deleted = deleted
     )
@@ -105,6 +108,7 @@ fun Coaster.toDb(): DbCoaster {
         frontUri = frontUri.toString(),
         backUri = backUri.toString(),
         uploaded = uploaded,
-        deleted = deleted
+        deleted = deleted,
+        normalizedSearchText = buildNormalizedSearchString(brewery, description)
     )
 }
