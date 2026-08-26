@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -76,6 +77,7 @@ fun LargePhotoScreen(
                 modifier = Modifier
                     .size(64.dp)
                     .padding(16.dp)
+                    .offset(y = 8.dp)
                     .align(Alignment.TopEnd)
                     .clickable { navController.navigateUp() },
                 tint = MaterialTheme.colorScheme.onPrimary
